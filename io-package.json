@@ -1,0 +1,104 @@
+{
+    "common": {
+        "name": "x-touch",
+        "version": "0.0.1",
+        "news": {
+            "0.0.1": {
+                "en": "initial release",
+                "de": "Erstveröffentlichung",
+                "ru": "Начальная версия",
+                "pt": "lançamento inicial",
+                "nl": "Eerste uitgave",
+                "fr": "Première version",
+                "it": "Versione iniziale",
+                "es": "Versión inicial",
+                "pl": "Pierwsze wydanie",
+                "zh-cn": "首次出版"
+            }
+        },
+        "title": "Behringer X-Touch",
+        "titleLang": {
+            "en": "Behringer X-Touch",
+            "de": "Behringer X-Touch",
+            "ru": "Behringer X-Touch",
+            "pt": "Behringer X-Touch",
+            "nl": "Behringer X-Touch",
+            "fr": "Behringer X-Touch",
+            "it": "Behringer X-Touch",
+            "es": "Behringer X-Touch",
+            "pl": "Behringer X-Touch",
+            "zh-cn": "贝林格X-Touch"
+        },
+        "desc": {
+            "en": "Communicate with a Behringer X-Touch Control Surface (DAW Controller)",
+            "de": "Kommunizieren Sie mit einer Behringer X-Touch-Bedienoberfläche (DAW-Controller)",
+            "ru": "Связь с панелью управления Behringer X-Touch (контроллером DAW)",
+            "pt": "Comunique-se com uma superfície de controle Behringer X-Touch (controlador DAW)",
+            "nl": "Communiceer met een Behringer X-Touch Control Surface (DAW Controller)",
+            "fr": "Communiquer avec une surface de contrôle Behringer X-Touch (contrôleur DAW)",
+            "it": "Comunica con una superficie di controllo Behringer X-Touch (controller DAW)",
+            "es": "Comunicarse con una superficie de control Behringer X-Touch (controlador DAW)",
+            "pl": "Komunikuj się z Behringer X-Touch Control Surface (kontroler DAW)",
+            "zh-cn": "与Behringer X-Touch控制界面（DAW控制器）进行通信"
+        },
+        "authors": [
+            "Bannsaenger <bannsaenger@gmx.de>"
+        ],
+        "keywords": [
+            "behringer x-touch hui mackie midi"
+        ],
+        "license": "MIT",
+        "platform": "Javascript/Node.js",
+        "main": "main.js",
+        "icon": "x-touch.png",
+        "enabled": true,
+        "extIcon": "https://raw.githubusercontent.com/Bannsaenger/ioBroker.x-touch/master/admin/x-touch.png",
+        "readme": "https://github.com/Bannsaenger/ioBroker.x-touch/blob/master/README.md",
+        "loglevel": "info",
+        "restartAdapters": [
+        ],
+        "mode": "daemon",
+        "type": "hardware",
+        "message": true,
+        "compact": true,
+        "materialize": true,
+        "dependencies": [
+            {
+                "js-controller": ">=1.4.2"
+            }
+        ]
+    },
+    "native": {
+        "port": 10111,
+        "bind": "0.0.0.0",
+        "deviceInactivityTimeout": 6000,
+        "deviceGroups": 1,
+        "maxChannels": 8,
+        "maxBanks": 1,
+        "createBank": 0
+    },
+    "objects": [],
+    "instanceObjects": [
+        {
+            "_id": "info",
+            "type": "channel",
+            "common": {
+                "name": "Information"
+            },
+            "native": {}
+        },
+        {
+            "_id": "info.connection",
+            "type": "state",
+            "common": {
+                "role": "indicator.connected",
+                "name": "Device or service connected",
+                "type": "boolean",
+                "read": true,
+                "write": false,
+                "def": false
+            },
+            "native": {}
+        }
+    ]
+}

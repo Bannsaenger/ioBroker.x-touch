@@ -1,0 +1,1407 @@
+{
+    "common": [
+        {
+            "_id": "devices",
+            "type": "folder",
+            "common": {
+                "name": "Physical devices"
+            },
+            "native": {}
+        },
+        {
+            "_id": "deviceGroups",
+            "type": "folder",
+            "common": {
+                "name": "Surface parameters"
+            },
+            "native": {}
+        }
+    ],
+    "device": {
+            "_id": "0",
+            "type": "device",
+            "common": {
+                "name": "Put device name here"
+            },
+            "native": {}
+    },
+    "devices": [
+        {
+            "_id": "serialNumber",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "As received by HostConnectionQuery",
+                "type": "string",
+                "read": true,
+                "write": true
+            },
+            "native": {}
+        },
+        {
+            "_id": "ipAddress",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "Identification in network",
+                "type": "string",
+                "read": true,
+                "write": true
+            },
+            "native": {}
+        },
+        {
+            "_id": "port",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "Source Port of device",
+                "type": "string",
+                "read": true,
+                "write": true
+            },
+            "native": {}
+        },
+        {
+            "_id": "connection",
+            "type": "state",
+            "common": {
+                "role": "indicator.reachable",
+                "name": "Device connected",
+                "type": "boolean",
+                "read": true,
+                "write": false,
+                "def": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "memberOfGroup",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "Assign a device (dynamically) to a group",
+                "type": "number",
+                "read": true,
+                "write": true,
+                "def": 0
+            },
+            "native": {}
+        },
+        {
+            "_id": "activeBaseChannel",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "Base channel number of active channel bank (1, 9, 17, 25)",
+                "type": "number",
+                "states": "1:1-8;9:9-16;17:17-24;25:25-32",
+                "read": true,
+                "write": true,
+                "def": 1
+            },
+            "native": {}
+        },
+        {
+            "_id": "activeBank",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "The number of the active Fader Bank",
+                "type": "number",
+                "read": true,
+                "write": true,
+                "def": 0
+            },
+            "native": {}
+        }
+    ],
+    "deviceGroup": {
+        "_id": "0",
+        "type": "folder",
+        "common": {
+            "name": "Put device group name here"
+        },
+        "native": {}
+    },
+    "deviceGroups":[
+        {
+            "_id": "maxBanks",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "The maximum number of banks. Can be set dynamically but could not exceed maxBanks from main configuration",
+                "type": "number",
+                "read": true,
+                "write": true,
+                "def": 1
+            },
+            "native": {}
+        },
+        {
+            "_id": "syncBanks",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "If true the active bank will be synced on all devices in the group",
+                "type": "boolean",
+                "read": true,
+                "write": true,
+                "def": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "banks",
+            "type": "folder",
+            "common": {
+                "name": "Switchable collections of parameters for the fader section"
+            },
+            "native": {}
+        },
+        {
+            "_id": "masterFader",
+            "type": "channel",
+            "common": {
+                "role": "level.volume",
+                "name": "Master fader"
+            },
+            "native": {}
+        },
+        {
+            "_id": "masterFlip",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Master button FLIP (ORANGE)"
+            },
+            "native": {}
+        },
+        {
+            "_id": "encoderAssign",
+            "type": "folder",
+            "common": {
+                "name": "Elements of the ENCODER ASSIGN section"
+            },
+            "native": {}
+        },
+        {
+            "_id": "timecodeDisplay",
+            "type": "folder",
+            "common": {
+                "name": "Elements of the TIMECODE DISPLAY section"
+            },
+            "native": {}
+        },
+        {
+            "_id": "view",
+            "type": "folder",
+            "common": {
+                "name": "Elements of the VIEW section"
+            },
+            "native": {}
+        },
+        {
+            "_id": "function",
+            "type": "folder",
+            "common": {
+                "name": "Elements of the FUNCTION section"
+            },
+            "native": {}
+        },
+        {
+            "_id": "modify",
+            "type": "folder",
+            "common": {
+                "name": "Elements of the MODIFY section"
+            },
+            "native": {}
+        },
+        {
+            "_id": "automation",
+            "type": "folder",
+            "common": {
+                "name": "Elements of the AUTOMATION section"
+            },
+            "native": {}
+        },
+        {
+            "_id": "utility",
+            "type": "folder",
+            "common": {
+                "name": "Elements of the UTILITY section"
+            },
+            "native": {}
+        },
+        {
+            "_id": "transport",
+            "type": "folder",
+            "common": {
+                "name": "Elements of the TRANSPORT section"
+            },
+            "native": {}
+        },
+        {
+            "_id": "page",
+            "type": "folder",
+            "common": {
+                "name": "Elements of the PAGE section"
+            },
+            "native": {}
+        },
+        {
+            "_id": "navigation",
+            "type": "folder",
+            "common": {
+                "name": "Elements of the NAVIGATION section"
+            },
+            "native": {}
+        }
+    ],
+    "bank": {
+        "_id": "0",
+        "type": "folder",
+        "common": {
+            "name": "Put bank name here"
+        },
+        "native": {}
+    },
+    "banks": [
+        {
+            "_id": "syncBaseCannel",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "If true the active base channel will be synced on all devices in the group",
+                "type": "boolean",
+                "read": true,
+                "write": true,
+                "def": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "maxChannels",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "Maximum number of channels available: 8, 16, 24, 32",
+                "type": "number",
+                "states": "8:one Bank;16:two banks;24:3 banks;32:4 banks",
+                "read": true,
+                "write": true,
+                "def": 8
+            },
+            "native": {}
+        },
+        {
+            "_id": "channels",
+            "type": "folder",
+            "common": {
+                "name": "The channel listing"
+            },
+            "native": {}
+        }
+    ],
+    "channel": {
+        "_id": "0",
+        "type": "folder",
+        "common": {
+            "name": "Channel"
+        },
+        "native": {}
+    },
+    "channels": [
+        {
+            "_id": "encoder",
+            "type": "channel",
+            "common": {
+                "role": "encoder",
+                "name": "Endless encoder"
+            },
+            "native": {}
+        },
+        {
+            "_id": "meter",
+            "type": "channel",
+            "common": {
+                "role": "value.volume",
+                "name": "Volume meter"
+            },
+            "native": {}
+        },
+        {
+            "_id": "display",
+            "type": "channel",
+            "common": {
+                "role": "info.display",
+                "name": "Scribble strip"
+            },
+            "native": {}
+        },
+        {
+            "_id": "rec",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button REC (RED)"
+            },
+            "native": {}
+        },
+        {
+            "_id": "solo",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button SOLO (ORANGE)"
+            },
+            "native": {}
+        },
+        {
+            "_id": "mute",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button MUTE (RED)"
+            },
+            "native": {}
+        },
+        {
+            "_id": "select",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button SELECT (GREEN)"
+            },
+            "native": {}
+        },
+        {
+            "_id": "fader",
+            "type": "channel",
+            "common": {
+                "role": "level.volume",
+                "name": "Master fader"
+            },
+            "native": {}
+        }
+    ],
+    "encoderAssign": [
+        {
+            "_id": "track",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button TRACK (ORANGE)"
+            },
+            "native": {}
+        },
+        {
+            "_id": "pan_surround",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button PAN/SURROUND (ORANGE)"
+            },
+            "native": {}
+        },
+        {
+            "_id": "eq",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button EQ (ORANGE)"
+            },
+            "native": {}
+        },
+        {
+            "_id": "send",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button SEND (ORANGE)"
+            },
+            "native": {}
+        },
+        {
+            "_id": "plugin",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button PLUG-IN (ORANGE)"
+            },
+            "native": {}
+        },
+        {
+            "_id": "inst",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button INST (ORANGE)"
+            },
+            "native": {}
+        }
+    ],    
+    "timecodeDisplay": [
+        {
+            "_id": "display",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button DISPLAY, NAME/VALUE (none)"
+            },
+            "native": {}
+        },
+        {
+            "_id": "solo",
+            "type": "channel",
+            "common": {
+                "role": "led",
+                "name": "LED SOLO (ORANGE)"
+            },
+            "native": {}
+        },
+        {
+            "_id": "smpte",
+            "type": "channel",
+            "common": {
+                "role": "led",
+                "name": "LED SMPTE (RED)"
+            },
+            "native": {}
+        },
+        {
+            "_id": "smpte_beats",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button SMPTE/BEATS (none)"
+            },
+            "native": {}
+        },
+        {
+            "_id": "beats",
+            "type": "channel",
+            "common": {
+                "role": "led",
+                "name": "LED BEATS (RED)"
+            },
+            "native": {}
+        }
+    ],    
+    "view": [
+        {
+            "_id": "global_view",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button GLOBAL VIEW (ORANGE)"
+            },
+            "native": {}
+        },
+        {
+            "_id": "midi_tracks",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button MIDI TRACKS (ORANGE)"
+            },
+            "native": {}
+        },
+        {
+            "_id": "inputs",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button INPUTS (ORANGE)"
+            },
+            "native": {}
+        },
+        {
+            "_id": "audio_tracks",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button AUDIO TRACKS (ORANGE)"
+            },
+            "native": {}
+        },
+        {
+            "_id": "audio_inst",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button AUDIO INST (ORANGE)"
+            },
+            "native": {}
+        },
+        {
+            "_id": "aux",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button AUX (ORANGE)"
+            },
+            "native": {}
+        },
+        {
+            "_id": "buses",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button BUSES (ORANGE)"
+            },
+            "native": {}
+        },
+        {
+            "_id": "outputs",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button OUTPUTS (ORANGE)"
+            },
+            "native": {}
+        },
+        {
+            "_id": "user",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button USER (ORANGE)"
+            },
+            "native": {}
+        }
+    ],    
+    "function": [
+        {
+            "_id": "f1",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button F1 (ORANGE)"
+            },
+            "native": {}
+        },
+        {
+            "_id": "f2",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button F2 (ORANGE)"
+            },
+            "native": {}
+        },
+        {
+            "_id": "f3",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button F3 (ORANGE)"
+            },
+            "native": {}
+        },
+        {
+            "_id": "f4",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button F4 (ORANGE)"
+            },
+            "native": {}
+        },
+        {
+            "_id": "f5",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button F5 (ORANGE)"
+            },
+            "native": {}
+        },
+        {
+            "_id": "f6",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button F6 (ORANGE)"
+            },
+            "native": {}
+        },
+        {
+            "_id": "f7",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button F7 (ORANGE)"
+            },
+            "native": {}
+        },
+        {
+            "_id": "f8",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button F8 (ORANGE)"
+            },
+            "native": {}
+        }
+    ],    
+    "modify": [
+        {
+            "_id": "shift",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button SHIFT (ORANGE)"
+            },
+            "native": {}
+        },
+        {
+            "_id": "option",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button OPTION (ORANGE)"
+            },
+            "native": {}
+        },
+        {
+            "_id": "control",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button CONTROL (ORANGE)"
+            },
+            "native": {}
+        },
+        {
+            "_id": "alt",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button #/ALT (ORANGE)"
+            },
+            "native": {}
+        }
+    ],    
+    "automation": [
+        {
+            "_id": "read/off",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button READ/OFF (GREEN)"
+            },
+            "native": {}
+        },
+        {
+            "_id": "write",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button WRITE (RED)"
+            },
+            "native": {}
+        },
+        {
+            "_id": "trim",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button TRIM (ORANGE)"
+            },
+            "native": {}
+        },
+        {
+            "_id": "touch",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button TOUCH (ORANGE)"
+            },
+            "native": {}
+        },
+        {
+            "_id": "latch",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button LATCH (ORANGE)"
+            },
+            "native": {}
+        },
+        {
+            "_id": "group",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button GROUP (GREEN)"
+            },
+            "native": {}
+        }
+    ],    
+    "utility": [
+        {
+            "_id": "save",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button SAVE (RED)"
+            },
+            "native": {}
+        },
+        {
+            "_id": "undo",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button UNDO (GREEN)"
+            },
+            "native": {}
+        },
+        {
+            "_id": "cancel",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button CANCEL (ORANGE)"
+            },
+            "native": {}
+        },
+        {
+            "_id": "enter",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button ENTER (ORANGE)"
+            },
+            "native": {}
+        }
+    ],    
+    "transport": [
+        {
+            "_id": "marker",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button MARKER (GREEN)"
+            },
+            "native": {}
+        },
+        {
+            "_id": "nudge",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button NUDGE (GREEN)"
+            },
+            "native": {}
+        },
+        {
+            "_id": "cycle",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button CYCLE (GREEN)"
+            },
+            "native": {}
+        },
+        {
+            "_id": "drop",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button DROP (RED)"
+            },
+            "native": {}
+        },
+        {
+            "_id": "replace",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button REPLACE (RED)"
+            },
+            "native": {}
+        },
+        {
+            "_id": "click",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button CLICK (GREEN)"
+            },
+            "native": {}
+        },
+        {
+            "_id": "solo",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button SOLO (ORANGE)"
+            },
+            "native": {}
+        },
+        {
+            "_id": "rev",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button << (REV) (ORANGE)"
+            },
+            "native": {}
+        },
+        {
+            "_id": "ff",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button >> (FF) (ORANGE)"
+            },
+            "native": {}
+        },
+        {
+            "_id": "stop",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button # (STOP) (ORANGE)"
+            },
+            "native": {}
+        },
+        {
+            "_id": "play",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button > (PLAY) (GREEN)"
+            },
+            "native": {}
+        },
+        {
+            "_id": "record",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button O (RECORD) (RED)"
+            },
+            "native": {}
+        },
+        {
+            "_id": "encoder",
+            "type": "channel",
+            "common": {
+                "role": "encoder",
+                "name": "Encoder wheel"
+            },
+            "native": {}
+        }
+    ],    
+    "page": [
+        {
+            "_id": "faderBankDec",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button FADER BANK < (ORANGE) (autoToggle=tip sets autofunction)"
+            },
+            "native": {}
+        },
+        {
+            "_id": "faderBankInc",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button FADER BANK > (ORANGE) (autoToggle=tip sets autofunction)"
+            },
+            "native": {}
+        },
+        {
+            "_id": "channelDec",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button CHANNEL < (ORANGE) (autoToggle=tip sets autofunction)"
+            },
+            "native": {}
+        },
+        {
+            "_id": "channelInc",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button CHANNEL > (ORANGE) (autoToggle=tip sets autofunction)"
+            },
+            "native": {}
+        }
+    ],    
+    "navigation": [
+        {
+            "_id": "up",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button ^(UP) (ORANGE)"
+            },
+            "native": {}
+        },
+        {
+            "_id": "left",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button < (LEFT) (ORANGE)"
+            },
+            "native": {}
+        },
+        {
+            "_id": "zoom",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button + (ZOOM) (BLUE)"
+            },
+            "native": {}
+        },
+        {
+            "_id": "right",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button > (RIGHT) (ORANGE)"
+            },
+            "native": {}
+        },
+        {
+            "_id": "down",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button v (DOWN) (ORANGE)"
+            },
+            "native": {}
+        },
+        {
+            "_id": "scrub",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button SCRUB (RED)"
+            },
+            "native": {}
+        }
+    ],    
+    "levelVolume": [
+        {
+            "_id": "touched",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "True if fader is touched",
+                "type": "boolean",
+                "read": true,
+                "write": false,
+                "def": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "value",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "Value linear from 0 to 1000 (0 db is 764)",
+                "type": "number",
+                "read": true,
+                "write": true,
+                "min": 0,
+                "max": 1000,
+                "def": 0
+            },
+            "native": {}
+        },
+        {
+            "_id": "value_db",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "Value logarithmic from -70 to 10 in 0.1 db steps",
+                "type": "number",
+                "read": true,
+                "write": true,
+                "min": -70.0,
+                "max": 10.0,
+                "def": -70.0
+            },
+            "native": {}
+        },
+        {
+            "_id": "syncGlobal",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "If true the value will be synced to every equal item in the whole adapter",
+                "type": "boolean",
+                "read": true,
+                "write": true,
+                "def": false
+            },
+            "native": {}
+        }
+    ],
+    "button": [
+        {
+            "_id": "status",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "If true LED is on",
+                "type": "boolean",
+                "read": true,
+                "write": true,
+                "def": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "pressed",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "If true button is actually pressed",
+                "type": "boolean",
+                "read": true,
+                "write": true,
+                "def": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "flashing",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "If true the LED is set flashing if status is true",
+                "type": "boolean",
+                "read": true,
+                "write": true,
+                "def": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "autoToggle",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "auto Function",
+                "type": "number",
+                "states": "0:off;1:tip;2:on press;3:on release;4:on press/release",
+                "read": true,
+                "write": true,
+                "min": 0,
+                "max": 4,
+                "def": 0
+            },
+            "native": {}
+        },
+        {
+            "_id": "syncGlobal",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "If true the value will be synced to every equal item in the whole adapter",
+                "type": "boolean",
+                "read": true,
+                "write": true,
+                "def": false
+            },
+            "native": {}
+        }
+    ],
+    "led": [
+        {
+            "_id": "status",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "If true LED is on",
+                "type": "boolean",
+                "read": true,
+                "write": true,
+                "def": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "flashing",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "If true the LED is set flashing if status is true",
+                "type": "boolean",
+                "read": true,
+                "write": true,
+                "def": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "syncGlobal",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "If true the value will be synced to every equal item in the whole adapter",
+                "type": "boolean",
+                "read": true,
+                "write": true,
+                "def": false
+            },
+            "native": {}
+        }
+    ],
+    "valueVolume": [
+        {
+            "_id": "value",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "Value from 0 to 8 (1-4 green, 5-7 orange, 8 red)",
+                "type": "number",
+                "states": {
+                    "0": "off",
+                    "1": "green 1",
+                    "2": "green 2",
+                    "3": "green 3",
+                    "4": "green 4",
+                    "5": "orange 1",
+                    "6": "orange 2",
+                    "7": "orange 3",
+                    "8": "red"
+                },
+                "read": true,
+                "write": true,
+                "def": 0
+            },
+            "native": {}
+        },
+        {
+            "_id": "syncGlobal",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "If true the value will be synced to every equal item in the whole adapter",
+                "type": "boolean",
+                "read": true,
+                "write": true,
+                "def": false
+            },
+            "native": {}
+        }
+    ],
+    "infoDisplay": [
+        {
+            "_id": "color",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "off, red, green, yellow, blue, pink, cyan, white",
+                "type": "number",
+                "states": {
+                    "0": "off",
+                    "1": "red",
+                    "2": "green",
+                    "3": "yellow",
+                    "4": "blue",
+                    "5": "pink",
+                    "6": "cyan",
+                    "7": "white"
+                },
+                "read": true,
+                "write": true,
+                "def": 0
+            },
+            "native": {}
+        },
+        {
+            "_id": "inverted",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "If true the second like should be inverted",
+                "type": "boolean",
+                "read": true,
+                "write": true,
+                "def": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "line1",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "Max 7 times 7-bit ASCII characters",
+                "type": "string",
+                "read": true,
+                "write": true,
+                "def": ""
+            },
+            "native": {}
+        },
+        {
+            "_id": "line1_ct",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "If true the first line will be displayed centered (line filled with 0x00)",
+                "type": "boolean",
+                "read": true,
+                "write": true,
+                "def": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "line2",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "Max 7 times 7-bit ASCII characters",
+                "type": "string",
+                "read": true,
+                "write": true,
+                "def": ""
+            },
+            "native": {}
+        },
+        {
+            "_id": "line2_ct",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "If true the second line will be displayed centered (line filled with 0x00)",
+                "type": "boolean",
+                "read": true,
+                "write": true,
+                "def": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "syncGlobal",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "If true the value will be synced to every equal item in the whole adapter",
+                "type": "boolean",
+                "read": true,
+                "write": true,
+                "def": false
+            },
+            "native": {}
+        }
+    ],
+    "channelEncoder": [
+        {
+            "_id": "pressed",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "If true controller is actually pressed",
+                "type": "boolean",
+                "read": true,
+                "write": true,
+                "def": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "mode",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "Modes as described by LogicControl Midi implementation",
+                "type": "number",
+                "states": {
+                    "0": "Single Dot",
+                    "1": "Boost/Cut",
+                    "2": "Wrap",
+                    "3": "Spread"
+                },
+                "read": true,
+                "write": true,
+                "def": 0
+            },
+            "native": {}
+        },
+        {
+            "_id": "value",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "Value from 0 (all LEDs off) to 11",
+                "type": "number",
+                "read": true,
+                "write": true,
+                "min": 0,
+                "max": 11,
+                "def": 0
+            },
+            "native": {}
+        },
+        {
+            "_id": "autoFunction",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "If true the value is inc- and decremented automatically",
+                "type": "boolean",
+                "read": true,
+                "write": true,
+                "def": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "syncGlobal",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "If true the value will be synced to every equal item in the whole adapter",
+                "type": "boolean",
+                "read": true,
+                "write": true,
+                "def": false
+            },
+            "native": {}
+        }
+    ],
+    "encoder": [
+        {
+            "_id": "ccw",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "If controller is one step moved counter clockwise",
+                "type": "boolean",
+                "read": true,
+                "write": false,
+                "def": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "cw",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "If controller is one step moved clockwise",
+                "type": "boolean",
+                "read": true,
+                "write": false,
+                "def": false
+            },
+            "native": {}
+        }
+    ]
+}

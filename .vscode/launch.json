@@ -1,0 +1,36 @@
+{
+    // Use IntelliSense to learn about possible Node.js debug attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+
+        {
+            "name": "Backup erstellen",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "D:/TechDevel/ioBroker/X-Touch/backup_x-touch.cmd",
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+           "name": "(x-touch) main.js --force starten",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceRoot}/main.js",
+            "cwd": "${workspaceRoot}",
+            "args": [
+                "--force"
+            ],
+            "runtimeArgs": [
+            ]
+        },
+        {
+            "type": "node",
+            "request": "attach",
+            "name": "An den Port anfügen",
+            "address": "localhost",
+            "port": 5858
+        }
+    ]
+}
