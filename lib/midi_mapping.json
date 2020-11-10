@@ -81,7 +81,7 @@
     "71":   "modify.option",
     "72":   "modify.control",
     "73":   "modify.alt",
-    "74":   "automation.read/off",
+    "74":   "automation.read_off",
     "75":   "automation.write",
     "76":   "automation.trim",
     "77":   "automation.touch",
