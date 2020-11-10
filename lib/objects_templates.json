@@ -685,7 +685,7 @@
     ],    
     "automation": [
         {
-            "_id": "read/off",
+            "_id": "read_off",
             "type": "channel",
             "common": {
                 "role": "button",
