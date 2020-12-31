@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "x-touch",
-        "version": "0.0.1",
+        "version": "0.0.2",
         "news": {
             "0.0.1": {
                 "en": "initial release",
@@ -14,6 +14,18 @@
                 "es": "Versión inicial",
                 "pl": "Pierwsze wydanie",
                 "zh-cn": "首次出版"
+            },
+            "0.0.2": {
+                "en": "minor changes for the publication of the first release",
+                "de": "geringfügige Änderungen für die Veröffentlichung der ersten Version",
+                "ru": "мелкие изменения для публикации первого релиза",
+                "pt": "pequenas alterações para a publicação do primeiro lançamento",
+                "nl": "kleine wijzigingen voor de publicatie van de eerste release",
+                "fr": "changements mineurs pour la publication de la première version",
+                "it": "modifiche minori per la pubblicazione della prima release",
+                "es": "cambios menores para la publicación del primer lanzamiento",
+                "pl": "drobne zmiany dotyczące publikacji pierwszego wydania",
+                "zh-cn": "对第一个发行版的微小更改"
             }
         },
         "title": "Behringer X-Touch",
@@ -59,6 +71,8 @@
         ],
         "mode": "daemon",
         "type": "hardware",
+        "connectionType": "local",
+        "dataSource": "push",
         "message": true,
         "compact": true,
         "materialize": true,

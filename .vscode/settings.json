@@ -1,3 +1,4 @@
 {
-    "eslint.enable": true
+    "eslint.enable": true,
+    "php.validate.executablePath": "C:/TechApps/php/php-7.4.13/php.exe"
 }
