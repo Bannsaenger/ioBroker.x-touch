@@ -1,6 +1,6 @@
 {
   "name": "iobroker.x-touch",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Communicate with a Behringer X-Touch Control Surface (DAW Controller)",
   "author": {
     "name": "Bannsaenger",
