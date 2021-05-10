@@ -278,9 +278,7 @@ class XTouch extends utils.Adapter {
             }
 
             // close the server port
-            this.server.close();
-
-            callback();
+            this.server.close(callback);
         } catch (e) {
             callback();
         }
