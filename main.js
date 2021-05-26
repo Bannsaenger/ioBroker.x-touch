@@ -1,15 +1,12 @@
-/* ***************************************************************
- * Project:     ioBroker.x-touch
- * File:        main.js
- * Author:      Ralf Boeckle
- * Created:     19.09.2020
- * Changed:     03.11.2020, RB
- * Version:     0.0.1
- * License:     MIT
- * Copyright:   Copyright (c) 2020 Bannsaenger <bannsaenger@gmx.de>
+/**
  *
- * Template created with @iobroker/create-adapter v1.26.3
- * ***************************************************************/
+ *      iobroker x-touch Adapter
+ *
+ *      Copyright (c) 2020-2021, Bannsaenger <bannsaenger@gmx.de>
+ *
+ *      MIT License
+ *
+ */
 
 /*
  * ToDo:
@@ -192,10 +189,10 @@ class XTouch extends utils.Adapter {
     /**
      * Is called to set the connection state in db and log
      * @param {string} deviceAddress
-     * @param {string} port
+     * @param {number} port
      * @param {boolean} status
      */
-    setConnection(deviceAddress, port, status) {
+    async setConnection(deviceAddress, port, status) {
         const self = this;
         try {
             if (status) {
@@ -205,7 +202,7 @@ class XTouch extends utils.Adapter {
                 if (!(deviceAddress in self.devices)) {
                     self.devices[deviceAddress] = {
                         'activeBank': 0,
-                        'activeBaseChannel': 0,
+                        'activeBaseChannel': 1,
                         'connection': true,
                         'ipAddress': deviceAddress,
                         'port': port,
@@ -218,7 +215,7 @@ class XTouch extends utils.Adapter {
                     prefix += '.';
                     self.nextDevice++;
                     for (const element of self.objectsTemplate.devices) {
-                        self.setObjectNotExists(prefix + element._id, element);
+                        await self.setObjectNotExistsAsync(prefix + element._id, element);
                     }
                     self.log.info('X-Touch device with IP <' + deviceAddress + '> created. Is now online.');
                     self.setState(prefix + 'ipAddress', deviceAddress, true);
@@ -291,6 +288,8 @@ class XTouch extends utils.Adapter {
      */
     onServerError(error) {
         this.log.error('Server got Error: <' + error + '> closing server.');
+        // Reset the connection indicator
+        this.setState('info.connection', false, true);
         this.server.close();
     }
 
@@ -318,7 +317,7 @@ class XTouch extends utils.Adapter {
      */
     onDeviceInactivityTimeoutExceeded(deviceAddress) {
         this.log.debug('X-Touch device "' + deviceAddress + '" reached inactivity timeout');
-        this.setConnection(deviceAddress, '', false);
+        this.setConnection(deviceAddress, 0, false);
     }
 
     /**
@@ -559,8 +558,8 @@ class XTouch extends utils.Adapter {
                             self.deviceGroups[baseId + '.value_db'].val = locObj.logValue;
                             isDirty = true;
                         }
-                        self.setState(baseId + '.value', locObj.linValue, true);            // maybe correct the format
-                        self.setState(baseId + '.value_db', locObj.logValue, true);         // update log value too
+                        self.setState(baseId + '.value', Number(locObj.linValue), true);            // maybe correct the format
+                        self.setState(baseId + '.value_db', Number(locObj.logValue), true);         // update log value too
                         break;
 
                     case 'value_db':
@@ -570,8 +569,8 @@ class XTouch extends utils.Adapter {
                             self.deviceGroups[baseId + '.value'].val = locObj.linValue;
                             isDirty = true;
                         }
-                        self.setState(baseId + '.value_db', locObj.logValue, true);         // maybe correct the format
-                        self.setState(baseId + '.value', locObj.linValue, true);            // update lin value too
+                        self.setState(baseId + '.value_db', Number(locObj.logValue), true);         // maybe correct the format
+                        self.setState(baseId + '.value', Number(locObj.linValue), true);            // update lin value too
                         break;
 
                     default:
@@ -603,12 +602,12 @@ class XTouch extends utils.Adapter {
 
                     if (self.deviceGroups[baseId + '.value'].val != locObj.linValue) {
                         self.deviceGroups[baseId + '.value'].val = locObj.linValue;
-                        self.setState(baseId + '.value', locObj.linValue, true);
+                        self.setState(baseId + '.value', Number(locObj.linValue), true);
                         isDirty = true;
                     }
                     if (self.deviceGroups[baseId + '.value_db'].val != locObj.logValue) {
                         self.deviceGroups[baseId + '.value_db'].val = locObj.logValue;
-                        self.setState(baseId + '.value_db', locObj.logValue, true);
+                        self.setState(baseId + '.value_db', Number(locObj.logValue), true);
                         isDirty = true;
                     }
 

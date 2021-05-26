@@ -56,7 +56,7 @@
             "common": {
                 "role": "value",
                 "name": "Source Port of device",
-                "type": "string",
+                "type": "number",
                 "read": true,
                 "write": true
             },
@@ -1339,26 +1339,28 @@
             "type": "state",
             "common": {
                 "role": "value",
-                "name": "Value from 0 (all LEDs off) to 11",
+                "name": "Value from 0 to 1000",
                 "type": "number",
                 "read": true,
                 "write": true,
                 "min": 0,
-                "max": 11,
+                "max": 1000,
                 "def": 0
             },
             "native": {}
         },
         {
-            "_id": "autoFunction",
+            "_id": "stepsPerTick",
             "type": "state",
             "common": {
                 "role": "value",
-                "name": "If true the value is inc- and decremented automatically",
-                "type": "boolean",
+                "name": "Number of value steps inc- or decremented per single tick",
+                "type": "number",
                 "read": true,
                 "write": true,
-                "def": false
+                "min": 0,
+                "max": 1000,
+                "def": 50
             },
             "native": {}
         },
