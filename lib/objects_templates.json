@@ -152,6 +152,32 @@
             "native": {}
         },
         {
+            "_id": "illuminateBankSwitching",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "If true the fader bank left/rigt buttons will show the possible directions",
+                "type": "boolean",
+                "read": true,
+                "write": true,
+                "def": true
+            },
+            "native": {}
+        },
+        {
+            "_id": "illuminateChannelSwitching",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "If true the channel left/right buttons will show the possible directions",
+                "type": "boolean",
+                "read": true,
+                "write": true,
+                "def": true
+            },
+            "native": {}
+        },
+        {
             "_id": "banks",
             "type": "folder",
             "common": {
@@ -245,7 +271,7 @@
             "_id": "page",
             "type": "folder",
             "common": {
-                "name": "Elements of the PAGE section"
+                "name": "The PAGE section (used only for bank and channel switching)"
             },
             "native": {}
         },
@@ -897,42 +923,6 @@
         }
     ],    
     "page": [
-        {
-            "_id": "faderBankDec",
-            "type": "channel",
-            "common": {
-                "role": "button",
-                "name": "Button FADER BANK < (ORANGE) (autoToggle=tip sets autofunction)"
-            },
-            "native": {}
-        },
-        {
-            "_id": "faderBankInc",
-            "type": "channel",
-            "common": {
-                "role": "button",
-                "name": "Button FADER BANK > (ORANGE) (autoToggle=tip sets autofunction)"
-            },
-            "native": {}
-        },
-        {
-            "_id": "channelDec",
-            "type": "channel",
-            "common": {
-                "role": "button",
-                "name": "Button CHANNEL < (ORANGE) (autoToggle=tip sets autofunction)"
-            },
-            "native": {}
-        },
-        {
-            "_id": "channelInc",
-            "type": "channel",
-            "common": {
-                "role": "button",
-                "name": "Button CHANNEL > (ORANGE) (autoToggle=tip sets autofunction)"
-            },
-            "native": {}
-        }
     ],    
     "navigation": [
         {
