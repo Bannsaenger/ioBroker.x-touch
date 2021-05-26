@@ -256,30 +256,6 @@ class XTouch extends utils.Adapter {
         }
     }
 
-    /**
-     * Is called when adapter shuts down - callback has to be called under any circumstances!
-     * @param {() => void} callback
-     */
-    onUnload(callback) {
-        try {
-            const self = this;
-            // Reset the connection indicator
-            self.setState('info.connection', false, true);
-
-            // Here you must clear all timeouts or intervals that may still be active
-            // and for all devices set not connected
-            for (const element of Object.keys(self.devices)) {
-                self.setState('devices.' + self.devices[element].index + '.connection', false, true);
-                if (self.devices[element].timerDeviceInactivityTimeout) self.devices[element].timerDeviceInactivityTimeout.clearTimeout();
-            }
-
-            // close the server port
-            this.server.close(callback);
-        } catch (e) {
-            callback();
-        }
-    }
-
     // Methods related to Server events
     /**
      * Is called if a server error occurs
@@ -1417,6 +1393,30 @@ class XTouch extends utils.Adapter {
     //         }
     //     }
     // }
+
+    /**
+     * Is called when adapter shuts down - callback has to be called under any circumstances!
+     * @param {() => void} callback
+     */
+     onUnload(callback) {
+        try {
+            const self = this;
+            // Reset the connection indicator
+            self.setState('info.connection', false, true);
+
+            // Here you must clear all timeouts or intervals that may still be active
+            // and for all devices set not connected
+            for (const element of Object.keys(self.devices)) {
+                self.setState('devices.' + self.devices[element].index + '.connection', false, true);
+                if (self.devices[element].timerDeviceInactivityTimeout) self.devices[element].timerDeviceInactivityTimeout.clearTimeout();
+            }
+
+            // close the server port
+            this.server.close(callback);
+        } catch (e) {
+            callback();
+        }
+    }
 
 }
 
