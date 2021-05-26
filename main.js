@@ -1168,23 +1168,6 @@ class XTouch extends utils.Adapter {
 
             await self.createBanksAsync(deviceGroup);
 
-            const tempObj = await self.getStateAsync('deviceGroups.' + deviceGroup + '.maxBanks');
-            const maxBanks = (tempObj && tempObj.val) ? Number(tempObj.val) : 1;
-
-            // delete all unused banks
-            for(const key in await self.getAdapterObjectsAsync()){
-                const tempArr = key.split('.');
-                if (tempArr.length < 6) continue;
-                if ((tempArr[3] == deviceGroup) && (Number(tempArr[5]) >= maxBanks)) {
-                    await self.delObjectAsync(key);
-                }
-            }
-
-            // and now delete the unused bank base folder
-            for (let index = maxBanks; index <= self.config.maxBanks; index++) {
-                await self.delObjectAsync(self.namespace + '.deviceGroups.' + deviceGroup + '.banks.' + index);
-            }
-
         } catch (err) {
             self.errorHandler(err, 'createDeviceGroupAsync');
         }
@@ -1197,13 +1180,13 @@ class XTouch extends utils.Adapter {
     async createBanksAsync(deviceGroup) {
         const self = this;
         try {
-            const maxBanks = await self.getStateAsync('deviceGroups.' + deviceGroup + '.maxBanks');
-            let maxBanksNum = maxBanks ? maxBanks.val : 1;
+            const tempObj = await self.getStateAsync('deviceGroups.' + deviceGroup + '.maxBanks');
+            let maxBanks = (tempObj && tempObj.val) ? Number(tempObj.val) : 1;
 
             // @ts-ignore
-            if (maxBanksNum > self.config.maxBanks) {
-                maxBanksNum = self.config.maxBanks;
-                await self.setStateAsync('deviceGroups.' + deviceGroup + '.maxBanks', Number(maxBanksNum), true);
+            if (maxBanks > self.config.maxBanks) {
+                maxBanks = self.config.maxBanks;
+                await self.setStateAsync('deviceGroups.' + deviceGroup + '.maxBanks', Number(maxBanks), true);
             }
 
             // @ts-ignore
@@ -1235,7 +1218,19 @@ class XTouch extends utils.Adapter {
                 await self.createChannelsAsync(deviceGroup, index.toString());
             }
 
+            // delete all unused banks
+            for(const key in await self.getAdapterObjectsAsync()){
+                const tempArr = key.split('.');
+                if (tempArr.length < 6) continue;
+                if ((tempArr[3] == deviceGroup) && (Number(tempArr[5]) >= maxBanks)) {
+                    await self.delObjectAsync(key);
+                }
+            }
 
+            // and now delete the unused bank base folder
+            for (let index = maxBanks; index <= self.config.maxBanks; index++) {
+                await self.delObjectAsync(self.namespace + '.deviceGroups.' + deviceGroup + '.banks.' + index);
+            }
 
         } catch (err) {
             self.errorHandler(err, 'createBanksAsync');
@@ -1250,21 +1245,22 @@ class XTouch extends utils.Adapter {
     async createChannelsAsync(deviceGroup, bank) {
         const self = this;
         try {
-            const maxChannels = await self.getStateAsync('deviceGroups.' + deviceGroup + '.banks.' + bank + '.maxChannels');
-            let maxChannelsNum = maxChannels ? maxChannels.val : 8;
-            if (Number(maxChannelsNum) % 8) {               // if not a multiple of 8
-                maxChannelsNum = 8;
-                await self.setStateAsync('deviceGroups.' + deviceGroup + '.banks.' + bank + '.maxChannels', Number(maxChannelsNum), true);   
+            const tempObj = await self.getStateAsync('deviceGroups.' + deviceGroup + '.banks.' + bank + '.maxChannels');
+            let maxChannels = (tempObj && tempObj.val) ? Number(tempObj.val) : 8;
+
+            if (Number(maxChannels) % 8) {               // if not a multiple of 8
+                maxChannels = 8;
+                await self.setStateAsync('deviceGroups.' + deviceGroup + '.banks.' + bank + '.maxChannels', Number(maxChannels), true);   
             }
 
             // @ts-ignore
-            if (maxChannelsNum > self.config.maxChannels) {
-                maxChannelsNum = self.config.maxChannels;
-                await self.setStateAsync('deviceGroups.' + deviceGroup + '.banks.' + bank + '.maxChannels', Number(maxChannelsNum), true);
+            if (maxChannels > self.config.maxChannels) {
+                maxChannels = self.config.maxChannels;
+                await self.setStateAsync('deviceGroups.' + deviceGroup + '.banks.' + bank + '.maxChannels', Number(maxChannels), true);
             }
 
             // @ts-ignore
-            for (let channel = 1; channel <= maxChannelsNum; channel++) {
+            for (let channel = 1; channel <= maxChannels; channel++) {
                 const activeChannel = 'deviceGroups.' + deviceGroup + '.banks.' + bank + '.channels.' + channel;
 
                 await self.setObjectNotExistsAsync(activeChannel, self.objectsTemplate.channel);
@@ -1299,6 +1295,21 @@ class XTouch extends utils.Adapter {
                     }
                 }
             }
+
+            // delete all unused channels
+            for(const key in await self.getAdapterObjectsAsync()){
+                const tempArr = key.split('.');
+                if (tempArr.length < 9) continue;
+                if ((tempArr[3] == deviceGroup) && (tempArr[5] === bank) && (Number(tempArr[7]) >= maxChannels)) {
+                    await self.delObjectAsync(key);
+                }
+            }
+
+            // and now delete the unused channel base folder
+            for (let index = maxChannels; index <= self.config.maxChannels; index++) {
+                await self.delObjectAsync(self.namespace + '.deviceGroups.' + deviceGroup + '.banks.' + bank + '.channels.' + index);
+            }
+
         } catch (err) {
             self.errorHandler(err, 'createChannelsAsync');
         }
