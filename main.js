@@ -159,6 +159,7 @@ class XTouch extends utils.Adapter {
             self.nextDevice = Number(actDeviceNum) + 1;
             self.log.info('X-Touch got ' + Object.keys(self.devices).length + ' devices from the db. Next free device number: "' + self.nextDevice + '"');
 
+            // read all states from the device groups to memory
             const device_states = await self.getStatesOfAsync('deviceGroups');
             for (const device_state of device_states) {
                 self.deviceGroups[device_state._id] = device_state;
@@ -1166,6 +1167,24 @@ class XTouch extends utils.Adapter {
             }
 
             await self.createBanksAsync(deviceGroup);
+
+            const tempObj = await self.getStateAsync('deviceGroups.' + deviceGroup + '.maxBanks');
+            const maxBanks = (tempObj && tempObj.val) ? Number(tempObj.val) : 1;
+
+            // delete all unused banks
+            for(const key in await self.getAdapterObjectsAsync()){
+                const tempArr = key.split('.');
+                if (tempArr.length < 6) continue;
+                if ((tempArr[3] == deviceGroup) && (Number(tempArr[5]) >= maxBanks)) {
+                    await self.delObjectAsync(key);
+                }
+            }
+
+            // and now delete the unused bank base folder
+            for (let index = maxBanks; index <= self.config.maxBanks; index++) {
+                await self.delObjectAsync(self.namespace + '.deviceGroups.' + deviceGroup + '.banks.' + index);
+            }
+
         } catch (err) {
             self.errorHandler(err, 'createDeviceGroupAsync');
         }
@@ -1215,6 +1234,9 @@ class XTouch extends utils.Adapter {
 
                 await self.createChannelsAsync(deviceGroup, index.toString());
             }
+
+
+
         } catch (err) {
             self.errorHandler(err, 'createBanksAsync');
         }
@@ -1232,7 +1254,7 @@ class XTouch extends utils.Adapter {
             let maxChannelsNum = maxChannels ? maxChannels.val : 8;
             if (Number(maxChannelsNum) % 8) {               // if not a multiple of 8
                 maxChannelsNum = 8;
-                await self.setStateAsync('deviceGroups.' + deviceGroup + '.banks.' + bank + '.maxChannels', Number(maxChannelsNum), true);         
+                await self.setStateAsync('deviceGroups.' + deviceGroup + '.banks.' + bank + '.maxChannels', Number(maxChannelsNum), true);   
             }
 
             // @ts-ignore
