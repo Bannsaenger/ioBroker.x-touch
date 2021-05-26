@@ -20,6 +20,7 @@ const utils = require('@iobroker/adapter-core');
 // Load your modules here, e.g.:
 const fs = require('fs');
 const udp = require('dgram');
+const { debug } = require('console');
 
 const POLL_REC    = 'F0002032585400F7';
 const POLL_REPLY  = 'F00000661400F7';
@@ -108,7 +109,7 @@ class XTouch extends utils.Adapter {
             /*
             create the database
             */
-            await self.createDatabase();
+            await self.createDatabaseAsync();
 
             // Read all devices in the db
             let tempObj;
@@ -1100,14 +1101,26 @@ class XTouch extends utils.Adapter {
     /**
      * create the database (populate all values an delete unused)
      */
-    async createDatabase() {
+    async createDatabaseAsync() {
         const self = this;
+
+        self.log.debug('Extron start to create/update the database');
         /*
         create the device groups
         */
         for (let index = 0; index < self.config.deviceGroups; index++) {
             await self.createDeviceGroupAsync(index.toString());
         }
+
+        for(const key in await self.getAdapterObjectsAsync()){
+            const tempArr = key.split('.');
+            if (tempArr.length < 5) continue;
+            if (Number(tempArr[3]) >= self.config.deviceGroups) {
+                await self.delObjectAsync(key);
+            }
+        }
+
+        self.log.debug('Extron finished up database creation');
     }
 
     /**
@@ -1382,7 +1395,7 @@ class XTouch extends utils.Adapter {
 	 * @param {Error} err
 	 * @param {string} module
 	 */
-     errorHandler(err, module = '') {
+    errorHandler(err, module = '') {
 
         this.log.error(`Extron error in method: [${module}] error: ${err.message}, stack: ${err.stack}`);
     }
