@@ -1182,7 +1182,7 @@ class XTouch extends utils.Adapter {
             // @ts-ignore
             if (maxBanksNum > self.config.maxBanks) {
                 maxBanksNum = self.config.maxBanks;
-                await self.setStateAsync('deviceGroups.' + deviceGroup + '.maxBanks', Number(maxBanksNum));
+                await self.setStateAsync('deviceGroups.' + deviceGroup + '.maxBanks', Number(maxBanksNum), true);
             }
 
             // @ts-ignore
@@ -1227,7 +1227,17 @@ class XTouch extends utils.Adapter {
         const self = this;
         try {
             const maxChannels = await self.getStateAsync('deviceGroups.' + deviceGroup + '.banks.' + bank + '.maxChannels');
-            const maxChannelsNum = maxChannels ? maxChannels.val : 8;
+            let maxChannelsNum = maxChannels ? maxChannels.val : 8;
+            if (Number(maxChannelsNum) % 8) {               // if not a multiple of 8
+                maxChannelsNum = 8;
+                await self.setStateAsync('deviceGroups.' + deviceGroup + '.banks.' + bank + '.maxChannels', Number(maxChannelsNum), true);         
+            }
+
+            // @ts-ignore
+            if (maxChannelsNum > self.config.maxChannels) {
+                maxChannelsNum = self.config.maxChannels;
+                await self.setStateAsync('deviceGroups.' + deviceGroup + '.banks.' + bank + '.maxChannels', Number(maxChannelsNum), true);
+            }
 
             // @ts-ignore
             for (let channel = 1; channel <= maxChannelsNum; channel++) {
