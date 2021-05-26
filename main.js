@@ -868,6 +868,7 @@ class XTouch extends utils.Adapter {
                                 break;
                         }
                     }
+   //                 if ()
                 }
             } else {
                 // The state was deleted
@@ -1087,13 +1088,19 @@ class XTouch extends utils.Adapter {
         for (let index = 0; index < self.config.deviceGroups; index++) {
             await self.createDeviceGroupAsync(index.toString());
         }
-
+        
+        // delete all unused device groups
         for(const key in await self.getAdapterObjectsAsync()){
             const tempArr = key.split('.');
             if (tempArr.length < 5) continue;
             if (Number(tempArr[3]) >= self.config.deviceGroups) {
                 await self.delObjectAsync(key);
             }
+        }
+
+        // and now delete the unused device groups base folder
+        for (let index = self.config.deviceGroups; index <= 4; index++) {
+            await self.delObjectAsync(self.namespace + '.deviceGroups.' + index);
         }
 
         self.log.debug('Extron finished up database creation');
