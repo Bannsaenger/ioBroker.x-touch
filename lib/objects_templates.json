@@ -271,7 +271,7 @@
             "_id": "page",
             "type": "folder",
             "common": {
-                "name": "The PAGE section (used only for bank and channel switching)"
+                "name": "Elements of the PAGE section"
             },
             "native": {}
         },
@@ -923,6 +923,19 @@
         }
     ],    
     "page": [
+        {
+            "_id": "info",
+            "type": "state",
+            "common": {
+                "role": "meta.info",
+                "name": "used only for bank and channel switching",
+                "type": "boolean",
+                "read": true,
+                "write": false,
+                "def": false
+            },
+            "native": {}
+        }
     ],    
     "navigation": [
         {
