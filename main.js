@@ -1177,7 +1177,13 @@ class XTouch extends utils.Adapter {
         const self = this;
         try {
             const maxBanks = await self.getStateAsync('deviceGroups.' + deviceGroup + '.maxBanks');
-            const maxBanksNum = maxBanks ? maxBanks.val : 1;
+            let maxBanksNum = maxBanks ? maxBanks.val : 1;
+
+            // @ts-ignore
+            if (maxBanksNum > self.config.maxBanks) {
+                maxBanksNum = self.config.maxBanks;
+                await self.setStateAsync('deviceGroups.' + deviceGroup + '.maxBanks', Number(maxBanksNum));
+            }
 
             // @ts-ignore
             for (let index = 0; index < maxBanksNum; index++) {
