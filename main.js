@@ -106,11 +106,9 @@ class XTouch extends utils.Adapter {
             }
 
             /*
-            create the device groups
+            create the database
             */
-            for (let index = 0; index < self.config.deviceGroups; index++) {
-                await self.createDeviceGroupAsync(index.toString());
-            }
+            await self.createDatabase();
 
             // Read all devices in the db
             let tempObj;
@@ -182,7 +180,7 @@ class XTouch extends utils.Adapter {
             // Set the connection indicator after startup
             self.setState('info.connection', true, true);
         } catch (err) {
-            self.log.error('X-Touch Error in method "onReady": ' + err.stack);
+            self.errorHandler(err, 'onReady');
         }
     }
 
@@ -253,7 +251,7 @@ class XTouch extends utils.Adapter {
                 }
             }
         } catch (err) {
-            self.log.error('X-Touch Error in method "setConnection": ' + err.stack);
+            self.errorHandler(err, 'setConnection');
         }
     }
 
@@ -373,7 +371,7 @@ class XTouch extends utils.Adapter {
                 }
             }
         } catch (err) {
-            self.log.error('X-Touch Error in method "onServerMessage": ' + err.stack);
+            self.errorHandler(err, 'onServerMessage');
         }
     }
 
@@ -510,7 +508,7 @@ class XTouch extends utils.Adapter {
                 }
             }
         } catch (err) {
-            self.log.error('X-Touch Error in method "handleButton": ' + err.stack);
+            self.errorHandler(err, 'handleButton');
         }
     }
 
@@ -620,7 +618,7 @@ class XTouch extends utils.Adapter {
                 self.sendFader(baseId, address, true);
             }
         } catch (err) {
-            self.log.error('X-Touch Error in method "handleFader": ' + err.stack);
+            self.errorHandler(err, 'handleFader');
         }
     }
 
@@ -679,7 +677,7 @@ class XTouch extends utils.Adapter {
                 // ToDo: handle syncGlobal
             }
         } catch (err) {
-            self.log.error('X-Touch Error in method "sendButton": ' + err.stack);
+            self.errorHandler(err, 'sendButton');
         }
     }
 
@@ -733,7 +731,7 @@ class XTouch extends utils.Adapter {
                 // ToDo: handle syncGlobal
             }
         } catch (err) {
-            self.log.error('X-Touch Error in method "sendFader": ' + err.stack);
+            self.errorHandler(err, 'sendFader');
         }
     }
 
@@ -858,7 +856,7 @@ class XTouch extends utils.Adapter {
                 // ToDo: handle syncGlobal
             }
         } catch (err) {
-            self.log.error('X-Touch Error in method "sendDisplay": ' + err.stack);
+            self.errorHandler(err, 'sendDisplay');
         }
     }
 
@@ -899,7 +897,7 @@ class XTouch extends utils.Adapter {
                 self.log.info(`state ${id} deleted`);
             }
         } catch (err) {
-            self.log.error('X-Touch Error in method "onStateChange": ' + err.stack);
+            self.errorHandler(err, 'onStateChange');
         }
     }
 
@@ -955,7 +953,7 @@ class XTouch extends utils.Adapter {
                 lastId = baseId;
             }
         } catch (err) {
-            self.log.error('X-Touch Error in method "deviceUpdateAll": ' + err.stack);
+            self.errorHandler(err, 'deviceUpdateAll');
         }
     }
 
@@ -1094,9 +1092,22 @@ class XTouch extends utils.Adapter {
             return midiMsg;
 
         } catch (err) {
-            self.log.error('X-Touch Error in method "parseMidiData": ' + err.stack);
+            self.errorHandler(err, 'parseMidiData');
         }
         return {};
+    }
+
+    /**
+     * create the database (populate all values an delete unused)
+     */
+    async createDatabase() {
+        const self = this;
+        /*
+        create the device groups
+        */
+        for (let index = 0; index < self.config.deviceGroups; index++) {
+            await self.createDeviceGroupAsync(index.toString());
+        }
     }
 
     /**
@@ -1158,7 +1169,7 @@ class XTouch extends utils.Adapter {
 
             await self.createBanksAsync(deviceGroup);
         } catch (err) {
-            self.log.error('X-Touch Error in method "createDeviceGroupAsync": ' + err.stack);
+            self.errorHandler(err, 'createDeviceGroupAsync');
         }
     }
 
@@ -1201,7 +1212,7 @@ class XTouch extends utils.Adapter {
                 await self.createChannelsAsync(deviceGroup, index.toString());
             }
         } catch (err) {
-            self.log.error('X-Touch Error in method "createBanksAsync": ' + err.stack);
+            self.errorHandler(err, 'createBanksAsync');
         }
     }
 
@@ -1253,7 +1264,7 @@ class XTouch extends utils.Adapter {
                 }
             }
         } catch (err) {
-            self.log.error('X-Touch Error in method "createChannelsAsync": ' + err.stack);
+            self.errorHandler(err, 'createChannelsAsync');
         }
     }
 
@@ -1301,6 +1312,7 @@ class XTouch extends utils.Adapter {
         if (typeof value === 'string') value = Number(value);
 
         const locObj = {};
+        let self = this;
 
         try {
 
@@ -1359,10 +1371,20 @@ class XTouch extends utils.Adapter {
                     break;
             }
         } catch (err) {
-            this.log.error('X-Touch Error in method "calculateFaderValue": ' + err.stack);
+            self.errorHandler(err, 'calculateFaderValue');
         }
 
         return locObj;
+    }
+
+    /**
+     * Called on error situations and from catch blocks
+	 * @param {Error} err
+	 * @param {string} module
+	 */
+     errorHandler(err, module = '') {
+
+        this.log.error(`Extron error in method: [${module}] error: ${err.message}, stack: ${err.stack}`);
     }
 
     // If you need to accept messages in your adapter, uncomment the following block and the corresponding line in the constructor.
