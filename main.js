@@ -868,7 +868,9 @@ class XTouch extends utils.Adapter {
                                 break;
                         }
                     }
-   //                 if ()
+                    if (/illuminate|max/.test(id)) {
+                        self.log.warn(`X-Touch state ${id} changed. Please restart instance`);
+                    }
                 }
             } else {
                 // The state was deleted
@@ -1396,7 +1398,7 @@ class XTouch extends utils.Adapter {
 	 */
     errorHandler(err, module = '') {
 
-        this.log.error(`Extron error in method: [${module}] error: ${err.message}, stack: ${err.stack}`);
+        this.log.error(`X-Touch error in method: [${module}] error: ${err.message}, stack: ${err.stack}`);
     }
 
     // If you need to accept messages in your adapter, uncomment the following block and the corresponding line in the constructor.
