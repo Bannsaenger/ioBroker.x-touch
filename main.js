@@ -46,9 +46,11 @@ class XTouch extends utils.Adapter {
 
         // read Objects template for object generation
         this.objectsTemplate = JSON.parse(fs.readFileSync(__dirname + '/lib/objects_templates.json', 'utf8'));
-        // and Midi mapping
+        // Midi mapping
         this.midi2Objects = JSON.parse(fs.readFileSync(__dirname + '/lib/midi_mapping.json', 'utf8'));
         this.objects2Midi = {};
+        // and layout
+        this.consoleLayout = JSON.parse(fs.readFileSync(__dirname + '/lib/console_layout.json', 'utf8'));
 
         // devices object, key is ip address. Values are connection and memberOfGroup
         this.devices = [];
