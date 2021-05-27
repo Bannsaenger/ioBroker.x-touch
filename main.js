@@ -165,7 +165,7 @@ class XTouch extends utils.Adapter {
                 self.deviceGroups[device_state._id] = device_state;
                 tempObj = await self.getStateAsync(device_state._id);
                 // @ts-ignore
-                self.deviceGroups[device_state._id].val = tempObj ? tempObj.val : '';
+                self.deviceGroups[device_state._id].val = (tempObj && tempObj.val) ? tempObj.val : '';
                 self.deviceGroups[device_state._id].helperBool = false;                     // used for e.g. autoToggle
             }
 
