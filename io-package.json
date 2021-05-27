@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "x-touch",
-        "version": "0.0.2",
+        "version": "0.1.0",
         "news": {
             "0.0.1": {
                 "en": "initial release",
@@ -26,6 +26,9 @@
                 "es": "cambios menores para la publicación del primer lanzamiento",
                 "pl": "drobne zmiany dotyczące publikacji pierwszego wydania",
                 "zh-cn": "对第一个发行版的微小更改"
+            },
+            "0.1.0": {
+                "en": "introduced channel and page switching"
             }
         },
         "title": "Behringer X-Touch",

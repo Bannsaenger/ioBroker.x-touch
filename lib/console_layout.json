@@ -9,7 +9,6 @@
         "fader"
     ],
     "buttons" : [
-        "masterFader",
         "masterFlip",
         "encoderAssign.track",
         "encoderAssign.pan_surround",

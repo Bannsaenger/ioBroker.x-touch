@@ -25,7 +25,8 @@ const { debug } = require('console');
 const POLL_REC    = 'F0002032585400F7';
 const POLL_REPLY  = 'F00000661400F7';
 
-const HOST_CON_QUERY = 'F000006658013031353634303730344539F7';
+//const HOST_CON_QUERY = 'F000006658013031353634303730344539F7';
+const HOST_CON_QUERY = 'F000006658013031353634303732393345F7';
 const HOST_CON_REPLY = 'F0000066580230313536343037353D1852F7';
 
 class XTouch extends utils.Adapter {
@@ -221,11 +222,11 @@ class XTouch extends utils.Adapter {
                         await self.setObjectNotExistsAsync(prefix + element._id, element);
                     }
                     self.log.info('X-Touch device with IP <' + deviceAddress + '> created. Is now online.');
-                    self.setState(prefix + 'ipAddress', deviceAddress, true);
-                    self.setState(prefix + 'port', port, true);
-                    self.setState(prefix + 'memberOfGroup', 0, true);
-                    self.setState(prefix + 'connection', true, true);
-                    self.deviceUpdateAll(deviceAddress);
+                    await self.setStateAsync(prefix + 'ipAddress', deviceAddress, true);
+                    await self.setStateAsync(prefix + 'port', port, true);
+                    await self.setStateAsync(prefix + 'memberOfGroup', 0, true);
+                    await self.setStateAsync(prefix + 'connection', true, true);
+                    self.deviceUpdateDevice(deviceAddress);
                     if (self.devices[deviceAddress].timerDeviceInactivityTimeout) {
                         self.devices[deviceAddress].timerDeviceInactivityTimeout.refresh();
                     } else {
@@ -236,9 +237,9 @@ class XTouch extends utils.Adapter {
                         self.devices[deviceAddress].connection = true;
                         self.devices[deviceAddress].port = port;
                         self.log.info('X-Touch device with IP <' + deviceAddress + '> now online.');
-                        self.setState('devices.' + self.devices[deviceAddress].index + '.connection', true, true);
-                        self.setState('devices.' + self.devices[deviceAddress].index + '.port', port, true);        // port can have changed
-                        self.deviceUpdateAll(deviceAddress);
+                        await self.setStateAsync('devices.' + self.devices[deviceAddress].index + '.connection', true, true);
+                        await self.setStateAsync('devices.' + self.devices[deviceAddress].index + '.port', port, true);        // port can have changed
+                        self.deviceUpdateDevice(deviceAddress);
                     }
                     if (self.devices[deviceAddress].timerDeviceInactivityTimeout) {
                         self.devices[deviceAddress].timerDeviceInactivityTimeout.refresh();
@@ -249,7 +250,7 @@ class XTouch extends utils.Adapter {
             } else {
                 self.devices[deviceAddress].connection = false;
                 self.log.info('X-Touch device with IP <' + deviceAddress + '> now offline.');
-                self.setState('devices.' + self.devices[deviceAddress].index + '.connection', false, true);
+                await self.setStateAsync('devices.' + self.devices[deviceAddress].index + '.connection', false, true);
                 if (self.devices[deviceAddress].timerDeviceInactivityTimeout) {
                     clearTimeout(self.devices[deviceAddress].timerDeviceInactivityTimeout);
                     self.devices[deviceAddress].timerDeviceInactivityTimeout = undefined;
@@ -301,8 +302,8 @@ class XTouch extends utils.Adapter {
 
     /**
      * Is called on new datagram msg from server
-     * @param {Buffer} msg
-     * @param {Object} info
+     * @param {Buffer} msg      the message content received by the server socket
+     * @param {Object} info     the info for e.g. address of sending host
      */
     async onServerMessage(msg, info) {
         const self = this;
@@ -335,7 +336,29 @@ class XTouch extends utils.Adapter {
                         baseId = self.midi2Objects[midiMsg.note] ? self.namespace + '.deviceGroups.' + memberOfGroup + '.' + self.midi2Objects[midiMsg.note] : '';
                         if (Number(midiMsg.note) >= 104 && Number(midiMsg.note) <= 112) {       // Fader touched, Fader 1 - 8 + Master
                             await self.handleFader(baseId , undefined, actPressed ? 'touched' : 'released', info.address);
-                        } else {
+                        } else if (Number(midiMsg.note) >= 46 && Number(midiMsg.note) <= 49) {  // fader or channel switch
+                            let action = '';
+                            switch (Number(midiMsg.note)) {
+                                case 46:        // fader bank down
+                                    action = 'bankDown';
+                                    break;
+                                
+                                case 47:        // fader bank up
+                                    action = 'bankUp';
+                                break;
+                            
+                                case 48:        // channel bank up
+                                    action = 'channelDown';
+                                    break;
+                            
+                                case 49:        // channel bank down
+                                    action = 'channelUp';
+                                    break;
+                            
+                            }
+                            await self.deviceSwitchChannels(action, info.address);
+                        }
+                        else {
                             await self.handleButton(baseId , undefined, actPressed ? 'pressed' : 'released', info.addres);
                         }
                         break;
@@ -349,6 +372,9 @@ class XTouch extends utils.Adapter {
                         }
                         await self.handleFader(baseId , midiMsg.value, 'fader', info.address);
                         break;
+
+                    case 'ControlChange':           // Encoders do that
+                        break;
                 }
             }
         } catch (err) {
@@ -358,12 +384,12 @@ class XTouch extends utils.Adapter {
 
     /**
      * handle the button events and call the sendback when someting is changed
-     * @param {string} buttonId
+     * @param {string} buttonId                 full button id via on StateChange 
      * @param {any | null | undefined} value
-     * @param {string} event        pressed, released, fader or value (value = when called via onStateChange)
-     * @param {string} address      only chen called via onServerMessage
+     * @param {string} event            pressed, released, fader or value (value = when called via onStateChange)
+     * @param {string} deviceAddress    only chen called via onServerMessage
      */
-    async handleButton(buttonId, value = undefined, event = 'value', address = '') {
+    async handleButton(buttonId, value = undefined, event = 'value', deviceAddress = '') {
         const self = this;
         try {
             let baseId;
@@ -413,9 +439,9 @@ class XTouch extends utils.Adapter {
                 }
 
             } else {                    // when called by midiMsg determine the real channel
-                if ((address !== '') && self.devices[address]) {
-                    activeBank = self.devices[address].activeBank;
-                    activeBaseChannel = self.devices[address].activeBaseChannel;
+                if ((deviceAddress !== '') && self.devices[deviceAddress]) {
+                    activeBank = self.devices[deviceAddress].activeBank;
+                    activeBaseChannel = self.devices[deviceAddress].activeBaseChannel;
                 }
                 if (buttonArr[4] === 'banks') {         // replace bank and baseChannel on channel buttons
                     buttonArr[5] = activeBank.toString();
@@ -424,11 +450,11 @@ class XTouch extends utils.Adapter {
                 baseId = buttonArr.join('.');
             }
 
-            stateName = buttonArr.length > 9 ? buttonArr[9] : '';
+            stateName = buttonArr.length > 8 ? buttonArr[8] : '';
             const actPressed = event === 'pressed' ? true : false;
 
             if (stateName === 'encoder') {                  // encoder is only pressed event
-                self.setState(baseId + '.pressed', actPressed, true);
+                await self.setStateAsync(baseId + '.pressed', actPressed, true);
             } else {
                 actStatus = self.deviceGroups[baseId + '.status'].val;
                 let setValue = actStatus;
@@ -441,7 +467,7 @@ class XTouch extends utils.Adapter {
 
                     if (self.deviceGroups[baseId + '.pressed'].val !== actPressed) {      // if status changed
                         self.deviceGroups[baseId + '.pressed'].val = actPressed;
-                        self.setState(baseId + '.pressed', actPressed, true);
+                        await self.setStateAsync(baseId + '.pressed', actPressed, true);
 
                         switch (self.deviceGroups[baseId + '.autoToggle'].val) {
 
@@ -480,7 +506,7 @@ class XTouch extends utils.Adapter {
                 if ((self.deviceGroups[baseId + '.status'].val !== setValue) &&
                     ((stateName === '') || (stateName === 'status') || (stateName === 'pressed'))){      // if status changed
                     self.deviceGroups[baseId + '.status'].val = setValue;
-                    self.setState(baseId + '.status', setValue, true);
+                    await self.setStateAsync(baseId + '.status', setValue, true);
                     isDirty = true;
                 }
 
@@ -494,13 +520,13 @@ class XTouch extends utils.Adapter {
     }
 
     /**
-     * handle the button events and call the sendback when someting is changed
+     * handle the fader events and call the sendback when someting is changed
      * @param {string} faderId
      * @param {any | null | undefined} value
-     * @param {string} event        pressed, released or value (value = when called via onStateChange)
-     * @param {string} address      only chen called via onServerMessage
+     * @param {string} event            pressed, released or value (value = when called via onStateChange)
+     * @param {string} deviceAddress    only chen called via onServerMessage
      */
-    async handleFader(faderId, value = undefined, event = 'value', address = '') {
+    async handleFader(faderId, value = undefined, event = 'value', deviceAddress = '') {
         const self = this;
         try {
             let baseId;
@@ -537,8 +563,8 @@ class XTouch extends utils.Adapter {
                             self.deviceGroups[baseId + '.value_db'].val = locObj.logValue;
                             isDirty = true;
                         }
-                        self.setState(baseId + '.value', Number(locObj.linValue), true);            // maybe correct the format
-                        self.setState(baseId + '.value_db', Number(locObj.logValue), true);         // update log value too
+                        await self.setStateAsync(baseId + '.value', Number(locObj.linValue), true);            // maybe correct the format
+                        await self.setStateAsync(baseId + '.value_db', Number(locObj.logValue), true);         // update log value too
                         break;
 
                     case 'value_db':
@@ -548,8 +574,8 @@ class XTouch extends utils.Adapter {
                             self.deviceGroups[baseId + '.value'].val = locObj.linValue;
                             isDirty = true;
                         }
-                        self.setState(baseId + '.value_db', Number(locObj.logValue), true);         // maybe correct the format
-                        self.setState(baseId + '.value', Number(locObj.linValue), true);            // update lin value too
+                        await self.setStateAsync(baseId + '.value_db', Number(locObj.logValue), true);         // maybe correct the format
+                        await self.setStateAsync(baseId + '.value', Number(locObj.linValue), true);            // update lin value too
                         break;
 
                     default:
@@ -557,9 +583,9 @@ class XTouch extends utils.Adapter {
                         return;
                 }
             } else {                    // when called by midiMsg determine the real channel
-                if ((address !== '') && self.devices[address]) {
-                    activeBank = self.devices[address].activeBank;
-                    activeBaseChannel = self.devices[address].activeBaseChannel;
+                if ((deviceAddress !== '') && self.devices[deviceAddress]) {
+                    activeBank = self.devices[deviceAddress].activeBank;
+                    activeBaseChannel = self.devices[deviceAddress].activeBaseChannel;
                 }
                 if (faderArr[4] === 'banks') {         // replace bank and baseChannel
                     faderArr[5] = activeBank.toString();
@@ -570,23 +596,23 @@ class XTouch extends utils.Adapter {
                 if (event === 'touched') {
                     if (!self.deviceGroups[baseId + '.touched'].val) {      // if status changed
                         self.deviceGroups[baseId + '.touched'].val = true;
-                        self.setState(baseId + '.touched', true, true);
+                        await self.setStateAsync(baseId + '.touched', true, true);
                     }
                 } else if (event === 'released') {
                     if (self.deviceGroups[baseId + '.touched'].val) {       // if status changed
                         self.deviceGroups[baseId + '.touched'].val = false;
-                        self.setState(baseId + '.touched', false, true);
+                        await self.setStateAsync(baseId + '.touched', false, true);
                     }
                 } else if (event === 'fader') {
 
                     if (self.deviceGroups[baseId + '.value'].val != locObj.linValue) {
                         self.deviceGroups[baseId + '.value'].val = locObj.linValue;
-                        self.setState(baseId + '.value', Number(locObj.linValue), true);
+                        await self.setStateAsync(baseId + '.value', Number(locObj.linValue), true);
                         isDirty = true;
                     }
                     if (self.deviceGroups[baseId + '.value_db'].val != locObj.logValue) {
                         self.deviceGroups[baseId + '.value_db'].val = locObj.logValue;
-                        self.setState(baseId + '.value_db', Number(locObj.logValue), true);
+                        await self.setStateAsync(baseId + '.value_db', Number(locObj.logValue), true);
                         isDirty = true;
                     }
 
@@ -596,7 +622,7 @@ class XTouch extends utils.Adapter {
             }
 
             if (isDirty) {
-                self.sendFader(baseId, address, true);
+                self.sendFader(baseId, deviceAddress, true);
             }
         } catch (err) {
             self.errorHandler(err, 'handleFader');
@@ -606,9 +632,9 @@ class XTouch extends utils.Adapter {
     /**
      * send back the button status, use same method to send the button state on restart and bank change
      * @param {string} buttonId
-     * @param {string} address      only chen called via deviceUpdateAll
+     * @param {string} deviceAddress    only chen called via deviceUpdatexx
      */
-    async sendButton(buttonId, address = '') {
+    async sendButton(buttonId, deviceAddress = '') {
         const self = this;
         try {
             self.log.silly('Now send back button state of button: "' + buttonId + '"');
@@ -643,12 +669,12 @@ class XTouch extends utils.Adapter {
             const midiCommand = new Uint8Array([0x90,  midiNote, midiVal]);
 
             for (const device of Object.keys(self.devices)) {
-                if ((address !== device) && (address !== '')) continue;
+                if ((deviceAddress !== device) && (deviceAddress !== '')) continue;
                 if (isOnChannel) {
                     if ((actDeviceGroup == self.devices[device].memberOfGroup) &&
                         (selectedBank == self.devices[device].activeBank) &&
                         (Number(realChannel) >= self.devices[device].activeBaseChannel) &&
-                        (Number(realChannel) <= (self.devices[device].activeBaseChannel + 8))) {   // only if button seen on console
+                        (Number(realChannel) < (self.devices[device].activeBaseChannel + 8))) {   // only if button seen on console
                         self.deviceSendData(midiCommand, self.devices[device].ipAddress, self.devices[device].port);
                     }
                 }
@@ -665,10 +691,10 @@ class XTouch extends utils.Adapter {
     /**
      * send back the fader status, use same method to send the fader state on restart and bank change
      * @param {string} faderId
-     * @param {string} address      only chen called via onServerMessage, to avoid sendback of fadervalue to device where it came from
-     * @param {boolean} fromHw      then fromHw = true. From deviceUpdateAll fromHw = false -> send the the address, otherwise skip
+     * @param {string} deviceAddress    only chen called via onServerMessage, to avoid sendback of fadervalue to device where it came from
+     * @param {boolean} fromHw          then fromHw = true. From deviceUpdatexx fromHw = false -> send the the address, otherwise skip
      */
-    async sendFader(faderId, address = '', fromHw = false) {
+    async sendFader(faderId, deviceAddress = '', fromHw = false) {
         const self = this;
         try {
             self.log.silly('Now send back state of fader: "' + faderId + '"');
@@ -696,8 +722,8 @@ class XTouch extends utils.Adapter {
             const midiCommand = new Uint8Array([statusByte, Number(dataByte1), Number(dataByte2)]);
 
             for (const device of Object.keys(self.devices)) {
-                if (address === device && fromHw) continue;
-                if (address !== device && !fromHw) continue;
+                if (deviceAddress === device && fromHw) continue;
+                if (deviceAddress !== device && !fromHw) continue;
                 if (isOnChannel) {
                     if ((actDeviceGroup == self.devices[device].memberOfGroup) &&
                         (selectedBank == self.devices[device].activeBank) &&
@@ -720,9 +746,9 @@ class XTouch extends utils.Adapter {
      * send back the display status, used on restart and bank change, there is no handleDisplay, all in here
      * @param {string} displayId
      * @param {any | null | undefined} value
-     * @param {string} address
+     * @param {string} deviceAddress
      */
-    async sendDisplay(displayId, value = undefined, address = '') {
+    async sendDisplay(displayId, value = undefined, deviceAddress = '') {
         const self = this;
         try {
             self.log.silly('Now send back state of display: "' + displayId + '"');
@@ -743,7 +769,7 @@ class XTouch extends utils.Adapter {
             let baseId = displayId.substr(0, displayId.lastIndexOf('.'));
             const stateName = displayArr.length > 9 ? displayArr[9] : '';
             if (stateName === '') {
-                baseId = displayId;                 // if called with no substate, from deviceUpdateAll
+                baseId = displayId;                 // if called with no substate, from deviceUpdatexx
             }
             let color = Number(self.deviceGroups[baseId + '.color'].val);
             let inverted = self.deviceGroups[baseId + '.inverted'].val;
@@ -757,7 +783,7 @@ class XTouch extends utils.Adapter {
                     color = Number(value);
                     if (color < 0 || color > 7) {
                         color = 0;
-                        self.setState(baseId + '.color', color, true);
+                        await self.setStateAsync(baseId + '.color', color, true);
                     }
                     self.deviceGroups[baseId + '.color'].val = color.toString();
                     break;
@@ -771,7 +797,7 @@ class XTouch extends utils.Adapter {
                     line1 = value.toString();
                     if (!self.isASCII(line1)) {
                         line1 = '';
-                        self.setState(baseId + '.line1', line1, true);
+                        await self.setStateAsync(baseId + '.line1', line1, true);
                     }
                     self.deviceGroups[baseId + '.line1'].val = line1;
                     break;
@@ -785,7 +811,7 @@ class XTouch extends utils.Adapter {
                     line2 = value.toString();
                     if (!self.isASCII(line2)) {
                         line2 = '';
-                        self.setState(baseId + '.line2', line2, true);
+                        await self.setStateAsync(baseId + '.line2', line2, true);
                     }
                     self.deviceGroups[baseId + '.line2'].val = line2;
                     break;
@@ -824,7 +850,7 @@ class XTouch extends utils.Adapter {
             // F0 00 00 66 58 20 8 48 61 6c 6c 6f 20 20 64 75 00 00 00 00 00 F7
             // 240,0,0,102,88,32,8,72,97,108,108,111,32,32,100,117,0,0,0,0,0,247
             for (const device of Object.keys(self.devices)) {
-                if ((address !== device) && (address !== '')) continue;
+                if ((deviceAddress !== device) && (deviceAddress !== '')) continue;
                 if ((actDeviceGroup == self.devices[device].memberOfGroup) &&
                     (selectedBank == self.devices[device].activeBank) &&
                     (Number(realChannel) >= self.devices[device].activeBaseChannel) &&
@@ -842,9 +868,118 @@ class XTouch extends utils.Adapter {
     }
 
     /**
+     * switch the bank up and down
+     * @param {string} action               bankUp, bankDown, channelUp, channelDown, none. action none used for illuminate the bank switches
+     * @param {string} deviceAddress
+     */
+    async deviceSwitchChannels(action = 'none', deviceAddress = '') {
+        const self = this;
+        const activeGroup = self.devices[deviceAddress].memberOfGroup;
+        const deviceIndex = self.devices[deviceAddress].index;
+        let activeBank = self.devices[deviceAddress].activeBank;
+        let activeBaseChannel = self.devices[deviceAddress].activeBaseChannel;
+        let isDirty = false;
+
+        try {
+            switch (action) {
+                case 'bankUp':
+                    if ((activeBank + 1) < self.deviceGroups[self.namespace + '.deviceGroups.' + activeGroup + '.maxBanks'].val) {  // active bank is 0 based
+                        activeBank++;
+                        self.devices[deviceAddress].activeBank = activeBank;
+                        await self.setStateAsync('devices.' + deviceIndex + '.activeBank', Number(activeBank), true);
+                        isDirty = true;
+                    }
+                    break;
+
+                case 'bankDown':
+                    if (activeBank > 0) {
+                        activeBank--;
+                        self.devices[deviceAddress].activeBank = activeBank;
+                        await self.setStateAsync('devices.' + deviceIndex + '.activeBank', Number(activeBank), true);
+                        isDirty = true;
+                    }
+                    break;
+
+                case 'channelUp':
+                    if ((activeBaseChannel + 8) < self.deviceGroups[self.namespace + '.deviceGroups.' + activeGroup + '.banks.' + activeBank + '.maxChannels'].val) {
+                        activeBaseChannel += 8;
+                        self.devices[deviceAddress].activeBaseChannel = activeBaseChannel;
+                        await self.setStateAsync('devices.' + deviceIndex + '.activeBaseChannel', Number(activeBaseChannel), true);
+                        isDirty = true;
+                    }
+                    break;
+    
+                case 'channelDown':
+                    if (activeBaseChannel > 8) {
+                        activeBaseChannel -= 8;
+                        self.devices[deviceAddress].activeBaseChannel = activeBaseChannel;
+                        await self.setStateAsync('devices.' + deviceIndex + '.activeBaseChannel', Number(activeBaseChannel), true);
+                        isDirty = true;
+                    }
+                    break;
+            }
+
+            if (isDirty || (action === 'none')) {       // only care of illumination if something changed or on action none
+
+                let midiNote;
+                let midiCommand;
+
+                // illuminate bank switching
+                if (self.deviceGroups[self.namespace + '.deviceGroups.' + activeGroup + '.illuminateBankSwitching'].val) {
+
+                    // bankUp is possible ?
+                    midiNote = self.objects2Midi['page.faderBankInc'];
+                    if ((activeBank + 1) < self.deviceGroups[self.namespace + '.deviceGroups.' + activeGroup + '.maxBanks'].val) {      
+                        midiCommand = new Uint8Array([0x90,  midiNote, 127]);
+                    } else {
+                        midiCommand = new Uint8Array([0x90,  midiNote, 0]);
+                    }
+                    self.deviceSendData(midiCommand, self.devices[deviceAddress].ipAddress, self.devices[deviceAddress].port);
+
+                    // bankDown is possible ?
+                    midiNote = self.objects2Midi['page.faderBankDec'];
+                    if (activeBank > 0) {      
+                        midiCommand = new Uint8Array([0x90,  midiNote, 127]);
+                    } else {
+                        midiCommand = new Uint8Array([0x90,  midiNote, 0]);
+                    }
+                    self.deviceSendData(midiCommand, self.devices[deviceAddress].ipAddress, self.devices[deviceAddress].port);
+                }
+
+                // illuminate channel switching
+                if (self.deviceGroups[self.namespace + '.deviceGroups.' + activeGroup + '.illuminateChannelSwitching'].val) {
+
+                    // channelUp is possible ?
+                    midiNote = self.objects2Midi['page.channelInc'];
+                    if ((activeBaseChannel + 8) < self.deviceGroups[self.namespace + '.deviceGroups.' + activeGroup + '.banks.' + activeBank + '.maxChannels'].val) {     
+                        midiCommand = new Uint8Array([0x90,  midiNote, 127]);
+                    } else {
+                        midiCommand = new Uint8Array([0x90,  midiNote, 0]);
+                    }
+                    self.deviceSendData(midiCommand, self.devices[deviceAddress].ipAddress, self.devices[deviceAddress].port);
+
+                    // bankDown is possible ?
+                    midiNote = self.objects2Midi['page.channelDec'];
+                    if (activeBaseChannel > 8) {      
+                        midiCommand = new Uint8Array([0x90,  midiNote, 127]);
+                    } else {
+                        midiCommand = new Uint8Array([0x90,  midiNote, 0]);
+                    }
+                    self.deviceSendData(midiCommand, self.devices[deviceAddress].ipAddress, self.devices[deviceAddress].port);
+                }
+            }
+
+            if (isDirty) self.deviceUpdateChannels(deviceAddress);
+
+        } catch (err) {
+            self.errorHandler(err, 'deviceSwitchBank');
+        }
+    }
+
+    /**
      * Is called if a subscribed state changes
-     * @param {string} id
-     * @param {ioBroker.State | null | undefined} state
+     * @param {string} id                                   database id of the state which generates this event
+     * @param {ioBroker.State | null | undefined} state     the state with value and acknowledge
      */
     async onStateChange(id, state) {
         const self = this;
@@ -853,27 +988,32 @@ class XTouch extends utils.Adapter {
                 // The state was changed
                 //                self.log.debug(`state ${id} changed: ${state.val} (ack = ${state.ack})`);
                 if (!state.ack) {       // only react on not acknowledged state changes
-                    self.log.info(`state ${id} changed: ${state.val} (ack = ${state.ack})`);
-                    const baseId = id.substr(0, id.lastIndexOf('.'));
-                    const locObj = await this.getObjectAsync(baseId);
-                    if (typeof(locObj) !== 'undefined' && locObj !== null) {
-                        const locRole = typeof(locObj.common.role) !== 'undefined' ? locObj.common.role : '';
-                        switch (locRole) {
-                            case 'button':
-                                self.handleButton(id, state.val, 'value');
-                                break;
+                    if (state.lc === state.ts) {    // last changed and last updated equal then the value has changed
+                        self.log.info(`state ${id} changed: ${state.val} (ack = ${state.ack})`);
+                        const baseId = id.substr(0, id.lastIndexOf('.'));
+                        const locObj = await this.getObjectAsync(baseId);
+                        if (typeof(locObj) !== 'undefined' && locObj !== null) {
+                            const locRole = typeof(locObj.common.role) !== 'undefined' ? locObj.common.role : '';
+                            switch (locRole) {
+                                case 'button':
+                                    self.handleButton(id, state.val, 'value');
+                                    break;
 
-                            case 'level.volume':
-                                self.handleFader(id, state.val, 'value');
-                                break;
+                                case 'level.volume':
+                                    self.handleFader(id, state.val, 'value');
+                                    break;
 
-                            case 'info.display':
-                                self.sendDisplay(id, state.val);
-                                break;
+                                case 'info.display':
+                                    self.sendDisplay(id, state.val);
+                                    break;
+                            }
+                        }
+                        if (/illuminate|max/.test(id)) {
+                            self.log.warn(`X-Touch state ${id} changed. Please restart instance`);
                         }
                     }
-                    if (/illuminate|max/.test(id)) {
-                        self.log.warn(`X-Touch state ${id} changed. Please restart instance`);
+                    else {
+                        self.log.debug(`state ${id} only updated not changed: ${state.val} (ack = ${state.ack})`);
                     }
                 }
             } else {
@@ -909,57 +1049,63 @@ class XTouch extends utils.Adapter {
      * called for sending all elements on status update
      * @param {string} deviceAddress
      */
-    async deviceUpdateAll(deviceAddress) {
+    async deviceUpdateDevice(deviceAddress) {
         const self = this;
         const activeGroup = self.devices[deviceAddress].memberOfGroup;
-        const activeBank = self.devices[deviceAddress].activeBank;
-        const activeBaseChannel = self.devices[deviceAddress].activeBaseChannel;
         try {
-            let lastId = '';
-            for (const actObj of Object.keys(self.deviceGroups[activeGroup])) {
-                const baseId = actObj.substr(0, actObj.lastIndexOf('.'));
-                if (baseId !== lastId) {
-                    const locObj = await this.getObjectAsync(baseId);
-                    if (typeof(locObj) !== 'undefined' && locObj !== null) {
-                        const locRole = typeof(locObj.common.role) !== 'undefined' ? locObj.common.role : '';
-                        switch (locRole) {
-                            case 'button':
-                                self.sendButton(baseId, deviceAddress);
-                                break;
-
-                            case 'level.volume':
-                                self.sendFader(baseId, deviceAddress);
-                                break;
-
-                            case 'info.display':
-                                self.sendDisplay(baseId, undefined, deviceAddress);
-                                break;
-                        }
-                    }
-                }
-                lastId = baseId;
+            // send all common buttons
+            for (const actButton of self.consoleLayout.buttons) {
+                const baseId = self.namespace + '.deviceGroups.' + activeGroup + '.' + actButton;
+                self.sendButton(baseId, deviceAddress);
             }
+            // and now send the master fader
+            self.sendFader(self.namespace + '.deviceGroups.' + activeGroup + '.masterFader', deviceAddress);
+            // and the active fader bank
+            self.deviceUpdateChannels(deviceAddress);
+            // illuminate the page buttons
+             self.deviceSwitchChannels('none', deviceAddress);
+
         } catch (err) {
-            self.errorHandler(err, 'deviceUpdateAll');
+            self.errorHandler(err, 'deviceUpdateDevice');
         }
     }
 
     /**
-     * called for sending all elements on status update
+     * called for sending all active channel elements on status update
      * @param {string} deviceAddress
      */
-    deviceUpdateBank(deviceAddress) {
-        // only for error avoidance
-        this.log.info(deviceAddress);
-    }
+    async deviceUpdateChannels(deviceAddress) {
+        const self = this;
+        const activeGroup = self.devices[deviceAddress].memberOfGroup;
+        const activeBank = self.devices[deviceAddress].activeBank;
+        const activeBaseChannel = self.devices[deviceAddress].activeBaseChannel - 1;    // is 1, 9, ... for addition
+        try {
+            // send the active fader bank elements
+            // loop through all visible channels
+            for (let baseChannel = 1; baseChannel < 9; baseChannel++) {
+                // and there for the elements
+                for (const actElement of self.consoleLayout.channel) {
+                    const baseId = self.namespace + '.deviceGroups.' + activeGroup + '.banks.' + activeBank + '.channels.' + (activeBaseChannel + baseChannel) + '.' + actElement;
+                    switch (actElement) {
+                        case 'encoder':
+                            break;
 
-    /**
-     * called for sending all elements on status update
-     * @param {string} deviceAddress
-     */
-    deviceUpdateChannels(deviceAddress) {
-        // only for error avoidance
-        this.log.info(deviceAddress);
+                        case 'display':
+                            self.sendDisplay(baseId, undefined, deviceAddress);
+                            break;
+
+                        case 'fader':
+                            self.sendFader(baseId, deviceAddress);
+                            break;
+
+                        default:
+                            self.sendButton(baseId, deviceAddress);
+                    }
+                }
+            }
+        } catch (err) {
+            self.errorHandler(err, 'deviceUpdateChannels');
+        }
     }
 
     /**
