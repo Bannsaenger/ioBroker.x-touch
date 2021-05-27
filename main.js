@@ -107,7 +107,7 @@ class XTouch extends utils.Adapter {
             }
 
             /*
-            create the database
+            * create the database
             */
             await self.createDatabaseAsync();
 
@@ -180,7 +180,8 @@ class XTouch extends utils.Adapter {
             self.server.bind(self.config.port, self.config.bind);
 
             // Set the connection indicator after startup
-            self.setState('info.connection', true, true);
+            // self.setState('info.connection', true, true);
+            // set by onServerListening
         } catch (err) {
             self.errorHandler(err, 'onReady');
         }
@@ -908,9 +909,12 @@ class XTouch extends utils.Adapter {
      */
     async deviceUpdateAll(deviceAddress) {
         const self = this;
+        const activeGroup = self.devices[deviceAddress].memberOfGroup;
+        const activeBank = self.devices[deviceAddress].activeBank;
+        const activeBaseChannel = self.devices[deviceAddress].activeBaseChannel;
         try {
             let lastId = '';
-            for (const actObj of Object.keys(self.deviceGroups)) {
+            for (const actObj of Object.keys(self.deviceGroups[activeGroup])) {
                 const baseId = actObj.substr(0, actObj.lastIndexOf('.'));
                 if (baseId !== lastId) {
                     const locObj = await this.getObjectAsync(baseId);
@@ -1166,6 +1170,7 @@ class XTouch extends utils.Adapter {
                 }
             }
 
+            self.log.info(`create bank of devicegroup ${deviceGroup}`);
             await self.createBanksAsync(deviceGroup);
 
         } catch (err) {
@@ -1190,7 +1195,7 @@ class XTouch extends utils.Adapter {
             }
 
             // @ts-ignore
-            for (let index = 0; index < maxBanksNum; index++) {
+            for (let index = 0; index < maxBanks; index++) {
                 const activeBank = 'deviceGroups.' + deviceGroup + '.banks.' + index;
 
                 await self.setObjectNotExistsAsync(activeBank, self.objectsTemplate.bank);
@@ -1300,13 +1305,13 @@ class XTouch extends utils.Adapter {
             for(const key in await self.getAdapterObjectsAsync()){
                 const tempArr = key.split('.');
                 if (tempArr.length < 9) continue;
-                if ((tempArr[3] == deviceGroup) && (tempArr[5] === bank) && (Number(tempArr[7]) >= maxChannels)) {
+                if ((tempArr[3] == deviceGroup) && (tempArr[5] === bank) && (Number(tempArr[7]) > maxChannels)) {
                     await self.delObjectAsync(key);
                 }
             }
 
             // and now delete the unused channel base folder
-            for (let index = maxChannels; index <= self.config.maxChannels; index++) {
+            for (let index = maxChannels + 1; index <= self.config.maxChannels; index++) {
                 await self.delObjectAsync(self.namespace + '.deviceGroups.' + deviceGroup + '.banks.' + bank + '.channels.' + index);
             }
 
