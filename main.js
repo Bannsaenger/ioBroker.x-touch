@@ -382,12 +382,19 @@ class XTouch extends utils.Adapter {
         }
     }
 
+    /********************************************************************************
+     * handler functions to handle the values coming from the database or the device
+     ******************************************************************************** 
+     * only the fader is not allowed to be transmitted to the sending device
+     * primary behaviour is correction of values and the processing of the
+     * autofunction process
+     ********************************************************************************/
     /**
      * handle the button events and call the sendback when someting is changed
-     * @param {string} buttonId                 full button id via on StateChange 
+     * @param {string} buttonId                 full button id via onStateChange 
      * @param {any | null | undefined} value
-     * @param {string} event            pressed, released, fader or value (value = when called via onStateChange)
-     * @param {string} deviceAddress    only chen called via onServerMessage
+     * @param {string} event                    pressed, released, fader or value (value = when called via onStateChange)
+     * @param {string} deviceAddress            only chen called via onServerMessage
      */
     async handleButton(buttonId, value = undefined, event = 'value', deviceAddress = '') {
         const self = this;
@@ -521,10 +528,10 @@ class XTouch extends utils.Adapter {
 
     /**
      * handle the fader events and call the sendback when someting is changed
-     * @param {string} faderId
+     * @param {string} faderId                  full fader id via onStateChange
      * @param {any | null | undefined} value
-     * @param {string} event            pressed, released or value (value = when called via onStateChange)
-     * @param {string} deviceAddress    only chen called via onServerMessage
+     * @param {string} event                    pressed, released or value (value = when called via onStateChange)
+     * @param {string} deviceAddress            only chen called via onServerMessage
      */
     async handleFader(faderId, value = undefined, event = 'value', deviceAddress = '') {
         const self = this;
@@ -629,6 +636,85 @@ class XTouch extends utils.Adapter {
         }
     }
 
+    /**
+     * handle the display status and call the send back if someting is changed
+     * @param {string} displayId                only called via onStateChange
+     * @param {any | null | undefined} value
+     */
+     async handleDisplay(displayId, value = undefined) {
+        const self = this;
+        try {
+            const displayArr = displayId.split('.');
+            const stateName = displayArr.length > 9 ? displayArr[9] : '';
+            let baseId = displayId.substr(0, displayId.lastIndexOf('.'));
+            if (!value) return;             // nothing to do
+            if (stateName === '') return;   // if only base id there is nothing to handle. 
+                                            // only called via onStateChange. Sending is done via sendDisplay
+            let color = Number(self.deviceGroups[baseId + '.color'].val);
+            let inverted = self.deviceGroups[baseId + '.inverted'].val;
+            let line1 = self.deviceGroups[baseId + '.line1'].val || '';
+            let line1_ct = self.deviceGroups[baseId + '.line1_ct'].val;
+            let line2 = self.deviceGroups[baseId + '.line2'].val || '';
+            let line2_ct = self.deviceGroups[baseId + '.line2_ct'].val;
+
+            switch (stateName) {                    // correction of malformed values
+                case 'color':
+                    color = Number(value);
+                    if (color < 0 || color > 7) {
+                        color = 0;
+                        await self.setStateAsync(baseId + '.color', color, true);
+                    }
+                    self.deviceGroups[baseId + '.color'].val = color.toString();
+                    break;
+
+                case 'inverted':
+                    inverted = Boolean(value);
+                    self.deviceGroups[baseId + '.inverted'].val = color.toString();
+                    break;
+
+                case 'line1':
+                    line1 = value.toString();
+                    if (!self.isASCII(line1)) {
+                        line1 = '';
+                        await self.setStateAsync(baseId + '.line1', line1, true);
+                    }
+                    self.deviceGroups[baseId + '.line1'].val = line1;
+                    break;
+
+                case 'line1_ct':
+                    line1_ct = Boolean(value);
+                    self.deviceGroups[baseId + '.line1_ct'].val = line1_ct;
+                    break;
+
+                case 'line2':
+                    line2 = value.toString();
+                    if (!self.isASCII(line2)) {
+                        line2 = '';
+                        await self.setStateAsync(baseId + '.line2', line2, true);
+                    }
+                    self.deviceGroups[baseId + '.line2'].val = line2;
+                    break;
+
+                case 'line2_ct':
+                    line2_ct = Boolean(value);
+                    self.deviceGroups[baseId + '.line2_ct'].val = line2_ct;
+                    break;
+            }
+
+            self.sendDisplay(baseId);
+
+            // ToDo: handle syncGlobal
+
+        } catch (err) {
+            self.errorHandler(err, 'handleDisplay');
+        }
+    }
+
+    /********************************************************************************
+     * send functions to send back data to the device e.g. devices in the group
+     ******************************************************************************** 
+     * 
+     ********************************************************************************/
     /**
      * send back the button status, use same method to send the button state on restart and bank change
      * @param {string} buttonId
@@ -743,33 +829,33 @@ class XTouch extends utils.Adapter {
     }
 
     /**
-     * send back the display status, used on restart and bank change, there is no handleDisplay, all in here
-     * @param {string} displayId
-     * @param {any | null | undefined} value
-     * @param {string} deviceAddress
+     * send back the display status
+     * @param {string} displayId        
+     * @param {string} deviceAddress    only chen called via deviceUpdatexx
      */
-    async sendDisplay(displayId, value = undefined, deviceAddress = '') {
+    async sendDisplay(displayId, deviceAddress = '') {
         const self = this;
         try {
             self.log.silly('Now send back state of display: "' + displayId + '"');
 
             let selectedBank;
             let channelInBank;
+            let actDeviceGroup;
             const displayArr = displayId.split('.');
             const realChannel = displayArr[7];
             if (displayArr[4] === 'banks') {          // replace bank and baseChannel on channel buttons
+                actDeviceGroup = displayArr[3];
                 selectedBank = displayArr[5];
                 channelInBank = (Number(displayArr[7]) % 8) == 0 ? '8' : (Number(displayArr[7]) % 8).toString();
-                // now "normalize" the array for lookup in the mapping
-                displayArr[5] = '0';
-                displayArr[7] = channelInBank;
+            } else {
+                self.log.error('sendDisplay called with a displayId with no banks identifier in it');
+                return;
             }
-            const actDeviceGroup = displayArr[3];
 
             let baseId = displayId.substr(0, displayId.lastIndexOf('.'));
             const stateName = displayArr.length > 9 ? displayArr[9] : '';
             if (stateName === '') {
-                baseId = displayId;                 // if called with no substate, from deviceUpdatexx
+                baseId = displayId;                 // if called with no substate
             }
             let color = Number(self.deviceGroups[baseId + '.color'].val);
             let inverted = self.deviceGroups[baseId + '.inverted'].val;
@@ -778,53 +864,8 @@ class XTouch extends utils.Adapter {
             let line2 = self.deviceGroups[baseId + '.line2'].val || '';
             let line2_ct = self.deviceGroups[baseId + '.line2_ct'].val;
 
-            switch (stateName) {                    // correction of malformed values
-                case 'color':
-                    color = Number(value);
-                    if (color < 0 || color > 7) {
-                        color = 0;
-                        await self.setStateAsync(baseId + '.color', color, true);
-                    }
-                    self.deviceGroups[baseId + '.color'].val = color.toString();
-                    break;
-
-                case 'inverted':
-                    inverted = Boolean(value);
-                    self.deviceGroups[baseId + '.inverted'].val = color.toString();
-                    break;
-
-                case 'line1':
-                    line1 = value.toString();
-                    if (!self.isASCII(line1)) {
-                        line1 = '';
-                        await self.setStateAsync(baseId + '.line1', line1, true);
-                    }
-                    self.deviceGroups[baseId + '.line1'].val = line1;
-                    break;
-
-                case 'line1_ct':
-                    line1_ct = Boolean(value);
-                    self.deviceGroups[baseId + '.line1_ct'].val = line1_ct;
-                    break;
-
-                case 'line2':
-                    line2 = value.toString();
-                    if (!self.isASCII(line2)) {
-                        line2 = '';
-                        await self.setStateAsync(baseId + '.line2', line2, true);
-                    }
-                    self.deviceGroups[baseId + '.line2'].val = line2;
-                    break;
-
-                case 'line2_ct':
-                    line2_ct = Boolean(value);
-                    self.deviceGroups[baseId + '.line2_ct'].val = line2_ct;
-                    break;
-            }
-
-
             let midiString = 'F000006658';
-            midiString += ('20' + (32 + (Number(channelInBank) - 1)).toString(16)).slice(-2);       // Add channel 20 -27
+            midiString += ('20' + (32 + (Number(channelInBank) - 1)).toString(16)).slice(-2);       // Add channel 20 - 27
             if (inverted) {
                 midiString += ('00' + (color + 64).toString(16)).slice(-2);
             } else {
@@ -849,19 +890,23 @@ class XTouch extends utils.Adapter {
             const midiCommand = self.fromHexString(midiString);
             // F0 00 00 66 58 20 8 48 61 6c 6c 6f 20 20 64 75 00 00 00 00 00 F7
             // 240,0,0,102,88,32,8,72,97,108,108,111,32,32,100,117,0,0,0,0,0,247
-            for (const device of Object.keys(self.devices)) {
-                if ((deviceAddress !== device) && (deviceAddress !== '')) continue;
-                if ((actDeviceGroup == self.devices[device].memberOfGroup) &&
-                    (selectedBank == self.devices[device].activeBank) &&
-                    (Number(realChannel) >= self.devices[device].activeBaseChannel) &&
-                    (Number(realChannel) <= (self.devices[device].activeBaseChannel + 8))) {   // only if button seen on console
-                    self.deviceSendData(midiCommand, self.devices[device].ipAddress, self.devices[device].port);
+
+            if (deviceAddress) {            // only send to this device (will only called with display which will be seen on this device)
+                self.deviceSendData(midiCommand, deviceAddress, self.devices[deviceAddress].port);
+            } else {                        // send to all connected devices on which this display is seen
+                for (const device of Object.keys(self.devices)) {
+                    if ((actDeviceGroup == self.devices[device].memberOfGroup) &&
+                        (selectedBank == self.devices[device].activeBank) &&
+                        (Number(realChannel) >= self.devices[device].activeBaseChannel) &&
+                        (Number(realChannel) <= (self.devices[device].activeBaseChannel + 8)) &&
+                        (self.devices[device].connection)) {   // only if display seen on console and device connected
+                        self.deviceSendData(midiCommand, self.devices[device].ipAddress, self.devices[device].port);
+                    }
                 }
-                else {
-                    self.deviceSendData(midiCommand, self.devices[device].ipAddress, self.devices[device].port);
-                }
-                // ToDo: handle syncGlobal
             }
+
+            // ToDo: handle syncGlobal
+
         } catch (err) {
             self.errorHandler(err, 'sendDisplay');
         }
@@ -887,6 +932,10 @@ class XTouch extends utils.Adapter {
                         activeBank++;
                         self.devices[deviceAddress].activeBank = activeBank;
                         await self.setStateAsync('devices.' + deviceIndex + '.activeBank', Number(activeBank), true);
+                        // on bank change reset the baseChannel to 1
+                        activeBaseChannel = 1;
+                        self.devices[deviceAddress].activeBaseChannel = activeBaseChannel;
+                        await self.setStateAsync('devices.' + deviceIndex + '.activeBaseChannel', Number(activeBaseChannel), true);
                         isDirty = true;
                     }
                     break;
@@ -896,6 +945,10 @@ class XTouch extends utils.Adapter {
                         activeBank--;
                         self.devices[deviceAddress].activeBank = activeBank;
                         await self.setStateAsync('devices.' + deviceIndex + '.activeBank', Number(activeBank), true);
+                        // on bank change reset the baseChannel to 1
+                        activeBaseChannel = 1;
+                        self.devices[deviceAddress].activeBaseChannel = activeBaseChannel;
+                        await self.setStateAsync('devices.' + deviceIndex + '.activeBaseChannel', Number(activeBaseChannel), true);
                         isDirty = true;
                     }
                     break;
@@ -1004,7 +1057,7 @@ class XTouch extends utils.Adapter {
                                     break;
 
                                 case 'info.display':
-                                    self.sendDisplay(id, state.val);
+                                    self.handleDisplay(id, state.val);
                                     break;
                             }
                         }
@@ -1078,20 +1131,20 @@ class XTouch extends utils.Adapter {
         const self = this;
         const activeGroup = self.devices[deviceAddress].memberOfGroup;
         const activeBank = self.devices[deviceAddress].activeBank;
-        const activeBaseChannel = self.devices[deviceAddress].activeBaseChannel - 1;    // is 1, 9, ... for addition
+        const activeBaseChannel = self.devices[deviceAddress].activeBaseChannel;    // is 1, 9, ... for addition
         try {
             // send the active fader bank elements
             // loop through all visible channels
             for (let baseChannel = 1; baseChannel < 9; baseChannel++) {
                 // and there for the elements
                 for (const actElement of self.consoleLayout.channel) {
-                    const baseId = self.namespace + '.deviceGroups.' + activeGroup + '.banks.' + activeBank + '.channels.' + (activeBaseChannel + baseChannel) + '.' + actElement;
+                    const baseId = self.namespace + '.deviceGroups.' + activeGroup + '.banks.' + activeBank + '.channels.' + (activeBaseChannel - 1 + baseChannel) + '.' + actElement;
                     switch (actElement) {
                         case 'encoder':
                             break;
 
                         case 'display':
-                            self.sendDisplay(baseId, undefined, deviceAddress);
+                            self.sendDisplay(baseId, deviceAddress);
                             break;
 
                         case 'fader':
