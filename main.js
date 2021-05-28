@@ -359,7 +359,7 @@ class XTouch extends utils.Adapter {
                             await self.deviceSwitchChannels(action, info.address);
                         }
                         else {
-                            await self.handleButton(baseId , undefined, actPressed ? 'pressed' : 'released', info.addres);
+                            await self.handleButton(baseId , undefined, actPressed ? 'pressed' : 'released', info.address);
                         }
                         break;
 
@@ -390,7 +390,7 @@ class XTouch extends utils.Adapter {
      * autofunction process
      ********************************************************************************/
     /**
-     * handle the button events and call the sendback when someting is changed
+     * handle the button events and call the sendback if someting is changed
      * @param {string} buttonId                 full button id via onStateChange 
      * @param {any | null | undefined} value
      * @param {string} event                    pressed, released, fader or value (value = when called via onStateChange)
@@ -416,6 +416,10 @@ class XTouch extends utils.Adapter {
                 baseId = buttonId.substr(0, buttonId.lastIndexOf('.'));
                 stateName = buttonId.substr(buttonId.lastIndexOf('.') + 1);
 
+                if (stateName === '') {
+                    self.log.error('handleButton called with value and only baseId');
+                    return;             // if no value part provided throw an error
+                }
                 switch (stateName) {
 
                     case 'autoToggle':
@@ -457,10 +461,10 @@ class XTouch extends utils.Adapter {
                 baseId = buttonArr.join('.');
             }
 
-            stateName = buttonArr.length > 8 ? buttonArr[8] : '';
+            const buttonName = buttonArr.length > 8 ? buttonArr[8] : '';
             const actPressed = event === 'pressed' ? true : false;
 
-            if (stateName === 'encoder') {                  // encoder is only pressed event
+            if (buttonName === 'encoder') {                  // encoder is only pressed event
                 await self.setStateAsync(baseId + '.pressed', actPressed, true);
             } else {
                 actStatus = self.deviceGroups[baseId + '.status'].val;
@@ -469,6 +473,7 @@ class XTouch extends utils.Adapter {
                 if (event === 'value') {
 
                     setValue = Boolean(value);
+                    isDirty = true;
 
                 } else {        // handle the button auto mode
 
@@ -508,13 +513,12 @@ class XTouch extends utils.Adapter {
                                 break;
                         }
                     }
-                }
 
-                if ((self.deviceGroups[baseId + '.status'].val !== setValue) &&
-                    ((stateName === '') || (stateName === 'status') || (stateName === 'pressed'))){      // if status changed
-                    self.deviceGroups[baseId + '.status'].val = setValue;
-                    await self.setStateAsync(baseId + '.status', setValue, true);
-                    isDirty = true;
+                    if (self.deviceGroups[baseId + '.status'].val !== setValue){      // if status changed
+                        self.deviceGroups[baseId + '.status'].val = setValue;
+                        await self.setStateAsync(baseId + '.status', setValue, true);
+                        isDirty = true;
+                    }
                 }
 
                 if (isDirty) {
@@ -527,7 +531,7 @@ class XTouch extends utils.Adapter {
     }
 
     /**
-     * handle the fader events and call the sendback when someting is changed
+     * handle the fader events and call the sendback if someting is changed
      * @param {string} faderId                  full fader id via onStateChange
      * @param {any | null | undefined} value
      * @param {string} event                    pressed, released or value (value = when called via onStateChange)
@@ -549,7 +553,7 @@ class XTouch extends utils.Adapter {
                 return;
             }
 
-            if (event === 'value') {    // when called via onStateChange there is the full fader id, cut the last part for baseId
+            if (event === 'value') {    // if called via onStateChange there is the full fader id, cut the last part for baseId
                 baseId = faderId.substr(0, faderId.lastIndexOf('.'));
                 stateName = faderId.substr(faderId.lastIndexOf('.') + 1);
 
@@ -589,7 +593,7 @@ class XTouch extends utils.Adapter {
                         self.log.warn('X-Touch unknown fader value: "' + faderId + '"');
                         return;
                 }
-            } else {                    // when called by midiMsg determine the real channel
+            } else {                    // if called by midiMsg determine the real channel
                 if ((deviceAddress !== '') && self.devices[deviceAddress]) {
                     activeBank = self.devices[deviceAddress].activeBank;
                     activeBaseChannel = self.devices[deviceAddress].activeBaseChannel;
@@ -1194,8 +1198,8 @@ class XTouch extends utils.Adapter {
                 'channel': '',      // 0 - 15
                 'note': '',         // Number of note in message
                 'value': '',        // dynamic value, controller value, program change value, pitchvalue etc.
-                'valueDB': '',      // when a pichbend is received, convert it in a range of -70.0 to 10.0 (fader value)
-                'valueLin': '',     // when a pichbend is received, convert it in a range of 0 to 1000 (fader value)
+                'valueDB': '',      // if a pichbend is received, convert it in a range of -70.0 to 10.0 (fader value)
+                'valueLin': '',     // if a pichbend is received, convert it in a range of 0 to 1000 (fader value)
                 'controller': '',   // Controller number (for ControlChange)
                 'programm': '',     // Programm number (for ProgramChange)
                 'manufact': '',     // Mannufacturer ID on a SysEx Message
@@ -1404,17 +1408,17 @@ class XTouch extends utils.Adapter {
                 for (const element of self.objectsTemplate.banks) {
                     await self.setObjectNotExistsAsync(activeBank + '.' + element._id, element);
 
-                    if (element.common.role === 'button') {     // populate the button folder
+                    if (element.common.role === 'button') {             // populate the button folder
                         for (const button of self.objectsTemplate.button) {
                             await self.setObjectNotExistsAsync(activeBank + '.' + element._id + '.' + button._id, button);
                         }
                     }
-                    if (element.common.role === 'level.volume') {     // populate the fader folder
+                    if (element.common.role === 'level.volume') {       // populate the fader folder
                         for (const fader of self.objectsTemplate.level_volume) {
                             await self.setObjectNotExistsAsync(activeBank + '.' + element._id + '.' + fader._id, fader);
                         }
                     }
-                    if (element.common.role === 'value.volume') {     // populate the meter folder
+                    if (element.common.role === 'value.volume') {       // populate the meter folder
                         for (const meter of self.objectsTemplate.value_volume) {
                             await self.setObjectNotExistsAsync(activeBank + '.' + element._id + '.' + meter._id, meter);
                         }
