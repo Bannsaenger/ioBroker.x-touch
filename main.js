@@ -806,7 +806,7 @@ class XTouch extends utils.Adapter {
             const logObj = self.calculateFaderValue(self.deviceGroups[faderId + '.value'].val, 'linValue');
 
             if (typeof realChannel === 'undefined') realChannel = '9';      // only if Master Fader
-            const statusByte = 0xE0 + Number(realChannel)-1;
+            const statusByte = 0xE0 + Number(channelInBank)-1;
             const dataByte2 = Math.floor(Number(logObj.midiValue) / 128).toFixed(0);
             const dataByte1 = Math.floor(Number(logObj.midiValue) - (Number(dataByte2) * 128)).toFixed(0);
             const midiCommand = new Uint8Array([statusByte, Number(dataByte1), Number(dataByte2)]);
