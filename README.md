@@ -15,10 +15,10 @@
 Communicate with a Behringer X-Touch Control Surface (DAW Controller)
 
 ## ToDo
-- Add the encoders and their LEDs
+- Add the encoders and their LEDs -> done, left is sync_global and checks on database changes
 - Add the timecode display
-- Add the big scroll button
-- Add the functionality of bank and fader channel switches (only prepared for now)
+- Add the functionality of bank and fader channel switches -> done, needs additional testing
+- Add the syncGlobal functionality
 
 ## Changelog
 
