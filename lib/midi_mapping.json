@@ -103,6 +103,7 @@
     "93":   "transport.stop",
     "94":   "transport.play",
     "95":   "transport.record",
+    "101":  "transport.scrub",
     "46":   "page.faderBankDec",
     "47":   "page.faderBankInc",
     "48":   "page.channelDec",
@@ -111,6 +112,5 @@
     "98":   "navigation.left",
     "100":  "navigation.zoom",
     "99":   "navigation.right",
-    "97":   "navigation.down",
-    "101":  "navigation.scrub"
+    "97":   "navigation.down"
 }

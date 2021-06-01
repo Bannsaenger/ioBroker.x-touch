@@ -406,7 +406,7 @@
             "type": "channel",
             "common": {
                 "role": "level.volume",
-                "name": "Master fader"
+                "name": "Channel fader"
             },
             "native": {}
         }
@@ -913,6 +913,15 @@
             "native": {}
         },
         {
+            "_id": "scrub",
+            "type": "channel",
+            "common": {
+                "role": "button",
+                "name": "Button SCRUB (RED)"
+            },
+            "native": {}
+        },
+        {
             "_id": "encoder",
             "type": "channel",
             "common": {
@@ -980,15 +989,6 @@
             "common": {
                 "role": "button",
                 "name": "Button v (DOWN) (ORANGE)"
-            },
-            "native": {}
-        },
-        {
-            "_id": "scrub",
-            "type": "channel",
-            "common": {
-                "role": "button",
-                "name": "Button SCRUB (RED)"
             },
             "native": {}
         }
@@ -1310,7 +1310,20 @@
             "type": "state",
             "common": {
                 "role": "value",
-                "name": "If true controller is actually pressed",
+                "name": "If true encoder is actually pressed",
+                "type": "boolean",
+                "read": true,
+                "write": true,
+                "def": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "enabled",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "If true the encoder is working and will be displayed with the LED ring",
                 "type": "boolean",
                 "read": true,
                 "write": true,
@@ -1387,7 +1400,7 @@
             "type": "state",
             "common": {
                 "role": "value",
-                "name": "If controller is one step moved counter clockwise",
+                "name": "If controller is moved one step counter clockwise",
                 "type": "boolean",
                 "read": true,
                 "write": false,
@@ -1400,7 +1413,7 @@
             "type": "state",
             "common": {
                 "role": "value",
-                "name": "If controller is one step moved clockwise",
+                "name": "If controller is moved one step clockwise",
                 "type": "boolean",
                 "read": true,
                 "write": false,

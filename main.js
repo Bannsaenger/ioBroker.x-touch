@@ -52,11 +52,15 @@ class XTouch extends utils.Adapter {
         this.objects2Midi = {};
         // and layout
         this.consoleLayout = JSON.parse(fs.readFileSync(__dirname + '/lib/console_layout.json', 'utf8'));
+        // mapping of the encoder modes to LED values
+        this.encoderMapping = JSON.parse(fs.readFileSync(__dirname + '/lib/encoder_mapping.json', 'utf8'));
 
         // devices object, key is ip address. Values are connection and memberOfGroup
         this.devices = [];
-        this.nextDevice = 0;        // next device index for db creation
+        this.nextDevice = 0;            // next device index for db creation
         this.deviceGroups = [];
+        this.timers = {};               // a place to store timers
+        this.timers.encoderWheels = {}; // e.g. encoder wheel reset timers by device group
 
         // Send buffer (Array of sendData objects)
         // sendData = {
@@ -168,8 +172,14 @@ class XTouch extends utils.Adapter {
                 self.deviceGroups[device_state._id] = device_state;
                 tempObj = await self.getStateAsync(device_state._id);
                 // @ts-ignore
-                self.deviceGroups[device_state._id].val = (tempObj && tempObj.val) ? tempObj.val : '';
+                self.deviceGroups[device_state._id].val = (tempObj && tempObj.val !== undefined) ? tempObj.val : '';
                 self.deviceGroups[device_state._id].helperBool = false;                     // used for e.g. autoToggle
+                self.deviceGroups[device_state._id].helperNum = -1;                         // used for e.g. display of encoders
+            }
+
+            // create a timer to reset the encoder state for each device group
+            for (let index = 0; index < self.config.deviceGroups; index++) {
+                self.timers.encoderWheels[index] = setTimeout(self.onEncoderWheelTimeoutExceeded.bind(self, index.toString()), 1000);
             }
 
             self.log.info('X-Touch got ' + Object.keys(self.deviceGroups).length + ' states from the db');
@@ -301,6 +311,16 @@ class XTouch extends utils.Adapter {
     }
 
     /**
+     * Is called when the encoder wheel values must be resetted to false
+     * @param {string} deviceGroup
+     */
+    onEncoderWheelTimeoutExceeded(deviceGroup) {
+        this.log.debug(`X-Touch encoder wheel from device group ${deviceGroup}" reached inactivity timeout`);
+        this.setState(`deviceGroups.${deviceGroup}.transport.encoder.cw`, false, true);     // reset the
+        this.setState(`deviceGroups.${deviceGroup}.transport.encoder.ccw`, false, true);    // state values
+    }
+
+    /**
      * Is called on new datagram msg from server
      * @param {Buffer} msg      the message content received by the server socket
      * @param {Object} info     the info for e.g. address of sending host
@@ -359,7 +379,7 @@ class XTouch extends utils.Adapter {
                             await self.deviceSwitchChannels(action, info.address);
                         }
                         else {
-                            await self.handleButton(baseId , undefined, actPressed ? 'pressed' : 'released', info.address);
+                            await self.handleButton(baseId, undefined, actPressed ? 'pressed' : 'released', info.address);
                         }
                         break;
 
@@ -370,10 +390,27 @@ class XTouch extends utils.Adapter {
                         } else {
                             baseId +=  '.banks.0.channels.' + (Number(midiMsg.channel) + 1) + '.fader';
                         }
-                        await self.handleFader(baseId , midiMsg.value, 'fader', info.address);
+                        await self.handleFader(baseId, midiMsg.value, 'fader', info.address);
                         break;
 
                     case 'ControlChange':           // Encoders do that
+                        baseId = self.namespace + '.deviceGroups.' + memberOfGroup;
+                        if ((Number(midiMsg.controller) >= 16) &&
+                            (Number(midiMsg.controller) <= 23)){      // Channel encoder
+                            baseId +=  '.banks.0.channels.' + (Number(midiMsg.controller) - 15) + '.encoder';
+                        } else {
+                            baseId +=  '.transport.encoder';
+                        }
+                        self.log.info(`midi message controller ${midiMsg.controller} value ${midiMsg.value}`);
+                        let stepsTaken = 1;
+                        let direction = 'cw';
+                        if (midiMsg.value < 65) {
+                            stepsTaken = midiMsg.value;
+                        } else {
+                            stepsTaken = midiMsg.value - 64;
+                            direction = 'ccw';
+                        }
+                        await self.handleEncoder(baseId, stepsTaken, direction, info.address);
                         break;
                 }
             }
@@ -642,7 +679,7 @@ class XTouch extends utils.Adapter {
 
     /**
      * handle the display status and call the send back if someting is changed
-     * @param {string} displayId                only called via onStateChange
+     * @param {string} displayId                only when called via onStateChange
      * @param {any | null | undefined} value
      */
      async handleDisplay(displayId, value = undefined) {
@@ -711,6 +748,160 @@ class XTouch extends utils.Adapter {
 
         } catch (err) {
             self.errorHandler(err, 'handleDisplay');
+        }
+    }
+
+    /**
+     * handle the encoder status and call the send back if someting is changed
+     * @param {string} encoderId                only when called via onStateChange
+     * @param {any | null | undefined} value
+     * @param {string} event                    pressed, released or value (value = when called via onStateChange)
+     * @param {string} deviceAddress            only chen called via onServerMessage
+     */
+     async handleEncoder(encoderId, value = undefined, event = 'value', deviceAddress = '') {
+        const self = this;
+        try {
+            let baseId;
+            let stateName = '';         // the name of the particular state when called via onStateChange
+            const encoderArr = encoderId.split('.');
+            let activeBank = 0;
+            let activeBaseChannel = 1;
+            let deviceGroup = encoderArr[3];
+            let actVal;
+            let isDirty = false;        // if true the encoder states has changed and must be sent
+
+            if (encoderId === '') {
+                self.log.debug('X-Touch encoder not supported');
+                return;
+            }
+
+            if (event === 'value') {    // when called via onStateChange there is the full encoder id, cut the last part for baseId
+                baseId = encoderId.substr(0, encoderId.lastIndexOf('.'));
+                stateName = encoderId.substr(encoderId.lastIndexOf('.') + 1);
+
+                if (stateName === '') {
+                    self.log.error('handleEncoder called with value and only baseId');
+                    return;             // if no value part provided throw an error
+                }
+                switch (stateName) {
+
+                    case 'cw':                                                                  // if wheel movement is simulated via database
+                    case 'ccw':                                                                 // only on encoder wheel possible
+                        self.timers.devicegroup[deviceGroup].refresh();                         // restart/refresh the timer
+                        return;
+
+                    case 'enabled':
+                        if (self.deviceGroups[baseId + '.enabled'].val != Boolean(value)) {     // if changed send
+                            self.deviceGroups[baseId + '.enabled'].val = Boolean(value);
+                            isDirty = true;
+                        }
+                        break;
+
+                    case 'mode':
+                        if ((value < 0) || (value > 3) || !Number.isInteger(value)) value = 0;  // correct ?
+                        if (self.deviceGroups[baseId + '.mode'].val != value) {                 // if changed send
+                            self.deviceGroups[baseId + '.mode'].val = value;
+                            isDirty = true;
+                        }
+                        break;
+                    
+                    case 'pressed':                                                             // reset if sent via database
+                        self.setState(baseId + '.pressed', false, true);
+                        return;
+
+                    case 'stepsPerTick':                                                        // check and correct
+                        actVal = value;
+                        if (value < 0) actVal = 0;
+                        if (value > 1000) actVal = 1000;
+                        if (!Number.isInteger(value)) actVal = parseInt(value, 10);
+                        if (value != actVal) {                                                  // value corrected ?
+                            await self.setStateAsync(baseId + '.stepsPerTick', Number(actVal), true);
+                        }
+                        if (self.deviceGroups[baseId + '.stepsPerTick'].val != actVal) {
+                            self.deviceGroups[baseId + '.stepsPerTick'].val = actVal;
+                            self.log.info(`handleEncoder changed the stepsPerTick to "${actVal}"`);
+                        }
+                        return;
+
+                    case 'value':
+                        if (value < 0) value = 0;
+                        if (value > 1000) value = 1000;
+                        if (!Number.isInteger(value)) value = parseInt(value, 10);
+                        if (self.deviceGroups[baseId + '.value'].val != value) {
+                            self.deviceGroups[baseId + '.value'].val = value;
+                            await self.setStateAsync(baseId + '.value', Number(value), true);
+                        }
+                        break;
+                }
+
+            } else {                    // when called by midiMsg determine the real channel
+                if ((deviceAddress !== '') && self.devices[deviceAddress]) {
+                    activeBank = self.devices[deviceAddress].activeBank;
+                    activeBaseChannel = self.devices[deviceAddress].activeBaseChannel;
+                }
+                if (encoderArr[4] === 'banks') {         // replace bank and baseChannel on channel encoders
+                    encoderArr[5] = activeBank.toString();
+                    encoderArr[7] = (Number(encoderArr[7]) + activeBaseChannel - 1).toString();
+                }
+                baseId = encoderArr.join('.');
+            }
+
+            if (encoderArr[5] === 'encoder') {          // only on encoder wheel
+                switch (event) {
+                    case 'cw':           
+                        await self.setStateAsync(baseId + '.cw', true, true);
+                        self.timers.encoderWheels[deviceGroup].refresh();   // restart/refresh the timer
+                        return;                                             // nothing more to do
+                    
+                    case 'ccw':          
+                        await self.setStateAsync(baseId + '.ccw', true, true);
+                        self.timers.encoderWheels[deviceGroup].refresh();   // restart/refresh the timer
+                        return;                                             // nothing more to do
+
+                    default:
+                        self.log.error(`handleEncoder called with unknown event ${event} on encoder wheel`);
+                }
+            }
+
+            if (self.deviceGroups[baseId + '.enabled'].val !== true) return;    // no farther processing
+
+            actVal = self.deviceGroups[baseId + '.value'].val;
+
+            if (self.deviceGroups[baseId + '.value'].helperNum == -1) {         // first call
+                self.deviceGroups[baseId + '.value'].helperNum = self.calculateEncoderValue(actVal);
+            }
+           
+            switch (event) {
+                case 'cw':              // rotate to increment value
+                    actVal += (self.deviceGroups[baseId + '.stepsPerTick'].val * value);    // value contains the steps taken
+                    if (actVal > 1000) actVal = 1000;
+                    break;
+
+                case 'ccw':             // rotate to decrement value
+                    actVal -= (self.deviceGroups[baseId + '.stepsPerTick'].val * value);
+                    if (actVal < 0) actVal = 0;
+                    break;
+            }
+
+            self.deviceGroups[baseId + '.value'].val = actVal;
+            await self.setStateAsync(baseId + '.value', actVal, true);
+
+            if (self.deviceGroups[baseId + '.value'].helperNum != this.calculateEncoderValue(actVal)) {
+                self.deviceGroups[baseId + '.value'].helperNum = this.calculateEncoderValue(actVal);
+                // if display value changed send
+                isDirty = true;
+            }
+
+            let logStr = `handleEncoder event: ${event} new value ${actVal} `;
+            if (isDirty) {
+                logStr += `going to send ${self.deviceGroups[baseId + '.value'].helperNum}`;
+                self.sendEncoder(baseId);
+            }
+            self.log.debug(logStr);
+            // ToDo: handle syncGlobal
+
+        } catch (err) {
+            self.errorHandler(err, 'handleEncoder');
         }
     }
 
@@ -840,8 +1031,6 @@ class XTouch extends utils.Adapter {
     async sendDisplay(displayId, deviceAddress = '') {
         const self = this;
         try {
-            self.log.silly('Now send back state of display: "' + displayId + '"');
-
             let selectedBank;
             let channelInBank;
             let actDeviceGroup;
@@ -867,6 +1056,8 @@ class XTouch extends utils.Adapter {
             let line1_ct = self.deviceGroups[baseId + '.line1_ct'].val;
             let line2 = self.deviceGroups[baseId + '.line2'].val || '';
             let line2_ct = self.deviceGroups[baseId + '.line2_ct'].val;
+
+            self.log.silly(`Now send back state of display: "${displayId}", Color: "${color}", Lines: "${line1}, ${line2}"`);
 
             let midiString = 'F000006658';
             midiString += ('20' + (32 + (Number(channelInBank) - 1)).toString(16)).slice(-2);       // Add channel 20 - 27
@@ -913,6 +1104,78 @@ class XTouch extends utils.Adapter {
 
         } catch (err) {
             self.errorHandler(err, 'sendDisplay');
+        }
+    }
+
+    /**
+     * send back the encoder status
+     * @param {string} encoderId        
+     * @param {string} deviceAddress    only chen called via deviceUpdatexx
+     */
+     async sendEncoder(encoderId, deviceAddress = '') {
+        const self = this;
+        try {
+            let selectedBank;
+            let channelInBank;
+            let actDeviceGroup;
+            const encoderArr = encoderId.split('.');
+            const realChannel = encoderArr[7];
+            if (encoderArr[4] === 'banks') {          // replace bank and baseChannel on channel buttons
+                actDeviceGroup = encoderArr[3];
+                selectedBank = encoderArr[5];
+                channelInBank = (Number(encoderArr[7]) % 8) == 0 ? '8' : (Number(encoderArr[7]) % 8).toString();
+            } else {
+                self.log.error('sendEncoder called with a displayId with no banks identifier in it');
+                return;
+            }
+
+            let baseId = encoderId.substr(0, encoderId.lastIndexOf('.'));
+            const stateName = encoderArr.length > 9 ? encoderArr[9] : '';
+            if (stateName === '') {
+                baseId = encoderId;                 // if called with no substate
+            }
+
+            if (self.deviceGroups[baseId + '.value'].helperNum == -1) {         // first call
+                self.deviceGroups[baseId + '.value'].helperNum = self.calculateEncoderValue(self.deviceGroups[baseId + '.value'].val);
+            }
+
+            const dispVal = self.deviceGroups[baseId + '.value'].helperNum;
+            const ccByte1Left =  Number(channelInBank) + 47;      // controller 48 - 55
+            const ccByte1Right = Number(channelInBank) + 55;      // controller 56 - 63
+            let   ccByte2Left = self.encoderMapping['mode_' + self.deviceGroups[baseId + '.mode'].val][dispVal][0];
+            let   ccByte2Right = self.encoderMapping['mode_' + self.deviceGroups[baseId + '.mode'].val][dispVal][1];
+
+            if (self.deviceGroups[baseId + '.enabled'].val != true) {
+                self.log.debug(`encoder "${baseId}" disabled. switch off`);
+                ccByte2Left = 0;
+                ccByte2Right = 0;
+            }
+
+            const midiCommand1 = new Uint8Array([0xB0,  ccByte1Left, ccByte2Left]);
+            const midiCommand2 = new Uint8Array([0xB0,  ccByte1Right, ccByte2Right]);
+
+            self.log.debug(`Now send back state of encoder: "${encoderId}", cc: "${ccByte1Left}:${ccByte1Right}", values: "${ccByte2Left}:${ccByte2Right}"`);
+
+            if (deviceAddress) {            // only send to this device (will only called with display which will be seen on this device)
+                self.deviceSendData(midiCommand1, deviceAddress, self.devices[deviceAddress].port);
+                self.deviceSendData(midiCommand2, deviceAddress, self.devices[deviceAddress].port);
+            } else {                        // send to all connected devices on which this display is seen
+                for (const device of Object.keys(self.devices)) {
+                    if ((actDeviceGroup == self.devices[device].memberOfGroup) &&
+                        (selectedBank == self.devices[device].activeBank) &&
+                        (Number(realChannel) >= self.devices[device].activeBaseChannel) &&
+                        (Number(realChannel) <= (self.devices[device].activeBaseChannel + 8)) &&
+                        (self.devices[device].connection)) {   // only if display seen on console and device connected
+                            self.deviceSendData(midiCommand1, self.devices[device].ipAddress, self.devices[device].port);
+                            self.deviceSendData(midiCommand2, self.devices[device].ipAddress, self.devices[device].port);
+                    }
+                }
+            }
+
+            // ToDo: handle syncGlobal
+
+        } catch (err) {
+            self.errorHandler(err, 'sendEncoder');
         }
     }
 
@@ -1063,7 +1326,11 @@ class XTouch extends utils.Adapter {
                                 case 'info.display':
                                     self.handleDisplay(id, state.val);
                                     break;
-                            }
+
+                                case 'encoder':
+                                    self.handleEncoder(id, state.val);
+                                    break;
+                                }
                         }
                         if (/illuminate|max/.test(id)) {
                             self.log.warn(`X-Touch state ${id} changed. Please restart instance`);
@@ -1083,30 +1350,10 @@ class XTouch extends utils.Adapter {
     }
 
     /**
-     * called for sending data (adding to the queue)
-     * @param {Buffer | Uint8Array | Array} data
-     * @param {string} deviceAddress
-     * @param {string | number} devicePort
-     */
-    deviceSendData(data, deviceAddress, devicePort = 10111) {
-        const sendData = {
-            'data': data,
-            'address' : deviceAddress,
-            'port': devicePort
-        };
-        // Add sendData to the buffer
-        this.sendBuffer.push(sendData);
-
-        if (!this.sendActive) {    // if sending is possible
-            this.deviceSendNext();
-        }
-    }
-
-    /**
      * called for sending all elements on status update
      * @param {string} deviceAddress
      */
-    async deviceUpdateDevice(deviceAddress) {
+     async deviceUpdateDevice(deviceAddress) {
         const self = this;
         const activeGroup = self.devices[deviceAddress].memberOfGroup;
         try {
@@ -1145,6 +1392,7 @@ class XTouch extends utils.Adapter {
                     const baseId = self.namespace + '.deviceGroups.' + activeGroup + '.banks.' + activeBank + '.channels.' + (activeBaseChannel - 1 + baseChannel) + '.' + actElement;
                     switch (actElement) {
                         case 'encoder':
+                            self.sendEncoder(baseId, deviceAddress);
                             break;
 
                         case 'display':
@@ -1166,6 +1414,26 @@ class XTouch extends utils.Adapter {
     }
 
     /**
+     * called for sending data (adding to the queue)
+     * @param {Buffer | Uint8Array | Array} data
+     * @param {string} deviceAddress
+     * @param {string | number} devicePort
+     */
+    deviceSendData(data, deviceAddress, devicePort = 10111) {
+        const sendData = {
+            'data': data,
+            'address' : deviceAddress,
+            'port': devicePort
+        };
+        // Add sendData to the buffer
+        this.sendBuffer.push(sendData);
+
+        if (!this.sendActive) {    // if sending is possible
+            this.deviceSendNext();
+        }
+    }
+
+    /**
      * send next data in the queue
      * @param {any} err
      */
@@ -1175,10 +1443,12 @@ class XTouch extends utils.Adapter {
             self.log.error('X-Touch received an error on sending data');
         } else {
             if (self.sendBuffer.length > 0) {
-                const localBuffer = self.sendBuffer.shift();
-                const logData = localBuffer.data.toString('hex').toUpperCase();
-                self.log.debug('X-Touch send data: "' + logData + '" to device: "' + localBuffer.address + '"');
-                self.server.send(localBuffer.data, localBuffer.port, localBuffer.address, self.deviceSendNext.bind(self, err));
+                self.sendActive = true;             // for now only push to sendqueue possible
+                const locLen = self.sendBuffer.length;
+                const locBuffer = self.sendBuffer.shift();
+                const logData = locBuffer.data.toString('hex').toUpperCase();
+                self.log.debug(`X-Touch send data: "${logData}" to device: "${locBuffer.address}" Send Buffer length: ${locLen}`);
+                self.server.send(locBuffer.data, locBuffer.port, locBuffer.address, self.deviceSendNext.bind(self, err));
             } else {
                 self.log.silly('X-Touch send queue now empty');
                 self.sendActive = false;            // queue is empty for now
@@ -1294,9 +1564,8 @@ class XTouch extends utils.Adapter {
         const self = this;
 
         self.log.debug('Extron start to create/update the database');
-        /*
-        create the device groups
-        */
+        
+        // create the device groups
         for (let index = 0; index < self.config.deviceGroups; index++) {
             await self.createDeviceGroupAsync(index.toString());
         }
@@ -1635,6 +1904,14 @@ class XTouch extends utils.Adapter {
     }
 
     /**
+     * calculate encoder display value 0 - 1000 to 0 - 12
+     * @param {*} value 
+     */
+    calculateEncoderValue(value) {
+        return parseInt((value / 77).toString(), 10);
+    }
+
+    /**
      * Called on error situations and from catch blocks
 	 * @param {Error} err
 	 * @param {string} module
@@ -1666,7 +1943,7 @@ class XTouch extends utils.Adapter {
      * Is called when adapter shuts down - callback has to be called under any circumstances!
      * @param {() => void} callback
      */
-     onUnload(callback) {
+    onUnload(callback) {
         try {
             const self = this;
             // Reset the connection indicator

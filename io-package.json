@@ -29,6 +29,9 @@
             },
             "0.1.0": {
                 "en": "introduced channel and page switching"
+            },
+            "0.2.0": {
+                "en": "introduced encoders"
             }
         },
         "title": "Behringer X-Touch",

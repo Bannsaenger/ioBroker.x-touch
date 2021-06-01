@@ -64,11 +64,11 @@
         "transport.stop",
         "transport.play",
         "transport.record",
+        "transport.scrub",
         "navigation.up",
         "navigation.left",
         "navigation.zoom",
         "navigation.right",
-        "navigation.down",
-        "navigation.scrub"
+        "navigation.down"
     ]
 }

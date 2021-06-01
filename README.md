@@ -31,6 +31,9 @@ Communicate with a Behringer X-Touch Control Surface (DAW Controller)
 ### 0.1.0
 * (Bannsaenger) introduced channel and page switching
 
+### 0.2.0
+* (Bannsaenger) introduced encoders
+
 ## License
 MIT License
 
