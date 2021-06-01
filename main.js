@@ -401,7 +401,7 @@ class XTouch extends utils.Adapter {
                         } else {
                             baseId +=  '.transport.encoder';
                         }
-                        self.log.info(`midi message controller ${midiMsg.controller} value ${midiMsg.value}`);
+                        //self.log.info(`midi message controller ${midiMsg.controller} value ${midiMsg.value}`);
                         let stepsTaken = 1;
                         let direction = 'cw';
                         if (midiMsg.value < 65) {
