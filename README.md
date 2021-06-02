@@ -34,6 +34,9 @@ Communicate with a Behringer X-Touch Control Surface (DAW Controller)
 ### 0.2.0
 * (Bannsaenger) introduced encoders
 
+### 0.2.1
+* (Bannsaenger) changed the way to send data. Added sendDelay
+
 ## License
 MIT License
 

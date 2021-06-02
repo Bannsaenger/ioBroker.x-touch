@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "x-touch",
-        "version": "0.2.0",
+        "version": "0.2.1",
         "news": {
             "0.0.1": {
                 "en": "initial release",
@@ -32,6 +32,9 @@
             },
             "0.2.0": {
                 "en": "introduced encoders"
+            },
+            "0.2.1": {
+                "en": "added sendDelay"
             }
         },
         "title": "Behringer X-Touch",
@@ -95,7 +98,8 @@
         "deviceGroups": 1,
         "maxChannels": 8,
         "maxBanks": 1,
-        "createBank": 0
+        "createBank": 0,
+        "sendDelay": 1
     },
     "objects": [],
     "instanceObjects": [

@@ -57,10 +57,11 @@ class XTouch extends utils.Adapter {
 
         // devices object, key is ip address. Values are connection and memberOfGroup
         this.devices = [];
-        this.nextDevice = 0;            // next device index for db creation
+        this.nextDevice = 0;                // next device index for db creation
         this.deviceGroups = [];
-        this.timers = {};               // a place to store timers
-        this.timers.encoderWheels = {}; // e.g. encoder wheel reset timers by device group
+        this.timers = {};                   // a place to store timers
+        this.timers.encoderWheels = {};     // e.g. encoder wheel reset timers by device group
+        this.timers.sendDelay = undefined;  // put the timer based on the configured sendDelay here
 
         // Send buffer (Array of sendData objects)
         // sendData = {
@@ -195,6 +196,11 @@ class XTouch extends utils.Adapter {
             // Set the connection indicator after startup
             // self.setState('info.connection', true, true);
             // set by onServerListening
+
+            // last action is to create the timer for the sendDelay and unrf it immediately
+            self.timers.sendDelay = setTimeout(self.deviceSendNext.bind(self, undefined, 'timer'), self.config.sendDelay || 1);
+            self.timers.sendDelay.unref();
+
         } catch (err) {
             self.errorHandler(err, 'onReady');
         }
@@ -1429,29 +1435,59 @@ class XTouch extends utils.Adapter {
         this.sendBuffer.push(sendData);
 
         if (!this.sendActive) {    // if sending is possible
-            this.deviceSendNext();
+            this.deviceSendNext(undefined, 'send');
         }
     }
 
     /**
      * send next data in the queue
      * @param {any} err
+     * @param {string} event        event can be send=called from deviceSendData, hw=called from server.send, timer=called from the sendDelay timer
      */
-    deviceSendNext(err = undefined) {
+    deviceSendNext(err = undefined, event = 'send') {
         const self = this;
+        //self.log.info(`called with event: ${event}`);
         if (err) {
-            self.log.error('X-Touch received an error on sending data');
+            self.errorHandler(err, 'deviceSendNext (server error)');
         } else {
-            if (self.sendBuffer.length > 0) {
-                self.sendActive = true;             // for now only push to sendqueue possible
-                const locLen = self.sendBuffer.length;
-                const locBuffer = self.sendBuffer.shift();
-                const logData = locBuffer.data.toString('hex').toUpperCase();
-                self.log.debug(`X-Touch send data: "${logData}" to device: "${locBuffer.address}" Send Buffer length: ${locLen}`);
-                self.server.send(locBuffer.data, locBuffer.port, locBuffer.address, self.deviceSendNext.bind(self, err));
-            } else {
-                self.log.silly('X-Touch send queue now empty');
-                self.sendActive = false;            // queue is empty for now
+            switch (event) {
+                case 'hw':          // comming from server.send
+                    //self.log.info('refreshing timer');
+                    self.timers.sendDelay.ref();
+                    self.timers.sendDelay.refresh();
+                    break;
+
+                case 'timer':
+                    //self.log.info('on timer');
+
+                    if (self.sendBuffer.length > 0) {
+                        self.sendActive = true;             // for now only push to sendqueue possible
+                        const locLen = self.sendBuffer.length;
+                        const locBuffer = self.sendBuffer.shift();
+                        const logData = locBuffer.data.toString('hex').toUpperCase();
+                        self.log.debug(`X-Touch send data (on timer): "${logData}" to device: "${locBuffer.address}" Send Buffer length: ${locLen}`);
+                        self.server.send(locBuffer.data, locBuffer.port, locBuffer.address, self.deviceSendNext.bind(self, err, 'hw'));
+                    } else {
+                        self.log.silly('X-Touch send queue now empty (on timer)');
+                        self.sendActive = false;            // queue is empty for now
+                    }
+                    break;
+
+                case 'send':
+                    //self.log.info('on send');
+
+                    if (self.sendBuffer.length > 0) {
+                        self.sendActive = true;             // for now only push to sendqueue possible
+                        const locLen = self.sendBuffer.length;
+                        const locBuffer = self.sendBuffer.shift();
+                        const logData = locBuffer.data.toString('hex').toUpperCase();
+                        self.log.debug(`X-Touch send data (on send): "${logData}" to device: "${locBuffer.address}" Send Buffer length: ${locLen}`);
+                        self.server.send(locBuffer.data, locBuffer.port, locBuffer.address, self.deviceSendNext.bind(self, err, 'hw'));
+                    } else {
+                        self.log.silly('X-Touch send queue now empty (on send)');
+                        self.sendActive = false;            // queue is empty for now
+                    }
+                    break;
             }
         }
     }

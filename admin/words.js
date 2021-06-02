@@ -1,4 +1,5 @@
-/*global systemDictionary:true */
+/* global systemDictionary:true */
+/* jshint node: true */
 'use strict';
 
 systemDictionary = {
@@ -97,5 +98,17 @@ systemDictionary = {
         "es": "si se marca, los faderbanks se crearán nuevamente cuando los parámetros (maxBanks o maxChannels) cambien",
         "pl": "jeśli zaznaczone, banki faderbank zostaną utworzone na nowo, gdy parametry (maxBanks lub maxChannels) ulegną zmianie",
         "zh-cn": "如果选中，则在参数（maxBanks或maxChannels）更改时将重新创建渐变器"
+      },
+      "sendDelay": {
+        "en": "time to wait between two midi messages (in ms)",
+        "de": "Wartezeit zwischen zwei Midi-Nachrichten (in ms)",
+        "ru": "время ожидания между двумя миди-сообщениями (в мс)",
+        "pt": "tempo de espera entre duas mensagens midi (em ms)",
+        "nl": "wachttijd tussen twee midi-berichten (in ms)",
+        "fr": "temps d'attente entre deux messages midi (en ms)",
+        "it": "tempo di attesa tra due messaggi midi (in ms)",
+        "es": "tiempo de espera entre dos mensajes midi (en ms)",
+        "pl": "czas oczekiwania między dwiema wiadomościami midi (w ms)",
+        "zh-cn": "两条 MIDI 消息之间的等待时间（以毫秒为单位）"
       }
 };
