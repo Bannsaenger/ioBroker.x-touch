@@ -40,6 +40,9 @@ Communicate with a Behringer X-Touch Control Surface (DAW Controller)
 ### 0.2.2
 * (Bannsaenger) fixed fader handling and data distribution to the device group
 
+### 0.2.3
+* (Bannsaenger) fixed setting of diplay inverted
+
 ## License
 MIT License
 

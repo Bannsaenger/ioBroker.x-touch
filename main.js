@@ -695,8 +695,8 @@ class XTouch extends utils.Adapter {
             const displayArr = displayId.split('.');
             const stateName = displayArr.length > 9 ? displayArr[9] : '';
             const  baseId = displayId.substr(0, displayId.lastIndexOf('.'));
-            if (!value) return;             // nothing to do
-            if (stateName === '') return;   // if only base id there is nothing to handle. only called via onStateChange. Sending is done via sendDisplay
+            if (value === undefined) return;    // nothing to do
+            if (stateName === '') return;       // if only base id there is nothing to handle. only called via onStateChange. Sending is done via sendDisplay
             let color = Number(self.deviceGroups[baseId + '.color'].val);
             let inverted = self.deviceGroups[baseId + '.inverted'].val;
             let line1 = self.deviceGroups[baseId + '.line1'].val || '';
