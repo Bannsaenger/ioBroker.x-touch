@@ -957,6 +957,7 @@ class XTouch extends utils.Adapter {
 
             for (const device of Object.keys(self.devices)) {
                 if ((deviceAddress !== device) && (deviceAddress !== '')) continue;
+                if (self.devices[device].connection == false) continue;     // skip offine devices
                 if (isOnChannel) {
                     if ((actDeviceGroup == self.devices[device].memberOfGroup) &&
                         (selectedBank == self.devices[device].activeBank) &&
@@ -1099,6 +1100,7 @@ class XTouch extends utils.Adapter {
                 self.deviceSendData(midiCommand, deviceAddress, self.devices[deviceAddress].port);
             } else {                        // send to all connected devices on which this display is seen
                 for (const device of Object.keys(self.devices)) {
+                    if (self.devices[device].connection == false) continue;     // skip offine devices
                     if ((actDeviceGroup == self.devices[device].memberOfGroup) &&
                         (selectedBank == self.devices[device].activeBank) &&
                         (Number(realChannel) >= self.devices[device].activeBaseChannel) &&
@@ -1170,6 +1172,7 @@ class XTouch extends utils.Adapter {
                 self.deviceSendData(midiCommand2, deviceAddress, self.devices[deviceAddress].port);
             } else {                        // send to all connected devices on which this display is seen
                 for (const device of Object.keys(self.devices)) {
+                    if (self.devices[device].connection == false) continue;     // skip offine devices
                     if ((actDeviceGroup == self.devices[device].memberOfGroup) &&
                         (selectedBank == self.devices[device].activeBank) &&
                         (Number(realChannel) >= self.devices[device].activeBaseChannel) &&
