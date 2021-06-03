@@ -1612,6 +1612,7 @@ class XTouch extends utils.Adapter {
         for(const key in await self.getAdapterObjectsAsync()){
             const tempArr = key.split('.');
             if (tempArr.length < 5) continue;
+            if (tempArr[2] === 'devices') continue;
             if (Number(tempArr[3]) >= self.config.deviceGroups) {
                 await self.delObjectAsync(key);
             }
