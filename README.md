@@ -37,6 +37,9 @@ Communicate with a Behringer X-Touch Control Surface (DAW Controller)
 ### 0.2.1
 * (Bannsaenger) changed the way to send data. Added sendDelay
 
+### 0.2.2
+* (Bannsaenger) fixed fader handling and data distribution to the device group
+
 ## License
 MIT License
 
