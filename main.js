@@ -1018,12 +1018,12 @@ class XTouch extends utils.Adapter {
                         (selectedBank == self.devices[device].activeBank) &&
                         (Number(realChannel) >= self.devices[device].activeBaseChannel) &&
                         (Number(realChannel) <= (self.devices[device].activeBaseChannel + 8))) {   // only if fader seen on console
-                        self.log.info(`send fader ${channelInBank} to ${device}`);
+                        //self.log.info(`send fader ${channelInBank} to ${device} value ${logObj.midiValue}`);
                         self.deviceSendData(midiCommand, self.devices[device].ipAddress, self.devices[device].port);
                     }
                 }
                 else {
-                    self.log.info(`send fader ${channelInBank} to ${device}`);
+                    //self.log.info(`send fader ${channelInBank} to ${device} value ${logObj.midiValue}`);
                     self.deviceSendData(midiCommand, self.devices[device].ipAddress, self.devices[device].port);
                 }
                 // ToDo: handle syncGlobal
@@ -1375,10 +1375,10 @@ class XTouch extends utils.Adapter {
                 const baseId = self.namespace + '.deviceGroups.' + activeGroup + '.' + actButton;
                 self.sendButton(baseId, deviceAddress);
             }
-            // and now send the master fader
-            self.sendFader(self.namespace + '.deviceGroups.' + activeGroup + '.masterFader', deviceAddress);
             // and the active fader bank
             self.deviceUpdateChannels(deviceAddress);
+            // and now send the master fader
+            self.sendFader(self.namespace + '.deviceGroups.' + activeGroup + '.masterFader', deviceAddress);
             // illuminate the page buttons
             self.deviceSwitchChannels('none', deviceAddress);
 
