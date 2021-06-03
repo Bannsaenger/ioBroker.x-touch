@@ -178,11 +178,6 @@ class XTouch extends utils.Adapter {
                 self.deviceGroups[device_state._id].helperNum = -1;                         // used for e.g. display of encoders
             }
 
-            // create a timer to reset the encoder state for each device group
-            for (let index = 0; index < self.config.deviceGroups; index++) {
-                self.timers.encoderWheels[index] = setTimeout(self.onEncoderWheelTimeoutExceeded.bind(self, index.toString()), 1000);
-            }
-
             self.log.info('X-Touch got ' + Object.keys(self.deviceGroups).length + ' states from the db');
 
             // In order to get state updates, you need to subscribe to them. The following line adds a subscription for our variable we have created above.
@@ -197,9 +192,13 @@ class XTouch extends utils.Adapter {
             // self.setState('info.connection', true, true);
             // set by onServerListening
 
-            // last action is to create the timer for the sendDelay and unrf it immediately
+            // create a timer to reset the encoder state for each device group
+            for (let index = 0; index < self.config.deviceGroups; index++) {
+                self.timers.encoderWheels[index] = setTimeout(self.onEncoderWheelTimeoutExceeded.bind(self, index.toString()), 1000);
+            }
+            // last action is to create the timer for the sendDelay and unref it immediately
             self.timers.sendDelay = setTimeout(self.deviceSendNext.bind(self, undefined, 'timer'), self.config.sendDelay || 1);
-            self.timers.sendDelay.unref();
+            //self.timers.sendDelay.unref();
 
         } catch (err) {
             self.errorHandler(err, 'onReady');
@@ -342,7 +341,7 @@ class XTouch extends utils.Adapter {
 
             // If a polling is received then answer the polling to hold the device online
             if (msg_hex === POLL_REC){
-                self.log.silly('X-Touch received Polling, give an reply "' + self.logHexData(POLL_REPLY) + '"');
+                self.log.silly(`X-Touch received Polling from device ${info.address}, give an reply "${self.logHexData(POLL_REPLY)}"`);
 
                 self.setConnection(info.address, info.port, true);
 
@@ -991,8 +990,8 @@ class XTouch extends utils.Adapter {
             let channelInBank;
             let isOnChannel = false;                // if fader is on channel to check whether it is aktually seen
             const faderArr = faderId.split('.');
-            let realChannel = faderArr[7];
-            if (faderArr[4] === 'banks') {          // replace bank and baseChannel on channel buttons
+            const realChannel = faderArr[7];
+            if (faderArr[4] === 'banks') {          // replace bank and baseChannel on channel faders
                 selectedBank = faderArr[5];
                 channelInBank = (Number(faderArr[7]) % 8) == 0 ? '8' : (Number(faderArr[7]) % 8).toString();
                 // now "normalize" the array for lookup in the mapping
@@ -1003,7 +1002,7 @@ class XTouch extends utils.Adapter {
             const actDeviceGroup = faderArr[3];
             const logObj = self.calculateFaderValue(self.deviceGroups[faderId + '.value'].val, 'linValue');
 
-            if (typeof realChannel === 'undefined') realChannel = '9';      // only if Master Fader
+            if (realChannel === undefined) channelInBank = 9;      // only if Master Fader
             const statusByte = 0xE0 + Number(channelInBank)-1;
             const dataByte2 = Math.floor(Number(logObj.midiValue) / 128).toFixed(0);
             const dataByte1 = Math.floor(Number(logObj.midiValue) - (Number(dataByte2) * 128)).toFixed(0);
@@ -1012,15 +1011,18 @@ class XTouch extends utils.Adapter {
             for (const device of Object.keys(self.devices)) {
                 if (deviceAddress === device && fromHw) continue;
                 if (deviceAddress !== device && !fromHw) continue;
+                if (self.devices[device].connection == false) continue;     // skip offine devices
                 if (isOnChannel) {
                     if ((actDeviceGroup == self.devices[device].memberOfGroup) &&
                         (selectedBank == self.devices[device].activeBank) &&
                         (Number(realChannel) >= self.devices[device].activeBaseChannel) &&
-                        (Number(realChannel) <= (self.devices[device].activeBaseChannel + 8))) {   // only if button seen on console
+                        (Number(realChannel) <= (self.devices[device].activeBaseChannel + 8))) {   // only if fader seen on console
+                        self.log.info(`send fader ${channelInBank} to ${device}`);
                         self.deviceSendData(midiCommand, self.devices[device].ipAddress, self.devices[device].port);
                     }
                 }
                 else {
+                    self.log.info(`send fader ${channelInBank} to ${device}`);
                     self.deviceSendData(midiCommand, self.devices[device].ipAddress, self.devices[device].port);
                 }
                 // ToDo: handle syncGlobal
@@ -1455,7 +1457,7 @@ class XTouch extends utils.Adapter {
             switch (event) {
                 case 'hw':          // comming from server.send
                     //self.log.info('refreshing timer');
-                    self.timers.sendDelay.ref();
+                    //self.timers.sendDelay.ref();
                     self.timers.sendDelay.refresh();
                     break;
 
@@ -1956,7 +1958,6 @@ class XTouch extends utils.Adapter {
 	 * @param {string} module
 	 */
     errorHandler(err, module = '') {
-
         this.log.error(`X-Touch error in method: [${module}] error: ${err.message}, stack: ${err.stack}`);
     }
 
