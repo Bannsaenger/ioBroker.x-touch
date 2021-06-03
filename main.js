@@ -20,7 +20,7 @@ const utils = require('@iobroker/adapter-core');
 // Load your modules here, e.g.:
 const fs = require('fs');
 const udp = require('dgram');
-const { debug } = require('console');
+//const { debug } = require('console');
 
 const POLL_REC    = 'F0002032585400F7';
 const POLL_REPLY  = 'F00000661400F7';
@@ -337,6 +337,8 @@ class XTouch extends utils.Adapter {
             const msg_hex = msg.toString('hex').toUpperCase();
             const memberOfGroup = self.devices[info.address] ? self.devices[info.address].memberOfGroup : '0';
             let midiMsg;
+            let stepsTaken;
+            let direction;
 
             // If a polling is received then answer the polling to hold the device online
             if (msg_hex === POLL_REC){
@@ -368,19 +370,19 @@ class XTouch extends utils.Adapter {
                                 case 46:        // fader bank down
                                     action = 'bankDown';
                                     break;
-                                
+
                                 case 47:        // fader bank up
                                     action = 'bankUp';
-                                break;
-                            
+                                    break;
+
                                 case 48:        // channel bank up
                                     action = 'channelDown';
                                     break;
-                            
+
                                 case 49:        // channel bank down
                                     action = 'channelUp';
                                     break;
-                            
+
                             }
                             await self.deviceSwitchChannels(action, info.address);
                         }
@@ -408,8 +410,8 @@ class XTouch extends utils.Adapter {
                             baseId +=  '.transport.encoder';
                         }
                         //self.log.info(`midi message controller ${midiMsg.controller} value ${midiMsg.value}`);
-                        let stepsTaken = 1;
-                        let direction = 'cw';
+                        stepsTaken = 1;
+                        direction = 'cw';
                         if (midiMsg.value < 65) {
                             stepsTaken = midiMsg.value;
                         } else {
@@ -427,14 +429,14 @@ class XTouch extends utils.Adapter {
 
     /********************************************************************************
      * handler functions to handle the values coming from the database or the device
-     ******************************************************************************** 
+     ********************************************************************************
      * only the fader is not allowed to be transmitted to the sending device
      * primary behaviour is correction of values and the processing of the
      * autofunction process
      ********************************************************************************/
     /**
      * handle the button events and call the sendback if someting is changed
-     * @param {string} buttonId                 full button id via onStateChange 
+     * @param {string} buttonId                 full button id via onStateChange
      * @param {any | null | undefined} value
      * @param {string} event                    pressed, released, fader or value (value = when called via onStateChange)
      * @param {string} deviceAddress            only chen called via onServerMessage
@@ -688,15 +690,14 @@ class XTouch extends utils.Adapter {
      * @param {string} displayId                only when called via onStateChange
      * @param {any | null | undefined} value
      */
-     async handleDisplay(displayId, value = undefined) {
+    async handleDisplay(displayId, value = undefined) {
         const self = this;
         try {
             const displayArr = displayId.split('.');
             const stateName = displayArr.length > 9 ? displayArr[9] : '';
-            let baseId = displayId.substr(0, displayId.lastIndexOf('.'));
+            const  baseId = displayId.substr(0, displayId.lastIndexOf('.'));
             if (!value) return;             // nothing to do
-            if (stateName === '') return;   // if only base id there is nothing to handle. 
-                                            // only called via onStateChange. Sending is done via sendDisplay
+            if (stateName === '') return;   // if only base id there is nothing to handle. only called via onStateChange. Sending is done via sendDisplay
             let color = Number(self.deviceGroups[baseId + '.color'].val);
             let inverted = self.deviceGroups[baseId + '.inverted'].val;
             let line1 = self.deviceGroups[baseId + '.line1'].val || '';
@@ -716,7 +717,7 @@ class XTouch extends utils.Adapter {
 
                 case 'inverted':
                     inverted = Boolean(value);
-                    self.deviceGroups[baseId + '.inverted'].val = color.toString();
+                    self.deviceGroups[baseId + '.inverted'].val = inverted;
                     break;
 
                 case 'line1':
@@ -764,7 +765,7 @@ class XTouch extends utils.Adapter {
      * @param {string} event                    pressed, released or value (value = when called via onStateChange)
      * @param {string} deviceAddress            only chen called via onServerMessage
      */
-     async handleEncoder(encoderId, value = undefined, event = 'value', deviceAddress = '') {
+    async handleEncoder(encoderId, value = undefined, event = 'value', deviceAddress = '') {
         const self = this;
         try {
             let baseId;
@@ -772,7 +773,7 @@ class XTouch extends utils.Adapter {
             const encoderArr = encoderId.split('.');
             let activeBank = 0;
             let activeBaseChannel = 1;
-            let deviceGroup = encoderArr[3];
+            const deviceGroup = encoderArr[3];
             let actVal;
             let isDirty = false;        // if true the encoder states has changed and must be sent
 
@@ -810,7 +811,7 @@ class XTouch extends utils.Adapter {
                             isDirty = true;
                         }
                         break;
-                    
+
                     case 'pressed':                                                             // reset if sent via database
                         self.setState(baseId + '.pressed', false, true);
                         return;
@@ -854,12 +855,12 @@ class XTouch extends utils.Adapter {
 
             if (encoderArr[5] === 'encoder') {          // only on encoder wheel
                 switch (event) {
-                    case 'cw':           
+                    case 'cw':
                         await self.setStateAsync(baseId + '.cw', true, true);
                         self.timers.encoderWheels[deviceGroup].refresh();   // restart/refresh the timer
                         return;                                             // nothing more to do
-                    
-                    case 'ccw':          
+
+                    case 'ccw':
                         await self.setStateAsync(baseId + '.ccw', true, true);
                         self.timers.encoderWheels[deviceGroup].refresh();   // restart/refresh the timer
                         return;                                             // nothing more to do
@@ -876,7 +877,7 @@ class XTouch extends utils.Adapter {
             if (self.deviceGroups[baseId + '.value'].helperNum == -1) {         // first call
                 self.deviceGroups[baseId + '.value'].helperNum = self.calculateEncoderValue(actVal);
             }
-           
+
             switch (event) {
                 case 'cw':              // rotate to increment value
                     actVal += (self.deviceGroups[baseId + '.stepsPerTick'].val * value);    // value contains the steps taken
@@ -913,8 +914,8 @@ class XTouch extends utils.Adapter {
 
     /********************************************************************************
      * send functions to send back data to the device e.g. devices in the group
-     ******************************************************************************** 
-     * 
+     ********************************************************************************
+     *
      ********************************************************************************/
     /**
      * send back the button status, use same method to send the button state on restart and bank change
@@ -1031,7 +1032,7 @@ class XTouch extends utils.Adapter {
 
     /**
      * send back the display status
-     * @param {string} displayId        
+     * @param {string} displayId
      * @param {string} deviceAddress    only chen called via deviceUpdatexx
      */
     async sendDisplay(displayId, deviceAddress = '') {
@@ -1056,12 +1057,12 @@ class XTouch extends utils.Adapter {
             if (stateName === '') {
                 baseId = displayId;                 // if called with no substate
             }
-            let color = Number(self.deviceGroups[baseId + '.color'].val);
-            let inverted = self.deviceGroups[baseId + '.inverted'].val;
-            let line1 = self.deviceGroups[baseId + '.line1'].val || '';
-            let line1_ct = self.deviceGroups[baseId + '.line1_ct'].val;
-            let line2 = self.deviceGroups[baseId + '.line2'].val || '';
-            let line2_ct = self.deviceGroups[baseId + '.line2_ct'].val;
+            const color = Number(self.deviceGroups[baseId + '.color'].val);
+            const inverted = self.deviceGroups[baseId + '.inverted'].val;
+            const line1 = self.deviceGroups[baseId + '.line1'].val || '';
+            const line1_ct = self.deviceGroups[baseId + '.line1_ct'].val;
+            const line2 = self.deviceGroups[baseId + '.line2'].val || '';
+            const line2_ct = self.deviceGroups[baseId + '.line2_ct'].val;
 
             self.log.silly(`Now send back state of display: "${displayId}", Color: "${color}", Lines: "${line1}, ${line2}"`);
 
@@ -1115,10 +1116,10 @@ class XTouch extends utils.Adapter {
 
     /**
      * send back the encoder status
-     * @param {string} encoderId        
+     * @param {string} encoderId
      * @param {string} deviceAddress    only chen called via deviceUpdatexx
      */
-     async sendEncoder(encoderId, deviceAddress = '') {
+    async sendEncoder(encoderId, deviceAddress = '') {
         const self = this;
         try {
             let selectedBank;
@@ -1171,9 +1172,10 @@ class XTouch extends utils.Adapter {
                         (selectedBank == self.devices[device].activeBank) &&
                         (Number(realChannel) >= self.devices[device].activeBaseChannel) &&
                         (Number(realChannel) <= (self.devices[device].activeBaseChannel + 8)) &&
-                        (self.devices[device].connection)) {   // only if display seen on console and device connected
-                            self.deviceSendData(midiCommand1, self.devices[device].ipAddress, self.devices[device].port);
-                            self.deviceSendData(midiCommand2, self.devices[device].ipAddress, self.devices[device].port);
+                        (self.devices[device].connection)) {
+                        // only if display seen on console and device connected
+                        self.deviceSendData(midiCommand1, self.devices[device].ipAddress, self.devices[device].port);
+                        self.deviceSendData(midiCommand2, self.devices[device].ipAddress, self.devices[device].port);
                     }
                 }
             }
@@ -1234,7 +1236,7 @@ class XTouch extends utils.Adapter {
                         isDirty = true;
                     }
                     break;
-    
+
                 case 'channelDown':
                     if (activeBaseChannel > 8) {
                         activeBaseChannel -= 8;
@@ -1255,7 +1257,7 @@ class XTouch extends utils.Adapter {
 
                     // bankUp is possible ?
                     midiNote = self.objects2Midi['page.faderBankInc'];
-                    if ((activeBank + 1) < self.deviceGroups[self.namespace + '.deviceGroups.' + activeGroup + '.maxBanks'].val) {      
+                    if ((activeBank + 1) < self.deviceGroups[self.namespace + '.deviceGroups.' + activeGroup + '.maxBanks'].val) {
                         midiCommand = new Uint8Array([0x90,  midiNote, 127]);
                     } else {
                         midiCommand = new Uint8Array([0x90,  midiNote, 0]);
@@ -1264,7 +1266,7 @@ class XTouch extends utils.Adapter {
 
                     // bankDown is possible ?
                     midiNote = self.objects2Midi['page.faderBankDec'];
-                    if (activeBank > 0) {      
+                    if (activeBank > 0) {
                         midiCommand = new Uint8Array([0x90,  midiNote, 127]);
                     } else {
                         midiCommand = new Uint8Array([0x90,  midiNote, 0]);
@@ -1277,7 +1279,7 @@ class XTouch extends utils.Adapter {
 
                     // channelUp is possible ?
                     midiNote = self.objects2Midi['page.channelInc'];
-                    if ((activeBaseChannel + 8) < self.deviceGroups[self.namespace + '.deviceGroups.' + activeGroup + '.banks.' + activeBank + '.maxChannels'].val) {     
+                    if ((activeBaseChannel + 8) < self.deviceGroups[self.namespace + '.deviceGroups.' + activeGroup + '.banks.' + activeBank + '.maxChannels'].val) {
                         midiCommand = new Uint8Array([0x90,  midiNote, 127]);
                     } else {
                         midiCommand = new Uint8Array([0x90,  midiNote, 0]);
@@ -1286,7 +1288,7 @@ class XTouch extends utils.Adapter {
 
                     // bankDown is possible ?
                     midiNote = self.objects2Midi['page.channelDec'];
-                    if (activeBaseChannel > 8) {      
+                    if (activeBaseChannel > 8) {
                         midiCommand = new Uint8Array([0x90,  midiNote, 127]);
                     } else {
                         midiCommand = new Uint8Array([0x90,  midiNote, 0]);
@@ -1336,7 +1338,7 @@ class XTouch extends utils.Adapter {
                                 case 'encoder':
                                     self.handleEncoder(id, state.val);
                                     break;
-                                }
+                            }
                         }
                         if (/illuminate|max/.test(id)) {
                             self.log.warn(`X-Touch state ${id} changed. Please restart instance`);
@@ -1359,7 +1361,7 @@ class XTouch extends utils.Adapter {
      * called for sending all elements on status update
      * @param {string} deviceAddress
      */
-     async deviceUpdateDevice(deviceAddress) {
+    async deviceUpdateDevice(deviceAddress) {
         const self = this;
         const activeGroup = self.devices[deviceAddress].memberOfGroup;
         try {
@@ -1373,7 +1375,7 @@ class XTouch extends utils.Adapter {
             // and the active fader bank
             self.deviceUpdateChannels(deviceAddress);
             // illuminate the page buttons
-             self.deviceSwitchChannels('none', deviceAddress);
+            self.deviceSwitchChannels('none', deviceAddress);
 
         } catch (err) {
             self.errorHandler(err, 'deviceUpdateDevice');
@@ -1600,12 +1602,12 @@ class XTouch extends utils.Adapter {
         const self = this;
 
         self.log.debug('Extron start to create/update the database');
-        
+
         // create the device groups
         for (let index = 0; index < self.config.deviceGroups; index++) {
             await self.createDeviceGroupAsync(index.toString());
         }
-        
+
         // delete all unused device groups
         for(const key in await self.getAdapterObjectsAsync()){
             const tempArr = key.split('.');
@@ -1765,7 +1767,7 @@ class XTouch extends utils.Adapter {
 
             if (Number(maxChannels) % 8) {               // if not a multiple of 8
                 maxChannels = 8;
-                await self.setStateAsync('deviceGroups.' + deviceGroup + '.banks.' + bank + '.maxChannels', Number(maxChannels), true);   
+                await self.setStateAsync('deviceGroups.' + deviceGroup + '.banks.' + bank + '.maxChannels', Number(maxChannels), true);
             }
 
             // @ts-ignore
@@ -1874,7 +1876,7 @@ class XTouch extends utils.Adapter {
         if (typeof value === 'string') value = Number(value);
 
         const locObj = {};
-        let self = this;
+        const self = this;
 
         try {
 
@@ -1941,7 +1943,7 @@ class XTouch extends utils.Adapter {
 
     /**
      * calculate encoder display value 0 - 1000 to 0 - 12
-     * @param {*} value 
+     * @param {*} value
      */
     calculateEncoderValue(value) {
         return parseInt((value / 77).toString(), 10);
