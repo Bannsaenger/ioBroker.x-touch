@@ -10,7 +10,8 @@
 
 /*
  * ToDo:
- *     - when maxBanks or maxChannels changes, delete when rebuildDatabase is set
+ *      - when maxBanks or maxChannels changes, delete when rebuildDatabase is set
+ *      - when an encoder gets disabled it wont be updated and sent
  */
 
 // The adapter-core module gives you access to the core ioBroker functions
@@ -79,7 +80,7 @@ class XTouch extends utils.Adapter {
     /**
      * Is called when databases are connected and adapter received configuration.
      */
-    async onReady() {
+    async onReady() {   
         const self = this;
         try {
             // Initialize your adapter here
