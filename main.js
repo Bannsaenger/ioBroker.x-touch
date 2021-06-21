@@ -870,7 +870,7 @@ class XTouch extends utils.Adapter {
                 }
             }
 
-            if (self.deviceGroups[baseId + '.enabled'].val !== true) return;    // no farther processing
+            if ((self.deviceGroups[baseId + '.enabled'].val !== true) && !isDirty) return;    // no farther processing if encoder disabled, only to send the status disabled on value "enabled" changed
 
             actVal = self.deviceGroups[baseId + '.value'].val;
 

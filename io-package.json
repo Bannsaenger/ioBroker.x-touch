@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "x-touch",
-        "version": "0.2.3",
+        "version": "0.2.4",
         "news": {
             "0.0.1": {
                 "en": "initial release",
@@ -40,7 +40,10 @@
                 "en": "fixed fader handling and data distribution to the device group"
             },
             "0.2.3": {
-                "en": "fixed setting of diplay inverted"
+                "en": "fixed setting of display inverted"
+            },
+            "0.2.4": {
+                "en": "fixed disabling of encoder display"
             }
         },
         "title": "Behringer X-Touch",
