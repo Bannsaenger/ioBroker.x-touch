@@ -80,7 +80,7 @@ class XTouch extends utils.Adapter {
     /**
      * Is called when databases are connected and adapter received configuration.
      */
-    async onReady() {   
+    async onReady() {
         const self = this;
         try {
             // Initialize your adapter here
