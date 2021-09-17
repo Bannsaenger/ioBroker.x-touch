@@ -11,7 +11,7 @@
 /*
  * ToDo:
  *      - when maxBanks or maxChannels changes, delete when rebuildDatabase is set
- *      - when an encoder gets disabled it wont be updated and sent
+ *      - resend data on group mambership change
  */
 
 // The adapter-core module gives you access to the core ioBroker functions
@@ -80,7 +80,7 @@ class XTouch extends utils.Adapter {
     /**
      * Is called when databases are connected and adapter received configuration.
      */
-    async onReady() {   
+    async onReady() {
         const self = this;
         try {
             // Initialize your adapter here
@@ -958,6 +958,7 @@ class XTouch extends utils.Adapter {
 
             for (const device of Object.keys(self.devices)) {
                 if ((deviceAddress !== device) && (deviceAddress !== '')) continue;
+                // if called via deviceUpdate only send to the selected device
                 if (self.devices[device].connection == false) continue;     // skip offine devices
                 if (isOnChannel) {
                     if ((actDeviceGroup == self.devices[device].memberOfGroup) &&
@@ -968,7 +969,9 @@ class XTouch extends utils.Adapter {
                     }
                 }
                 else {
-                    self.deviceSendData(midiCommand, self.devices[device].ipAddress, self.devices[device].port);
+                    if (actDeviceGroup == self.devices[device].memberOfGroup) {
+                        self.deviceSendData(midiCommand, self.devices[device].ipAddress, self.devices[device].port);
+                    }
                 }
                 // ToDo: handle syncGlobal
             }
@@ -1024,8 +1027,10 @@ class XTouch extends utils.Adapter {
                     }
                 }
                 else {
-                    //self.log.info(`send fader ${channelInBank} to ${device} value ${logObj.midiValue}`);
-                    self.deviceSendData(midiCommand, self.devices[device].ipAddress, self.devices[device].port);
+                    if (actDeviceGroup == self.devices[device].memberOfGroup) {
+                        //self.log.info(`send fader ${channelInBank} to ${device} value ${logObj.midiValue}`);
+                        self.deviceSendData(midiCommand, self.devices[device].ipAddress, self.devices[device].port);
+                    }
                 }
                 // ToDo: handle syncGlobal
             }

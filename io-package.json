@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "x-touch",
-        "version": "0.2.4",
+        "version": "0.2.5",
         "news": {
             "0.0.1": {
                 "en": "initial release",
@@ -44,6 +44,9 @@
             },
             "0.2.4": {
                 "en": "fixed disabling of encoder display"
+            },
+            "0.2.5": {
+                "en": "fixed send back of button and fader values. Now only the affected device group members will be updated"
             }
         },
         "title": "Behringer X-Touch",
