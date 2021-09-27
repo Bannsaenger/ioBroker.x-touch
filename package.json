@@ -16,7 +16,8 @@
     "url": "https://github.com/Bannsaenger/ioBroker.x-touch"
   },
   "dependencies": {
-    "@iobroker/adapter-core": "^2.4.0"
+    "@iobroker/adapter-core": "^2.4.0",
+    "dgram": "^1.0.1"
   },
   "devDependencies": {
     "@iobroker/testing": "^2.3.0",
@@ -31,7 +32,6 @@
     "axios": "^0.21.2",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
-    "dgram": "^1.0.1",
     "eslint": "^7.9.0",
     "gulp": "^4.0.2",
     "mocha": "^8.1.3",
