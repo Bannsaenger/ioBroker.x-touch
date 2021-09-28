@@ -1963,7 +1963,7 @@ class XTouch extends utils.Adapter {
 
     /**
      * Called on error situations and from catch blocks
-	 * @param {Error} err
+	 * @param {any} err
 	 * @param {string} module
 	 */
     errorHandler(err, module = '') {
