@@ -43,7 +43,7 @@ class XTouch extends utils.Adapter {
         this.on('ready', this.onReady.bind(this));
         this.on('stateChange', this.onStateChange.bind(this));
         // this.on('objectChange', this.onObjectChange.bind(this));
-        // this.on('message', this.onMessage.bind(this));
+        this.on('message', this.onMessage.bind(this));
         this.on('unload', this.onUnload.bind(this));
 
         // read Objects template for object generation
@@ -239,7 +239,7 @@ class XTouch extends utils.Adapter {
                     }
                     self.log.info('X-Touch device with IP <' + deviceAddress + '> created. Is now online.');
                     await self.setStateAsync(prefix + 'ipAddress', deviceAddress, true);
-                    await self.setStateAsync(prefix + 'port', port, true);
+                    await self.setStateAsync(prefix + 'port', port.toString(), true);
                     await self.setStateAsync(prefix + 'memberOfGroup', 0, true);
                     await self.setStateAsync(prefix + 'connection', true, true);
                     self.deviceUpdateDevice(deviceAddress);
@@ -254,7 +254,7 @@ class XTouch extends utils.Adapter {
                         self.devices[deviceAddress].port = port;
                         self.log.info('X-Touch device with IP <' + deviceAddress + '> now online.');
                         await self.setStateAsync('devices.' + self.devices[deviceAddress].index + '.connection', true, true);
-                        await self.setStateAsync('devices.' + self.devices[deviceAddress].index + '.port', port, true);        // port can have changed
+                        await self.setStateAsync('devices.' + self.devices[deviceAddress].index + '.port', port.toString(), true);        // port can have changed
                         self.deviceUpdateDevice(deviceAddress);
                     }
                     if (self.devices[deviceAddress].timerDeviceInactivityTimeout) {
@@ -1970,23 +1970,33 @@ class XTouch extends utils.Adapter {
         this.log.error(`X-Touch error in method: [${module}] error: ${err.message}, stack: ${err.stack}`);
     }
 
-    // If you need to accept messages in your adapter, uncomment the following block and the corresponding line in the constructor.
-    // /**
-    //  * Some message was sent to this instance over message box. Used by email, pushover, text2speech, ...
-    //  * Using this method requires 'common.message' property to be set to true in io-package.json
-    //  * @param {ioBroker.Message} obj
-    //  */
-    // onMessage(obj) {
-    //     if (typeof obj === 'object' && obj.message) {
-    //         if (obj.command === 'send') {
-    //             // e.g. send email or pushover or whatever
-    //             this.log.info('send command');
+    /**
+     * Some message was sent to this instance over message box. Used by email, pushover, text2speech, ...
+     * Using this method requires 'common.message' property to be set to true in io-package.json
+     * @param {ioBroker.Message} obj
+     */
+    onMessage(obj) {
+        if (typeof obj === 'object' && obj.message) {
+            if (obj.command === 'export') {
+                // export values of the actual instance
+                this.log.info('X-Touch exporting values');
 
-    //             // Send response in callback if required
-    //             if (obj.callback) this.sendTo(obj.from, obj.command, 'Message received', obj.callback);
-    //         }
-    //     }
-    // }
+                // Send response in callback
+                if (obj.callback) this.sendTo(obj.from, obj.command, 'values exported', obj.callback);
+            } else if (obj.command === 'import') {
+                // export values of the actual instance
+                this.log.info('X-Touch exporting values');
+
+                // Send response in callback
+                if (obj.callback) this.sendTo(obj.from, obj.command, 'values imported', obj.callback);
+            } else {
+                // export values of the actual instance
+                this.log.warn(`X-Touch received unknown command [${obj.command}]`);
+                // Send response in callback
+                if (obj.callback) this.sendTo(obj.from, obj.command, 'unknown command', obj.callback);
+            }
+        }
+    }
 
     /**
      * Is called when adapter shuts down - callback has to be called under any circumstances!

@@ -94,7 +94,7 @@
         "type": "hardware",
         "connectionType": "local",
         "dataSource": "push",
-        "message": true,
+        "messagebox": true,
         "compact": true,
         "materialize": true,
         "dependencies": [
