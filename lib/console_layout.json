@@ -70,5 +70,19 @@
         "navigation.zoom",
         "navigation.right",
         "navigation.down"
+    ],
+    "displayChars" : [
+        "timecodeDisplay.assignment_left",
+        "timecodeDisplay.assignment_right",
+        "timecodeDisplay.hours_left",
+        "timecodeDisplay.hours_middle",
+        "timecodeDisplay.hours_right",
+        "timecodeDisplay.minutes_left",
+        "timecodeDisplay.minutes_right",
+        "timecodeDisplay.seconds_left",
+        "timecodeDisplay.seconds_right",
+        "timecodeDisplay.frames_left",
+        "timecodeDisplay.frames_middle",
+        "timecodeDisplay.frames_right"
     ]
 }

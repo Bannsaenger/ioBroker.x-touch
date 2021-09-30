@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "x-touch",
-        "version": "0.2.5",
+        "version": "0.3.0",
         "news": {
             "0.0.1": {
                 "en": "initial release",
@@ -47,6 +47,9 @@
             },
             "0.2.5": {
                 "en": "fixed send back of button and fader values. Now only the affected device group members will be updated"
+            },
+            "0.3.0": {
+                "en": "added the timecode display"
             }
         },
         "title": "Behringer X-Touch",

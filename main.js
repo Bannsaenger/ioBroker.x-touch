@@ -55,6 +55,10 @@ class XTouch extends utils.Adapter {
         this.consoleLayout = JSON.parse(fs.readFileSync(__dirname + '/lib/console_layout.json', 'utf8'));
         // mapping of the encoder modes to LED values
         this.encoderMapping = JSON.parse(fs.readFileSync(__dirname + '/lib/encoder_mapping.json', 'utf8'));
+        // mapping of the characters in timecode display to 7-segment
+        // coding is in Siekoo-Alphabet (https://fakoo.de/siekoo/posible-siekoo.gif)
+        // not as described in Logic Control Manual
+        this.characterMapping = JSON.parse(fs.readFileSync(__dirname + '/lib/character_mapping.json', 'utf8'));
 
         // devices object, key is ip address. Values are connection and memberOfGroup
         this.devices = [];
@@ -695,7 +699,7 @@ class XTouch extends utils.Adapter {
         try {
             const displayArr = displayId.split('.');
             const stateName = displayArr.length > 9 ? displayArr[9] : '';
-            const  baseId = displayId.substr(0, displayId.lastIndexOf('.'));
+            const baseId = displayId.substr(0, displayId.lastIndexOf('.'));
             if (value === undefined) return;    // nothing to do
             if (stateName === '') return;       // if only base id there is nothing to handle. only called via onStateChange. Sending is done via sendDisplay
             let color = Number(self.deviceGroups[baseId + '.color'].val);
@@ -726,6 +730,10 @@ class XTouch extends utils.Adapter {
                         line1 = '';
                         await self.setStateAsync(baseId + '.line1', line1, true);
                     }
+                    if (line1.length > 7) {
+                        line1 = line1.substr(0,7);
+                        await self.setStateAsync(baseId + '.line1', line1, true);
+                    }
                     self.deviceGroups[baseId + '.line1'].val = line1;
                     break;
 
@@ -739,6 +747,10 @@ class XTouch extends utils.Adapter {
                     if (!self.isASCII(line2)) {
                         line2 = '';
                         await self.setStateAsync(baseId + '.line2', line2, true);
+                    }
+                    if (line1.length > 7) {
+                        line1 = line1.substr(0,7);
+                        await self.setStateAsync(baseId + '.line1', line1, true);
                     }
                     self.deviceGroups[baseId + '.line2'].val = line2;
                     break;
@@ -909,6 +921,77 @@ class XTouch extends utils.Adapter {
 
         } catch (err) {
             self.errorHandler(err, 'handleEncoder');
+        }
+    }
+
+    /**
+     * handle the timecode display character status and call the send back if someting is changed
+     * @param {string} charId                only when called via onStateChange
+     * @param {any | null | undefined} value
+     */
+     async handleDisplayChar(charId, value = undefined) {
+        const self = this;
+        try {
+            const characterArr = charId.split('.');
+            const stateName = characterArr.length > 6 ? characterArr[6] : '';
+            const baseId = charId.substr(0, charId.lastIndexOf('.'));
+            if (value === undefined) return;    // nothing to do
+            if (stateName === '') return;       // if only base id there is nothing to handle. only called via onStateChange. Sending is done via sendDisplayChar
+            let char = self.deviceGroups[baseId + '.char'].val || '';
+            let dot = self.deviceGroups[baseId + '.dot'].val || false;
+            let enabled = self.deviceGroups[baseId + '.enabled'].val || false;
+            let extended = self.deviceGroups[baseId + '.extended'].val;
+            let mode = self.deviceGroups[baseId + '.mode'].val;
+
+            switch (stateName) {                    // correction of malformed values
+                case 'char':
+                    char = value.toString();
+                    if (!self.isASCII(char)) {
+                        char = '';
+                        await self.setStateAsync(baseId + '.char', char, true);
+                    }
+                    if (char.length > 1) {
+                        char = char.substr(0,1);
+                        await self.setStateAsync(baseId + '.char', char, true);
+                    }
+                    self.deviceGroups[baseId + '.char'].val = char;
+                    break;
+
+                case 'dot':
+                    dot = Boolean(value);
+                    self.deviceGroups[baseId + '.dot'].val = dot;
+                    break;
+
+                case 'enabled':
+                    enabled = Boolean(value);
+                    self.deviceGroups[baseId + '.enabled'].val = enabled;
+                    break;
+
+                case 'extended':
+                    extended = Number(value);
+                    if (extended < 0 || extended > 127) {
+                        extended = 0;
+                        await self.setStateAsync(baseId + '.extended', extended, true);
+                    }
+                    self.deviceGroups[baseId + '.extended'].val = extended.toString();
+                    break;
+
+                case 'mode':
+                    mode = Number(value);
+                    if ((mode < 0) || (mode > 1) || !Number.isInteger(mode)) {
+                        mode = 0;
+                        await self.setStateAsync(baseId + '.mode', mode, true);
+                    }
+                    self.deviceGroups[baseId + '.mode'].val = mode.toString();
+                    break;
+            }
+
+            self.sendDisplayChar(baseId);
+
+            // ToDo: handle syncGlobal
+
+        } catch (err) {
+            self.errorHandler(err, 'handleDisplayChar');
         }
     }
 
@@ -1199,6 +1282,114 @@ class XTouch extends utils.Adapter {
     }
 
     /**
+     * send back the display character status
+     * @param {string} charId
+     * @param {string} deviceAddress    only chen called via deviceUpdatexx
+     */
+     async sendDisplayChar(charId, deviceAddress = '') {
+        const self = this;
+        try {
+            const characterArr = charId.split('.');
+            const actDeviceGroup = characterArr[3];
+            const character = characterArr[5];
+            let   char = self.deviceGroups[charId + '.char'].val || '';
+            const dot = self.deviceGroups[charId + '.dot'].val || false;
+            const enabled = self.deviceGroups[charId + '.enabled'].val || false;
+            const extended = self.deviceGroups[charId + '.extended'].val;
+            const mode = self.deviceGroups[charId + '.mode'].val;
+            let controller = 0;
+            let charCode = 0;
+
+            self.log.debug(`Now send back character: "${character}", Enabled: "${enabled}", Mode: "${mode}", Char: "${char}", Extended: "${extended}", HasDot: "${dot}"`);
+
+            switch (character) {
+                case 'assignment_left':
+                    controller = 96;
+                    break;
+
+                case 'assignment_right':
+                    controller = 97;
+                    break;
+
+                case 'hours_left':
+                    controller = 98;
+                    break;
+
+                case 'hours_middle':
+                    controller = 99;
+                    break;
+
+                case 'hours_right':
+                    controller = 100;
+                    break;
+
+                case 'minutes_left':
+                    controller = 101;
+                    break;
+
+                case 'minutes_right':
+                    controller = 102;
+                    break;
+            
+                case 'seconds_left':
+                    controller = 103;
+                    break;
+                                                                
+                case 'seconds_right':
+                    controller = 104;
+                    break;
+
+                case 'frames_left':
+                    controller = 105;
+                    break;
+
+                case 'frames_middle':
+                    controller = 106;
+                    break;
+
+                case 'frames_right':
+                    controller = 107;
+                    break;
+
+            }
+
+            if (mode == 0) {
+                charCode = self.characterMapping[char] || 0;
+            } else {
+                charCode = extended || 0;
+            }
+
+            if (!enabled) {
+                self.log.debug(`character "${charId}" disabled. switch off`);
+                charCode = 0;
+            } else {
+                if (dot) controller += 16;      // the controller number with dot
+                // only if enabled. When disabled send to controller without dot to switch of the dot
+            }
+
+            const midiCommand = new Uint8Array([0xB0,  controller, charCode]);
+
+            if (deviceAddress) {            // only send to this device (will only called with display which will be seen on this device)
+                self.deviceSendData(midiCommand, deviceAddress, self.devices[deviceAddress].port);
+            } else {                        // send to all connected devices on which this display is seen
+                for (const device of Object.keys(self.devices)) {
+                    if (self.devices[device].connection == false) continue;     // skip offine devices
+                    if ((actDeviceGroup == self.devices[device].memberOfGroup) &&
+                        (self.devices[device].connection)) {
+                        // only if display seen on console and device connected
+                        self.deviceSendData(midiCommand, self.devices[device].ipAddress, self.devices[device].port);
+                    }
+                }
+            }
+
+            // ToDo: handle syncGlobal
+
+        } catch (err) {
+            self.errorHandler(err, 'sendDisplayChar');
+        }
+    }
+
+    /**
      * switch the bank up and down
      * @param {string} action               bankUp, bankDown, channelUp, channelDown, none. action none used for illuminate the bank switches
      * @param {string} deviceAddress
@@ -1349,7 +1540,11 @@ class XTouch extends utils.Adapter {
                                 case 'encoder':
                                     self.handleEncoder(id, state.val);
                                     break;
-                            }
+
+                                case 'displayChar':
+                                    self.handleDisplayChar(id, state.val);
+                                    break;
+                                }
                         }
                         if (/illuminate|max/.test(id)) {
                             self.log.warn(`X-Touch state ${id} changed. Please restart instance`);
@@ -1380,6 +1575,11 @@ class XTouch extends utils.Adapter {
             for (const actButton of self.consoleLayout.buttons) {
                 const baseId = self.namespace + '.deviceGroups.' + activeGroup + '.' + actButton;
                 self.sendButton(baseId, deviceAddress);
+            }
+            // send all display characters
+            for (const actDisplayChar of self.consoleLayout.displayChars) {
+                const baseId = self.namespace + '.deviceGroups.' + activeGroup + '.' + actDisplayChar;
+                self.sendDisplayChar(baseId, deviceAddress);
             }
             // and the active fader bank
             self.deviceUpdateChannels(deviceAddress);
@@ -1690,6 +1890,11 @@ class XTouch extends utils.Adapter {
                                 await self.setObjectNotExistsAsync('deviceGroups.' + deviceGroup + '.' + element._id + '.' + sectElem._id + '.' + meter._id, meter);
                             }
                         }
+                        if (sectElem.common.role === 'displayChar') {       // populate the displayChar folder
+                            for (const displayChar of self.objectsTemplate.displayChar) {
+                                await self.setObjectNotExistsAsync('deviceGroups.' + deviceGroup + '.' + element._id + '.' + sectElem._id + '.' + displayChar._id, displayChar);
+                            }
+                        }
                     }
                 }
             }
@@ -1972,7 +2177,7 @@ class XTouch extends utils.Adapter {
 
     /**
      * Some message was sent to this instance over message box. Used by email, pushover, text2speech, ...
-     * Using this method requires 'common.message' property to be set to true in io-package.json
+     * Using this method requires 'common.messagebox' property to be set to true in io-package.json
      * @param {ioBroker.Message} obj
      */
     onMessage(obj) {

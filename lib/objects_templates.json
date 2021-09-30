@@ -512,6 +512,114 @@
                 "name": "LED BEATS (RED)"
             },
             "native": {}
+        },
+        {
+            "_id": "assignment_left",
+            "type": "channel",
+            "common": {
+                "role": "displayChar",
+                "name": "ASSIGNMENT section left character"
+            },
+            "native": {}
+        },
+        {
+            "_id": "assignment_right",
+            "type": "channel",
+            "common": {
+                "role": "displayChar",
+                "name": "ASSIGNMENT section right character"
+            },
+            "native": {}
+        },
+        {
+            "_id": "hours_left",
+            "type": "channel",
+            "common": {
+                "role": "displayChar",
+                "name": "HOURS section left character"
+            },
+            "native": {}
+        },
+        {
+            "_id": "hours_middle",
+            "type": "channel",
+            "common": {
+                "role": "displayChar",
+                "name": "HOURS section middle character"
+            },
+            "native": {}
+        },
+        {
+            "_id": "hours_right",
+            "type": "channel",
+            "common": {
+                "role": "displayChar",
+                "name": "HOURS section right character"
+            },
+            "native": {}
+        },
+        {
+            "_id": "minutes_left",
+            "type": "channel",
+            "common": {
+                "role": "displayChar",
+                "name": "MINUTES section left character"
+            },
+            "native": {}
+        },
+        {
+            "_id": "minutes_right",
+            "type": "channel",
+            "common": {
+                "role": "displayChar",
+                "name": "MINUTES section right character"
+            },
+            "native": {}
+        },
+        {
+            "_id": "seconds_left",
+            "type": "channel",
+            "common": {
+                "role": "displayChar",
+                "name": "SECONDS section left character"
+            },
+            "native": {}
+        },
+        {
+            "_id": "seconds_right",
+            "type": "channel",
+            "common": {
+                "role": "displayChar",
+                "name": "SECONDS section right character"
+            },
+            "native": {}
+        },
+        {
+            "_id": "frames_left",
+            "type": "channel",
+            "common": {
+                "role": "displayChar",
+                "name": "FRAMES section left character"
+            },
+            "native": {}
+        },
+        {
+            "_id": "frames_middle",
+            "type": "channel",
+            "common": {
+                "role": "displayChar",
+                "name": "FRAMES section middle character"
+            },
+            "native": {}
+        },
+        {
+            "_id": "frames_right",
+            "type": "channel",
+            "common": {
+                "role": "displayChar",
+                "name": "FRAMES section right character"
+            },
+            "native": {}
         }
     ],    
     "view": [
@@ -1417,6 +1525,92 @@
                 "type": "boolean",
                 "read": true,
                 "write": false,
+                "def": false
+            },
+            "native": {}
+        }
+    ],
+    "displayChar": [
+        {
+            "_id": "enabled",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "If true the character is working and will be displayed",
+                "type": "boolean",
+                "read": true,
+                "write": true,
+                "def": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "mode",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "simple (the character in char is diplayed) or extended",
+                "type": "number",
+                "states": {
+                    "0": "Simple",
+                    "1": "Extended"
+                },
+                "read": true,
+                "write": true,
+                "def": 0
+            },
+            "native": {}
+        },
+        {
+            "_id": "char",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "7-bit ASCII character to display",
+                "type": "string",
+                "read": true,
+                "write": true,
+                "def": ""
+            },
+            "native": {}
+        },
+        {
+            "_id": "extended",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "extended character (bit 0-7 corresponds to segment a-g)",
+                "type": "number",
+                "read": true,
+                "write": true,
+                "min": 0,
+                "max": 127,
+                "def": 0
+            },
+            "native": {}
+        },
+        {
+            "_id": "dot",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "when true displays a dot to the character",
+                "type": "boolean",
+                "read": true,
+                "write": true,
+                "def": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "syncGlobal",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "If true the value will be synced to every equal item in the whole adapter",
+                "type": "boolean",
+                "read": true,
+                "write": true,
                 "def": false
             },
             "native": {}
