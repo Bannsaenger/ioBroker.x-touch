@@ -929,7 +929,7 @@ class XTouch extends utils.Adapter {
      * @param {string} charId                only when called via onStateChange
      * @param {any | null | undefined} value
      */
-     async handleDisplayChar(charId, value = undefined) {
+    async handleDisplayChar(charId, value = undefined) {
         const self = this;
         try {
             const characterArr = charId.split('.');
@@ -1286,13 +1286,13 @@ class XTouch extends utils.Adapter {
      * @param {string} charId
      * @param {string} deviceAddress    only chen called via deviceUpdatexx
      */
-     async sendDisplayChar(charId, deviceAddress = '') {
+    async sendDisplayChar(charId, deviceAddress = '') {
         const self = this;
         try {
             const characterArr = charId.split('.');
             const actDeviceGroup = characterArr[3];
             const character = characterArr[5];
-            let   char = self.deviceGroups[charId + '.char'].val || '';
+            const char = self.deviceGroups[charId + '.char'].val || '';
             const dot = self.deviceGroups[charId + '.dot'].val || false;
             const enabled = self.deviceGroups[charId + '.enabled'].val || false;
             const extended = self.deviceGroups[charId + '.extended'].val;
@@ -1330,11 +1330,11 @@ class XTouch extends utils.Adapter {
                 case 'minutes_right':
                     controller = 102;
                     break;
-            
+
                 case 'seconds_left':
                     controller = 103;
                     break;
-                                                                
+
                 case 'seconds_right':
                     controller = 104;
                     break;
@@ -1544,7 +1544,7 @@ class XTouch extends utils.Adapter {
                                 case 'displayChar':
                                     self.handleDisplayChar(id, state.val);
                                     break;
-                                }
+                            }
                         }
                         if (/illuminate|max/.test(id)) {
                             self.log.warn(`X-Touch state ${id} changed. Please restart instance`);
@@ -2221,7 +2221,7 @@ class XTouch extends utils.Adapter {
 
                     const exportFile = self.createExportFile();
                     const device_states = await self.getStatesOfAsync('deviceGroups');
-                    let exportDeviceStates = [];
+                    const exportDeviceStates = [];
                     let tempObj;
                     let deviceObj;
                     for (const device_state of device_states) {
@@ -2232,7 +2232,7 @@ class XTouch extends utils.Adapter {
                         exportDeviceStates.push(deviceObj);
                     }
                     self.writeFileAsync('x-touch.0', exportFile, JSON.stringify(exportDeviceStates));
-        
+
                     // Send response in callback
                     if (obj.callback) self.sendTo(obj.from, obj.command, `values exported to: "${exportFile}"`, obj.callback);
                 } else if (obj.command === 'import') {
