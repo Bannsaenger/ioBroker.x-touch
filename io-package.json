@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "x-touch",
-        "version": "0.3.0",
+        "version": "0.4.0",
         "news": {
             "0.0.1": {
                 "en": "initial release",
@@ -50,6 +50,9 @@
             },
             "0.3.0": {
                 "en": "added the timecode display"
+            },
+            "0.4.0": {
+                "en": "added the ability to export the actual state values via a message and reimport the states again"
             }
         },
         "title": "Behringer X-Touch",
@@ -118,6 +121,15 @@
     },
     "objects": [],
     "instanceObjects": [
+        {
+            "_id": "",
+            "type": "meta",
+            "common": {
+                "name": "User files for x-touch",
+                "type": "meta.user"
+            },
+            "native": {}
+        },
         {
             "_id": "info",
             "type": "channel",

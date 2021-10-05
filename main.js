@@ -2167,6 +2167,36 @@ class XTouch extends utils.Adapter {
     }
 
     /**
+     * Called for creating a new file for recording
+     * @returns {string}
+	 */
+    createExportFile() {
+        const self = this;
+        try {
+            const locDateObj = new Date();
+            // current date
+            // current month
+            const locMonth = ('0' + (locDateObj.getMonth() + 1)).slice(-2);
+            // current day
+            const locDay = ('0' + locDateObj.getDate()).slice(-2);
+            // current year
+            const locYear = locDateObj.getFullYear();
+            // current hours
+            const locHours = ('0' + locDateObj.getHours()).slice(-2);
+            // current minutes
+            const locMinutes = ('0' + locDateObj.getMinutes()).slice(-2);
+            // current seconds
+            const locSeconds = ('0' + locDateObj.getSeconds()).slice(-2);
+            // now create the filename
+            return `${locYear}${locMonth}${locDay}_${locHours}${locMinutes}${locSeconds}_X-Touch_Export.rec`;
+            // file will be opened on exporting
+        } catch (err) {
+            self.errorHandler(err, 'createExportFile');
+        }
+        return '';
+    }
+
+    /**
      * Called on error situations and from catch blocks
 	 * @param {any} err
 	 * @param {string} module
@@ -2180,26 +2210,46 @@ class XTouch extends utils.Adapter {
      * Using this method requires 'common.messagebox' property to be set to true in io-package.json
      * @param {ioBroker.Message} obj
      */
-    onMessage(obj) {
-        if (typeof obj === 'object' && obj.message) {
-            if (obj.command === 'export') {
-                // export values of the actual instance
-                this.log.info('X-Touch exporting values');
+    async onMessage(obj) {
+        const self = this;
+        try {
+            if (typeof obj === 'object' && obj.command) {
+                self.log.info('X-Touch message: ' + JSON.stringify(obj));
+                if (obj.command === 'export') {
+                    // export values of the actual instance
+                    self.log.info('X-Touch exporting values');
 
-                // Send response in callback
-                if (obj.callback) this.sendTo(obj.from, obj.command, 'values exported', obj.callback);
-            } else if (obj.command === 'import') {
-                // export values of the actual instance
-                this.log.info('X-Touch exporting values');
+                    const exportFile = self.createExportFile();
+                    const device_states = await self.getStatesOfAsync('deviceGroups');
+                    let exportDeviceStates = [];
+                    let tempObj;
+                    let deviceObj;
+                    for (const device_state of device_states) {
+                        deviceObj = device_state;
+                        tempObj = await self.getStateAsync(device_state._id);
+                        // @ts-ignore
+                        deviceObj.val = (tempObj && tempObj.val !== undefined) ? tempObj.val : '';
+                        exportDeviceStates.push(deviceObj);
+                    }
+                    self.writeFileAsync('x-touch.0', exportFile, JSON.stringify(exportDeviceStates));
+        
+                    // Send response in callback
+                    if (obj.callback) self.sendTo(obj.from, obj.command, `values exported to: "${exportFile}"`, obj.callback);
+                } else if (obj.command === 'import') {
+                    // export values of the actual instance
+                    self.log.info('X-Touch importing values');
 
-                // Send response in callback
-                if (obj.callback) this.sendTo(obj.from, obj.command, 'values imported', obj.callback);
-            } else {
-                // export values of the actual instance
-                this.log.warn(`X-Touch received unknown command [${obj.command}]`);
-                // Send response in callback
-                if (obj.callback) this.sendTo(obj.from, obj.command, 'unknown command', obj.callback);
+                    // Send response in callback
+                    if (obj.callback) self.sendTo(obj.from, obj.command, 'values imported', obj.callback);
+                } else {
+                    // export values of the actual instance
+                    self.log.warn(`X-Touch received unknown command "${obj.command}" with message "${JSON.stringify(obj.message)}"`);
+                    // Send response in callback
+                    if (obj.callback) self.sendTo(obj.from, obj.command, `unknown command : "${obj.command}" with message "${JSON.stringify(obj.message)}"`, obj.callback);
+                }
             }
+        } catch (err) {
+            self.errorHandler(err, 'onMessage');
         }
     }
 
