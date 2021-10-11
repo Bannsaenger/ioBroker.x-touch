@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "x-touch",
-        "version": "0.4.0",
+        "version": "0.4.1",
         "news": {
             "0.0.1": {
                 "en": "initial release",
@@ -53,6 +53,9 @@
             },
             "0.4.0": {
                 "en": "added the ability to export the actual state values via a message and reimport the states again"
+            },
+            "0.4.1": {
+                "en": "abug fixing in the export/import feature"
             }
         },
         "title": "Behringer X-Touch",

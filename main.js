@@ -11,7 +11,7 @@
 /*
  * ToDo:
  *      - when maxBanks or maxChannels changes, delete when rebuildDatabase is set
- *      - resend data on group mambership change
+ *      - resend data on group membership change
  */
 
 // The adapter-core module gives you access to the core ioBroker functions
@@ -21,7 +21,7 @@ const utils = require('@iobroker/adapter-core');
 // Load your modules here, e.g.:
 const fs = require('fs');
 const udp = require('dgram');
-//const { debug } = require('console');
+const { debug } = require('console');
 
 const POLL_REC    = 'F0002032585400F7';
 const POLL_REPLY  = 'F00000661400F7';
@@ -243,7 +243,7 @@ class XTouch extends utils.Adapter {
                     }
                     self.log.info('X-Touch device with IP <' + deviceAddress + '> created. Is now online.');
                     await self.setStateAsync(prefix + 'ipAddress', deviceAddress, true);
-                    await self.setStateAsync(prefix + 'port', port.toString(), true);
+                    await self.setStateAsync(prefix + 'port', Number(port), true);
                     await self.setStateAsync(prefix + 'memberOfGroup', 0, true);
                     await self.setStateAsync(prefix + 'connection', true, true);
                     self.deviceUpdateDevice(deviceAddress);
@@ -256,9 +256,9 @@ class XTouch extends utils.Adapter {
                     if (!self.devices[deviceAddress].connection) {
                         self.devices[deviceAddress].connection = true;
                         self.devices[deviceAddress].port = port;
-                        self.log.info('X-Touch device with IP <' + deviceAddress + '> now online.');
+                        self.log.info('X-Touch device with IP <' + deviceAddress + '> is now online.');
                         await self.setStateAsync('devices.' + self.devices[deviceAddress].index + '.connection', true, true);
-                        await self.setStateAsync('devices.' + self.devices[deviceAddress].index + '.port', port.toString(), true);        // port can have changed
+                        await self.setStateAsync('devices.' + self.devices[deviceAddress].index + '.port', Number(port), true);        // port can have changed
                         self.deviceUpdateDevice(deviceAddress);
                     }
                     if (self.devices[deviceAddress].timerDeviceInactivityTimeout) {
@@ -2188,8 +2188,8 @@ class XTouch extends utils.Adapter {
             // current seconds
             const locSeconds = ('0' + locDateObj.getSeconds()).slice(-2);
             // now create the filename
-            return `${locYear}${locMonth}${locDay}_${locHours}${locMinutes}${locSeconds}_X-Touch_Export.rec`;
-            // file will be opened on exporting
+            return `${locYear}${locMonth}${locDay}_${locHours}${locMinutes}${locSeconds}_X-Touch_Export.json`;
+            // file will be written using the iobroker writefile utility
         } catch (err) {
             self.errorHandler(err, 'createExportFile');
         }
@@ -2221,7 +2221,7 @@ class XTouch extends utils.Adapter {
 
                     const exportFile = self.createExportFile();
                     const device_states = await self.getStatesOfAsync('deviceGroups');
-                    const exportDeviceStates = [];
+                    const exportDeviceStates = {};
                     let tempObj;
                     let deviceObj;
                     for (const device_state of device_states) {
@@ -2229,9 +2229,9 @@ class XTouch extends utils.Adapter {
                         tempObj = await self.getStateAsync(device_state._id);
                         // @ts-ignore
                         deviceObj.val = (tempObj && tempObj.val !== undefined) ? tempObj.val : '';
-                        exportDeviceStates.push(deviceObj);
+                        exportDeviceStates[deviceObj._id] = deviceObj;
                     }
-                    self.writeFileAsync('x-touch.0', exportFile, JSON.stringify(exportDeviceStates));
+                    self.writeFileAsync('x-touch.0', exportFile, JSON.stringify(exportDeviceStates, null, 2));
 
                     // Send response in callback
                     if (obj.callback) self.sendTo(obj.from, obj.command, `values exported to: "${exportFile}"`, obj.callback);
@@ -2239,8 +2239,53 @@ class XTouch extends utils.Adapter {
                     // export values of the actual instance
                     self.log.info('X-Touch importing values');
 
+                    let importFile = 'file' in Object(obj.message) ? Object(obj.message).file : '';
+                    let importPath = 'path' in Object(obj.message) ? Object(obj.message).path : '';
+                    let importDeviceGroup = 'devicegroup' in Object(obj.message) ? Object(obj.message).devicegroup : '';
+                    let importFiles = [];
+                    let importJson;
+                    let importContent;
+
+                    if (importPath !== '') {
+                        // look in the filesystem
+                        // try to read the given file. If not exists run to the error portion
+                        importJson = JSON.parse(fs.readFileSync(importPath + '/' + importFile, 'utf8'));
+                    } else {
+                        // look in the adapters file section
+                        let tempDir = await self.readDirAsync('x-touch.0', '/');
+                        for (const file of tempDir) {
+                            if (file.isDir) continue;       // skip directories
+                            if (file.file === importFile) {
+                                self.log.debug(`Importfile "${importFile}" found.`);
+                                importFiles.push(importFile);   // for later existance in array
+                                break;
+                            }
+                            const fileName = file.file;
+                            if (fileName.split('.').pop() !== 'json') continue;
+                            importFiles.push(fileName);
+                        }
+                        importFiles.sort();
+                        if (importFile === '') importFile = importFiles[importFiles.length - 1];   // if none specified pop the last in array
+                        if (!importFiles.includes(importFile)) throw({'message': `File "${importFile}" does not exist in directory`});
+                        // try to read the file
+                        importContent = await self.readFileAsync('x-touch.0', importFile);
+                        importJson = JSON.parse(importContent.file.toString());
+                        self.log.debug(`File "${importFile}" red`);
+                    }
+
+                    for (const dbObject of Object.keys(importJson)) {        // iterate through the file elements
+                        if (dbObject.substr(0, 22) !== 'x-touch.0.deviceGroups') continue;                           // skip foreign objects 
+                        if ((dbObject.substr(23, 1) !== importDeviceGroup) && importDeviceGroup !== '') continue;    // skip unselected devicegroups
+                        if (await self.getStateAsync(dbObject)) {           // Object exists in db
+                            if ((importJson[dbObject].val !== undefined) && (importJson[dbObject].common.write !== undefined) && (importJson[dbObject].common.write)) {
+                                self.log.debug(`Setting object: "${dbObject}" with value: "${importJson[dbObject].val}"`);
+                                await self.setStateAsync(dbObject, importJson[dbObject].val, false);                    // set as not acknowledged so it will be transmitted immediate to the X-Touch
+                            }
+                        }
+                    }
+
                     // Send response in callback
-                    if (obj.callback) self.sendTo(obj.from, obj.command, 'values imported', obj.callback);
+                    if (obj.callback) self.sendTo(obj.from, obj.command, `values imported from file "${importFile}"`, obj.callback);
                 } else {
                     // export values of the actual instance
                     self.log.warn(`X-Touch received unknown command "${obj.command}" with message "${JSON.stringify(obj.message)}"`);
