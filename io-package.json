@@ -1,19 +1,139 @@
 {
     "common": {
         "name": "x-touch",
-        "version": "0.4.1",
+        "version": "0.4.2",
         "news": {
-            "0.0.1": {
-                "en": "initial release",
-                "de": "Erstveröffentlichung",
-                "ru": "Начальная версия",
-                "pt": "lançamento inicial",
-                "nl": "Eerste uitgave",
-                "fr": "Première version",
-                "it": "Versione iniziale",
-                "es": "Versión inicial",
-                "pl": "Pierwsze wydanie",
-                "zh-cn": "首次出版"
+            "0.4.2": {
+                "en": "changed sort order in changelog",
+                "de": "Sortierreihenfolge im Changelog geändert",
+                "ru": "изменен порядок сортировки в журнале изменений",
+                "pt": "mudou a ordem de classificação no changelog",
+                "nl": "gewijzigde sorteervolgorde in changelog",
+                "fr": "ordre de tri modifié dans le journal des modifications",
+                "it": "cambiato l'ordinamento nel changelog",
+                "es": "orden de clasificación cambiado en el registro de cambios",
+                "pl": "zmieniono kolejność sortowania w dzienniku zmian",
+                "zh-cn": "更改日志中的排序顺序"
+            },
+            "0.4.1": {
+                "en": "bug fixing in the export/import feature",
+                "de": "Fehlerbehebung in der Export/Import-Funktion",
+                "ru": "исправление ошибки в функции экспорта / импорта",
+                "pt": "correção de bug no recurso de exportação / importação",
+                "nl": "bugfixing in de export-/importfunctie",
+                "fr": "correction de bugs dans la fonction d'export/import",
+                "it": "correzione di bug nella funzione di esportazione/importazione",
+                "es": "corrección de errores en la función de exportación / importación",
+                "pl": "naprawa błędów w funkcji eksportu/importu",
+                "zh-cn": "导出/导入功能中的错误修复"
+            },
+            "0.4.0": {
+                "en": "added the ability to export the actual state values via a message and reimport the states again",
+                "de": "Möglichkeit hinzugefügt, die aktuellen Zustandswerte über eine Nachricht zu exportieren und die Zustände erneut zu importieren",
+                "ru": "добавлена возможность экспортировать фактические значения состояния через сообщение и повторно импортировать состояния",
+                "pt": "adicionou a capacidade de exportar os valores do estado real por meio de uma mensagem e reimportar os estados novamente",
+                "nl": "de mogelijkheid toegevoegd om de werkelijke statuswaarden via een bericht te exporteren en de statussen opnieuw te importeren",
+                "fr": "ajout de la possibilité d'exporter les valeurs d'état réelles via un message et de réimporter les états à nouveau",
+                "it": "aggiunta la possibilità di esportare i valori di stato effettivi tramite un messaggio e reimportare nuovamente gli stati",
+                "es": "agregó la capacidad de exportar los valores de estado reales a través de un mensaje y reimportar los estados nuevamente",
+                "pl": "dodano możliwość eksportu aktualnych wartości stanu za pomocą wiadomości i ponownego importu stanów;",
+                "zh-cn": "添加了通过消息导出实际状态值并再次重新导入状态的功能"
+            },
+            "0.3.0": {
+                "en": "added the timecode display",
+                "de": "Timecode-Anzeige hinzugefügt",
+                "ru": "добавлено отображение тайм-кода",
+                "pt": "adicionou a exibição do timecode",
+                "nl": "de tijdcodeweergave toegevoegd",
+                "fr": "ajout de l'affichage du code temporel",
+                "it": "aggiunto il display del timecode",
+                "es": "agregó la visualización del código de tiempo",
+                "pl": "dodano wyświetlanie kodu czasowego",
+                "zh-cn": "添加了时间码显示"
+            },
+            "0.2.5": {
+                "en": "fixed send back of button and fader values. Now only the affected device group members will be updated",
+                "de": "Das Zurücksenden von Button- und Fader-Werten wurde behoben. Jetzt werden nur die betroffenen Gerätegruppenmitglieder aktualisiert",
+                "ru": "исправлена обратная передача значений кнопок и фейдеров. Теперь будут обновлены только затронутые члены группы устройств.",
+                "pt": "envio fixo de volta dos valores de botão e fader. Agora, apenas os membros do grupo de dispositivos afetados serão atualizados",
+                "nl": "vaste terugsturen van knop- en faderwaarden. Nu worden alleen de getroffen apparaatgroepsleden bijgewerkt",
+                "fr": "renvoi fixe des valeurs des boutons et des faders. Désormais, seuls les membres du groupe d'appareils concernés seront mis à jour",
+                "it": "ritorno fisso dei valori dei pulsanti e dei fader. Ora verranno aggiornati solo i membri del gruppo di dispositivi interessati",
+                "es": "envío fijo de valores de botón y fader. Ahora solo se actualizarán los miembros del grupo de dispositivos afectados",
+                "pl": "naprawiono odsyłanie wartości przycisków i suwaków. Teraz zostaną zaktualizowani tylko członkowie grupy urządzeń, których dotyczy problem",
+                "zh-cn": "固定发送回按钮和推子值。现在只会更新受影响的设备组成员"
+            },
+            "0.2.4": {
+                "en": "fixed disabling of encoder display",
+                "de": "Deaktivierung der Encoderanzeige behoben",
+                "ru": "исправлено отключение отображения энкодера",
+                "pt": "corrigido desabilitação da exibição do codificador",
+                "nl": "vaste uitschakeling van encoderweergave",
+                "fr": "désactivation fixe de l'affichage de l'encodeur",
+                "it": "disabilitazione fissa del display dell'encoder",
+                "es": "deshabilitación fija de la pantalla del codificador",
+                "pl": "naprawiono wyłączanie wyświetlania enkodera",
+                "zh-cn": "固定禁用编码器显示"
+            },
+            "0.2.3": {
+                "en": "fixed setting of display inverted",
+                "de": "Setzen der invertierten Anzeige behoben",
+                "ru": "фиксированная установка инвертированного дисплея",
+                "pt": "configuração fixa da tela invertida",
+                "nl": "vaste instelling van display omgekeerd",
+                "fr": "réglage fixe de l'affichage inversé",
+                "it": "impostazione fissa del display invertita",
+                "es": "ajuste fijo de la pantalla invertida",
+                "pl": "poprawione ustawienie odwróconego wyświetlacza",
+                "zh-cn": "固定显示倒置设置"
+            },
+            "0.2.2": {
+                "en": "fixed fader handling and data distribution to the device group",
+                "de": "Fader-Handling und Datenverteilung an die Gerätegruppe behoben",
+                "ru": "исправлена обработка фейдеров и распределение данных по группе устройств",
+                "pt": "manuseio de fader fixo e distribuição de dados para o grupo de dispositivos",
+                "nl": "vaste faderverwerking en datadistributie naar de apparaatgroep",
+                "fr": "gestion des faders fixes et distribution des données au groupe d'appareils",
+                "it": "gestione del fader fissa e distribuzione dei dati al gruppo di dispositivi",
+                "es": "manejo de fader fijo y distribución de datos al grupo de dispositivos",
+                "pl": "poprawiono obsługę faderów i dystrybucję danych do grupy urządzeń,",
+                "zh-cn": "固定推子处理和数据分配到设备组"
+            },
+            "0.2.1": {
+                "en": "added sendDelay",
+                "de": "sendDelay hinzugefügt",
+                "ru": "добавлен sendDelay",
+                "pt": "adicionado sendDelay",
+                "nl": "toegevoegde verzendvertraging",
+                "fr": "ajout sendDelay",
+                "it": "aggiunto sendDelay",
+                "es": "añadido sendDelay",
+                "pl": "dodano opóźnienie wysyłania",
+                "zh-cn": "添加了发送延迟"
+            },
+            "0.2.0": {
+                "en": "introduced encoders",
+                "de": "eingeführte Encoder",
+                "ru": "представил кодировщики",
+                "pt": "codificadores introduzidos",
+                "nl": "geïntroduceerde encoders",
+                "fr": "encodeurs introduits",
+                "it": "codificatori introdotti",
+                "es": "codificadores introducidos",
+                "pl": "wprowadzone kodery",
+                "zh-cn": "引入编码器"
+            },
+            "0.1.0": {
+                "en": "introduced channel and page switching",
+                "de": "Kanal- und Seitenumschaltung eingeführt",
+                "ru": "введено переключение каналов и страниц",
+                "pt": "introduziu a troca de canal e página",
+                "nl": "introduceerde kanaal- en paginawisseling",
+                "fr": "introduction du changement de canal et de page",
+                "it": "introdotto il cambio di canale e di pagina",
+                "es": "introdujo el cambio de canal y página",
+                "pl": "wprowadzono przełączanie kanałów i stron",
+                "zh-cn": "引入频道和页面切换"
             },
             "0.0.2": {
                 "en": "minor changes for the publication of the first release",
@@ -27,35 +147,17 @@
                 "pl": "drobne zmiany dotyczące publikacji pierwszego wydania",
                 "zh-cn": "对第一个发行版的微小更改"
             },
-            "0.1.0": {
-                "en": "introduced channel and page switching"
-            },
-            "0.2.0": {
-                "en": "introduced encoders"
-            },
-            "0.2.1": {
-                "en": "added sendDelay"
-            },
-            "0.2.2": {
-                "en": "fixed fader handling and data distribution to the device group"
-            },
-            "0.2.3": {
-                "en": "fixed setting of display inverted"
-            },
-            "0.2.4": {
-                "en": "fixed disabling of encoder display"
-            },
-            "0.2.5": {
-                "en": "fixed send back of button and fader values. Now only the affected device group members will be updated"
-            },
-            "0.3.0": {
-                "en": "added the timecode display"
-            },
-            "0.4.0": {
-                "en": "added the ability to export the actual state values via a message and reimport the states again"
-            },
-            "0.4.1": {
-                "en": "abug fixing in the export/import feature"
+            "0.0.1": {
+                "en": "initial release",
+                "de": "Erstveröffentlichung",
+                "ru": "Начальная версия",
+                "pt": "lançamento inicial",
+                "nl": "Eerste uitgave",
+                "fr": "Première version",
+                "it": "Versione iniziale",
+                "es": "Versión inicial",
+                "pl": "Pierwsze wydanie",
+                "zh-cn": "首次出版"
             }
         },
         "title": "Behringer X-Touch",
