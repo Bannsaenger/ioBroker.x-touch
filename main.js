@@ -21,6 +21,7 @@ const utils = require('@iobroker/adapter-core');
 // Load your modules here, e.g.:
 const fs = require('fs');
 const udp = require('dgram');
+// eslint-disable-next-line no-unused-vars
 const { debug } = require('console');
 
 const POLL_REC    = 'F0002032585400F7';
@@ -2240,9 +2241,9 @@ class XTouch extends utils.Adapter {
                     self.log.info('X-Touch importing values');
 
                     let importFile = 'file' in Object(obj.message) ? Object(obj.message).file : '';
-                    let importPath = 'path' in Object(obj.message) ? Object(obj.message).path : '';
-                    let importDeviceGroup = 'devicegroup' in Object(obj.message) ? Object(obj.message).devicegroup : '';
-                    let importFiles = [];
+                    const importPath = 'path' in Object(obj.message) ? Object(obj.message).path : '';
+                    const importDeviceGroup = 'devicegroup' in Object(obj.message) ? Object(obj.message).devicegroup : '';
+                    const importFiles = [];
                     let importJson;
                     let importContent;
 
@@ -2252,7 +2253,7 @@ class XTouch extends utils.Adapter {
                         importJson = JSON.parse(fs.readFileSync(importPath + '/' + importFile, 'utf8'));
                     } else {
                         // look in the adapters file section
-                        let tempDir = await self.readDirAsync('x-touch.0', '/');
+                        const tempDir = await self.readDirAsync('x-touch.0', '/');
                         for (const file of tempDir) {
                             if (file.isDir) continue;       // skip directories
                             if (file.file === importFile) {
@@ -2274,7 +2275,7 @@ class XTouch extends utils.Adapter {
                     }
 
                     for (const dbObject of Object.keys(importJson)) {        // iterate through the file elements
-                        if (dbObject.substr(0, 22) !== 'x-touch.0.deviceGroups') continue;                           // skip foreign objects 
+                        if (dbObject.substr(0, 22) !== 'x-touch.0.deviceGroups') continue;                           // skip foreign objects
                         if ((dbObject.substr(23, 1) !== importDeviceGroup) && importDeviceGroup !== '') continue;    // skip unselected devicegroups
                         if (await self.getStateAsync(dbObject)) {           // Object exists in db
                             if ((importJson[dbObject].val !== undefined) && (importJson[dbObject].common.write !== undefined) && (importJson[dbObject].common.write)) {
@@ -2331,7 +2332,7 @@ if (module.parent) {
      * @param {Partial<utils.AdapterOptions>} [options={}]
      */
 
-    module.exports = (options) => {'use strict'; new XTouch(options); };
+    module.exports = (options) => new XTouch(options);
 } else {
     // otherwise start the instance directly
     new XTouch();
