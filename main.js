@@ -243,7 +243,7 @@ class XTouch extends utils.Adapter {
                     }
                     self.log.info('X-Touch device with IP <' + deviceAddress + '> created. Is now online.');
                     await self.setStateAsync(prefix + 'ipAddress', deviceAddress, true);
-                    await self.setStateAsync(prefix + 'port', Number(port), true);
+                    await self.setStateAsync(prefix + 'port', port, true);
                     await self.setStateAsync(prefix + 'memberOfGroup', 0, true);
                     await self.setStateAsync(prefix + 'connection', true, true);
                     self.deviceUpdateDevice(deviceAddress);
@@ -258,7 +258,7 @@ class XTouch extends utils.Adapter {
                         self.devices[deviceAddress].port = port;
                         self.log.info('X-Touch device with IP <' + deviceAddress + '> is now online.');
                         await self.setStateAsync('devices.' + self.devices[deviceAddress].index + '.connection', true, true);
-                        await self.setStateAsync('devices.' + self.devices[deviceAddress].index + '.port', Number(port), true);        // port can have changed
+                        await self.setStateAsync('devices.' + self.devices[deviceAddress].index + '.port', port, true);        // port can have changed
                         self.deviceUpdateDevice(deviceAddress);
                     }
                     if (self.devices[deviceAddress].timerDeviceInactivityTimeout) {
