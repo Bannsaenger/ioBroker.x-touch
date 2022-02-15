@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "x-touch",
-        "version": "0.4.2",
+        "version": "0.5.0",
         "news": {
+            "0.5.0": {
+                "en": "fixes in db creation for js controller 4.x",
+                "de": "Korrekturen in der DB-Erstellung für js Controller 4.x",
+                "ru": "исправления в создании БД для js контроллера 4.x",
+                "pt": "correções na criação de banco de dados para js controller 4.x",
+                "nl": "fixes in db-creatie voor js-controller 4.x",
+                "fr": "correctifs dans la création de la base de données pour le contrôleur js 4.x",
+                "it": "correzioni nella creazione di db per il controller js 4.x",
+                "es": "correcciones en la creación de db para el controlador js 4.x",
+                "pl": "poprawki w tworzeniu bazy danych dla kontrolera js 4.x",
+                "zh-cn": "修复了 js 控制器 4.x 的数据库创建"
+            },
             "0.4.2": {
                 "en": "changed sort order in changelog",
                 "de": "Sortierreihenfolge im Changelog geändert",

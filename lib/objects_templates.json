@@ -95,7 +95,12 @@
                 "role": "value",
                 "name": "Base channel number of active channel bank (1, 9, 17, 25)",
                 "type": "number",
-                "states": "1:1-8;9:9-16;17:17-24;25:25-32",
+                "states": {
+                    "1": "1-8",
+                    "9": "9-16",
+                    "17": "17-24",
+                    "25": "25-32"
+                },
                 "read": true,
                 "write": true,
                 "def": 1
@@ -313,7 +318,12 @@
                 "role": "value",
                 "name": "Maximum number of channels available: 8, 16, 24, 32",
                 "type": "number",
-                "states": "8:one Bank;16:two banks;24:3 banks;32:4 banks",
+                "states": {
+                    "8": "one Bank",
+                    "16": "two banks",
+                    "24": "3 banks",
+                    "32": "4 banks"
+                },
                 "read": true,
                 "write": true,
                 "def": 8
@@ -1206,7 +1216,13 @@
                 "role": "value",
                 "name": "auto Function",
                 "type": "number",
-                "states": "0:off;1:tip;2:on press;3:on release;4:on press/release",
+                "states": {
+                    "0": "off",
+                    "1": "tip",
+                    "2": "on press",
+                    "3": "on release",
+                    "4": "on press/release"
+                },
                 "read": true,
                 "write": true,
                 "min": 0,
