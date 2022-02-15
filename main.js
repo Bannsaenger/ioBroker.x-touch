@@ -21,6 +21,7 @@ const utils = require('@iobroker/adapter-core');
 // Load your modules here, e.g.:
 const fs = require('fs');
 const udp = require('dgram');
+// eslint-disable-next-line no-unused-vars
 const { debug } = require('console');
 
 const POLL_REC    = 'F0002032585400F7';
@@ -243,7 +244,7 @@ class XTouch extends utils.Adapter {
                     }
                     self.log.info('X-Touch device with IP <' + deviceAddress + '> created. Is now online.');
                     await self.setStateAsync(prefix + 'ipAddress', deviceAddress, true);
-                    await self.setStateAsync(prefix + 'port', Number(port), true);
+                    await self.setStateAsync(prefix + 'port', port, true);
                     await self.setStateAsync(prefix + 'memberOfGroup', 0, true);
                     await self.setStateAsync(prefix + 'connection', true, true);
                     self.deviceUpdateDevice(deviceAddress);
@@ -258,7 +259,7 @@ class XTouch extends utils.Adapter {
                         self.devices[deviceAddress].port = port;
                         self.log.info('X-Touch device with IP <' + deviceAddress + '> is now online.');
                         await self.setStateAsync('devices.' + self.devices[deviceAddress].index + '.connection', true, true);
-                        await self.setStateAsync('devices.' + self.devices[deviceAddress].index + '.port', Number(port), true);        // port can have changed
+                        await self.setStateAsync('devices.' + self.devices[deviceAddress].index + '.port', port, true);        // port can have changed
                         self.deviceUpdateDevice(deviceAddress);
                     }
                     if (self.devices[deviceAddress].timerDeviceInactivityTimeout) {
@@ -2240,9 +2241,9 @@ class XTouch extends utils.Adapter {
                     self.log.info('X-Touch importing values');
 
                     let importFile = 'file' in Object(obj.message) ? Object(obj.message).file : '';
-                    let importPath = 'path' in Object(obj.message) ? Object(obj.message).path : '';
-                    let importDeviceGroup = 'devicegroup' in Object(obj.message) ? Object(obj.message).devicegroup : '';
-                    let importFiles = [];
+                    const importPath = 'path' in Object(obj.message) ? Object(obj.message).path : '';
+                    const importDeviceGroup = 'devicegroup' in Object(obj.message) ? Object(obj.message).devicegroup : '';
+                    const importFiles = [];
                     let importJson;
                     let importContent;
 
@@ -2252,7 +2253,7 @@ class XTouch extends utils.Adapter {
                         importJson = JSON.parse(fs.readFileSync(importPath + '/' + importFile, 'utf8'));
                     } else {
                         // look in the adapters file section
-                        let tempDir = await self.readDirAsync('x-touch.0', '/');
+                        const tempDir = await self.readDirAsync('x-touch.0', '/');
                         for (const file of tempDir) {
                             if (file.isDir) continue;       // skip directories
                             if (file.file === importFile) {
@@ -2274,7 +2275,7 @@ class XTouch extends utils.Adapter {
                     }
 
                     for (const dbObject of Object.keys(importJson)) {        // iterate through the file elements
-                        if (dbObject.substr(0, 22) !== 'x-touch.0.deviceGroups') continue;                           // skip foreign objects 
+                        if (dbObject.substr(0, 22) !== 'x-touch.0.deviceGroups') continue;                           // skip foreign objects
                         if ((dbObject.substr(23, 1) !== importDeviceGroup) && importDeviceGroup !== '') continue;    // skip unselected devicegroups
                         if (await self.getStateAsync(dbObject)) {           // Object exists in db
                             if ((importJson[dbObject].val !== undefined) && (importJson[dbObject].common.write !== undefined) && (importJson[dbObject].common.write)) {
@@ -2331,7 +2332,7 @@ if (module.parent) {
      * @param {Partial<utils.AdapterOptions>} [options={}]
      */
 
-    module.exports = (options) => {'use strict'; new XTouch(options); };
+    module.exports = (options) => new XTouch(options);
 } else {
     // otherwise start the instance directly
     new XTouch();
