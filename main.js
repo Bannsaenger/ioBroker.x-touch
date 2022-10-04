@@ -2,7 +2,7 @@
  *
  *      iobroker x-touch Adapter
  *
- *      Copyright (c) 2020-2021, Bannsaenger <bannsaenger@gmx.de>
+ *      Copyright (c) 2020-2022, Bannsaenger <bannsaenger@gmx.de>
  *
  *      MIT License
  *
@@ -1813,7 +1813,7 @@ class XTouch extends utils.Adapter {
     async createDatabaseAsync() {
         const self = this;
 
-        self.log.debug('Extron start to create/update the database');
+        self.log.debug('X-Touch start to create/update the database');
 
         // create the device groups
         for (let index = 0; index < self.config.deviceGroups; index++) {
@@ -1835,7 +1835,7 @@ class XTouch extends utils.Adapter {
             await self.delObjectAsync(self.namespace + '.deviceGroups.' + index);
         }
 
-        self.log.debug('Extron finished up database creation');
+        self.log.debug('X-Touch finished up database creation');
     }
 
     /**
@@ -2270,7 +2270,7 @@ class XTouch extends utils.Adapter {
                         if (!importFiles.includes(importFile)) throw({'message': `File "${importFile}" does not exist in directory`});
                         // try to read the file
                         importContent = await self.readFileAsync('x-touch.0', importFile);
-                        importJson = JSON.parse(importContent.file.toString());
+                        importJson = JSON.parse(importContent.data.toString());
                         self.log.debug(`File "${importFile}" red`);
                     }
 

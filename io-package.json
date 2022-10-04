@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "x-touch",
-        "version": "0.5.0",
+        "version": "0.6.0",
         "news": {
+            "0.6.0": {
+                "en": "updated dependencies",
+                "de": "Abhängigkeiten aktualisiert",
+                "ru": "обновленные зависимости",
+                "pt": "dependências atualizadas",
+                "nl": "vertaling:",
+                "fr": "dépendances actualisées",
+                "it": "dipendenze aggiornate",
+                "es": "dependencias actualizadas",
+                "pl": "zależności aktualizacji",
+                "zh-cn": "二. 最新依赖"
+            },
             "0.5.0": {
                 "en": "fixes in db creation for js controller 4.x",
                 "de": "Korrekturen in der DB-Erstellung für js Controller 4.x",
