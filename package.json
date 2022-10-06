@@ -58,7 +58,7 @@
     "test": "npm run test:js && npm run test:package",
     "lint": "eslint",
     "translate": "translate-adapter",
-    "build": "build-adapter",
+    "build": "build-adapter all",
     "release": "release-script patch --dry",
     "release-minor": "release-script minor --dry",
     "release-major": "release-script major --dry"
