@@ -1,9 +1,9 @@
 {
     "common": {
         "name": "x-touch",
-        "version": "0.6.0",
+        "version": "0.5.1",
         "news": {
-            "0.6.0": {
+            "0.5.1": {
                 "en": "updated dependencies",
                 "de": "Abhängigkeiten aktualisiert",
                 "ru": "обновленные зависимости",

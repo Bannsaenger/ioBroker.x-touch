@@ -27,7 +27,17 @@ There a two acepted commands:
 * `import` imports the youngest file from the userdata folder. Additionally you can specify `file` and/or the `devicegroup` number to restore. If `path` is specified the entire filesystem will be used and a `file` name is mandatory.  
 
 ## Changelog
-### 0.6.0
+
+<!--
+    Placeholder for the next version (at the beginning of the line):
+    ## **WORK IN PROGRESS**
+-->
+
+## **WORK IN PROGRESS**
+
+- (Bannsanger) updated to adapter-dev and release script
+
+### 0.5.1
 * (Bannsanger) updated dependencies
 
 ### 0.5.0
