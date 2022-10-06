@@ -57,7 +57,7 @@
     "test:integration": "mocha test/integration --exit",
     "test": "npm run test:js && npm run test:package",
     "lint": "eslint",
-		"translate": "translate-adapter",
+    "translate": "translate-adapter",
     "release": "release-script patch --dry",
     "release-minor": "release-script minor --dry",
     "release-major": "release-script major --dry"
