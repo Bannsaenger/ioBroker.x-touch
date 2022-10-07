@@ -1,0 +1,101 @@
+{
+    "i18n": true,
+    "type": "tabs",
+    "items": {
+        "_options": {
+            "type": "panel",
+            "label": "options",
+            "items": {
+                "bind": {
+                    "type": "ip",
+                    "listenOnAllPorts": true,
+                    "onlyIp4": true,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "label": "IP",
+                    "help": "IP address to bind the port to"
+                },
+                "port": {
+                    "type": "number",
+                    "min": 1,
+                    "max": 65565,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 2,
+                    "label": "Port",
+                    "help": "listen at this UDP port"
+                },
+                "deviceInactivityTimeout": {
+                    "type": "number",
+                    "min": 2000,
+                    "max": 30000,
+                    "step": 100,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 2,
+                    "label": "device inactivity timeout (in ms)",
+                    "help": "set the time limit in ms after which the device will be reported offline if no status query is received",
+                    "newLine": true
+                },
+                "sendDelay": {
+                    "type": "number",
+                    "min": 1,
+                    "max": 100,
+                    "step": 1,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 2,
+                    "label": "time to wait between two midi messages (in ms)",
+                    "help": "increase if some conditions are not displayed correctly, especially if the whole status is transferred"
+                },
+                "deviceGroups": {
+                    "type": "number",
+                    "min": 1,
+                    "max": 4,
+                    "step": 1,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 2,
+                    "label": "Device groups",
+                    "help": "number of devicegroups which will be generated for use",
+                    "newLine": true
+                },
+                "maxChannels": {
+                    "type": "number",
+                    "min": 8,
+                    "max": 32,
+                    "step": 8,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 2,
+                    "label": "Channels",
+                    "help": "maximum number of channels (8 to 32, in steps of 8)"
+                },
+                "maxBanks": {
+                    "type": "number",
+                    "min": 1,
+                    "max": 8,
+                    "step": 1,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 2,
+                    "label": "Banks",
+                    "help": "maximum number of fader banks to switch (max. 8)"
+                },
+                "_divider": {
+                    "type": "divider",
+                    "newLine": true
+                },
+                "createBank": {
+                    "type": "checkbox",
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 6,
+                    "label": "createBank",
+                    "newLine": true
+                }
+            }
+        }
+    }
+}

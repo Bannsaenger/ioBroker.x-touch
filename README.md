@@ -16,10 +16,8 @@
 Communicate with a Behringer X-Touch Control Surface (DAW Controller)
 
 ## ToDo
-- Add the encoders and their LEDs -> done, left is sync_global and checks on database changes
-- Add the timecode display -> done
-- Add the functionality of bank and fader channel switches -> done, needs additional testing
 - Add the syncGlobal functionality
+- Add the recreation of banks if option is set
 
 ## Message Box
 There a two acepted commands:
@@ -35,13 +33,14 @@ There a two acepted commands:
 
 ## **WORK IN PROGRESS**
 
-- (Bannsanger) updated to adapter-dev and release script
+- (Bannsaenger) updated to adapter-dev and release script
+- (Bannsaenger) introducing admin 5 UI (jsonConfig)
 
 ### 0.5.1
-* (Bannsanger) updated dependencies
+* (Bannsaenger) updated dependencies
 
 ### 0.5.0
-* (Bannsanger) fixes in db creation for js controller 4.x
+* (Bannsaenger) fixes in db creation for js controller 4.x
 
 ### 0.4.2
 * (Bannsaenger) changed sort order in changelog

@@ -1,0 +1,18 @@
+{
+    "options": "Optionen",
+    "IP": "IP",
+    "IP address to bind the port to": "IP-Adresse, an die der Port gebunden werden soll",
+    "Port": "Port",
+    "listen at this UDP port": "an diesem UDP-Port lauschen",
+    "device inactivity timeout (in ms)": "Zeitüberschreitung bei Geräteinaktivität (in ms)",
+    "set the time limit in ms after which the device will be reported offline if no status query is received": "stellen Sie die Zeit in ms ein, nach der das Gerät offline gemeldet wird, wenn keine Statusabfrage erfolgt",
+    "time to wait between two midi messages (in ms)": "Wartezeit zwischen zwei Midi-Nachrichten (in ms)",
+    "increase if some conditions are not displayed correctly, especially if the whole status is transferred": "erhöhen, wenn einige Bedingungen nicht korrekt angezeigt werden, insbesondere wenn der gesamte Status übertragen wird",
+    "Device groups": "Gerätegruppen",
+    "number of devicegroups which will be generated for use": "Anzahl der Gerätegruppen, die zur Verwendung generiert werden",
+    "Channels": "Kanäle",
+    "maximum number of channels (8 to 32, in steps of 8)": "maximale Anzahl Kanäle (8 bis 32, in 8er-Schritten)",
+    "Banks": "Faderbänke",
+    "maximum number of fader banks to switch (max. 8)": "maximale Anzahl zu schaltender Faderbänke (max. 8)",
+    "createBank": "Wenn diese Option aktiviert ist, werden die Faderbänke neu erstellt, wenn sich Parameter (maxBanks oder maxChannels) ändern"
+}

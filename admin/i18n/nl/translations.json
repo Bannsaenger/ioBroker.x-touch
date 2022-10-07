@@ -1,0 +1,18 @@
+{
+    "options": "opties",
+    "IP": "IK P",
+    "IP address to bind the port to": "IP-adres om de poort aan te binden",
+    "Port": "Port",
+    "listen at this UDP port": "luister op deze UDP-poort",
+    "device inactivity timeout (in ms)": "time-out bij inactiviteit van apparaat (in ms)",
+    "set the time limit in ms after which the device will be reported offline if no status query is received": "stel de tijdslimiet in in ms waarna het apparaat offline wordt gerapporteerd als er geen statusquery wordt ontvangen",
+    "time to wait between two midi messages (in ms)": "wachttijd tussen twee midi-berichten (in ms)",
+    "increase if some conditions are not displayed correctly, especially if the whole status is transferred": "verhogen als sommige voorwaarden niet correct worden weergegeven, vooral als de hele status wordt overgedragen",
+    "Device groups": "Apparaatgroepen",
+    "number of devicegroups which will be generated for use": "aantal apparaatgroepen dat voor gebruik wordt gegenereerd",
+    "Channels": "Kanalen",
+    "maximum number of channels (8 to 32, in steps of 8)": "maximaal aantal kanalen (8 tot 32, in stappen van 8)",
+    "Banks": "Faderbanken",
+    "maximum number of fader banks to switch (max. 8)": "maximaal aantal te schakelen faderbanken (max. 8)",
+    "createBank": "indien aangevinkt zullen de faderbanken nieuw worden aangemaakt wanneer parameters (maxBanks of maxChannels) veranderen"
+}

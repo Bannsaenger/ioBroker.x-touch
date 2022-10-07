@@ -1,0 +1,18 @@
+{
+    "options": "选项",
+    "IP": "知识产权",
+    "IP address to bind the port to": "绑定端口的IP地址",
+    "Port": "港口",
+    "listen at this UDP port": "在这个 UDP 端口监听",
+    "device inactivity timeout (in ms)": "设备不活动超时（以毫秒为单位）",
+    "set the time limit in ms after which the device will be reported offline if no status query is received": "设置时间限制（毫秒），如果没有收到状态查询，设备将被报告离线",
+    "time to wait between two midi messages (in ms)": "两条 midi 消息之间的等待时间（以毫秒为单位）",
+    "increase if some conditions are not displayed correctly, especially if the whole status is transferred": "如果某些条件没有正确显示，则增加，尤其是在整个状态转移的情况下",
+    "Device groups": "设备组",
+    "number of devicegroups which will be generated for use": "将生成以供使用的设备组数",
+    "Channels": "频道",
+    "maximum number of channels (8 to 32, in steps of 8)": "最大通道数（8 到 32，以 8 为步长）",
+    "Banks": "推子库",
+    "maximum number of fader banks to switch (max. 8)": "要切换的推子库的最大数量（最多 8 个）",
+    "createBank": "如果选中，当参数（maxBanks 或 maxChannels）改变时，推子库将被新创建"
+}

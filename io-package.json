@@ -222,8 +222,7 @@
         "extIcon": "https://raw.githubusercontent.com/Bannsaenger/ioBroker.x-touch/master/admin/x-touch.png",
         "readme": "https://github.com/Bannsaenger/ioBroker.x-touch/blob/master/README.md",
         "loglevel": "info",
-        "restartAdapters": [
-        ],
+        "restartAdapters": [],
         "mode": "daemon",
         "type": "hardware",
         "connectionType": "local",
@@ -231,9 +230,17 @@
         "messagebox": true,
         "compact": true,
         "materialize": true,
+        "adminUI": {
+            "config": "json"
+        },
         "dependencies": [
             {
-                "js-controller": ">=2.0.0"
+                "js-controller": ">=3.3.19"
+            }
+        ],
+        "globalDependecies": [
+            {
+                "admin": ">=5.1.28"
             }
         ]
     },
@@ -244,7 +251,7 @@
         "deviceGroups": 1,
         "maxChannels": 8,
         "maxBanks": 1,
-        "createBank": 0,
+        "createBank": false,
         "sendDelay": 1
     },
     "objects": [],

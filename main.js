@@ -10,7 +10,7 @@
 
 /*
  * ToDo:
- *      - when maxBanks or maxChannels changes, delete when rebuildDatabase is set
+ *      - when maxBanks or maxChannels changes, delete when cretaeBank is set
  *      - resend data on group membership change
  */
 
