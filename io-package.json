@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "x-touch",
-        "version": "0.5.1",
+        "version": "0.6.0",
         "news": {
+            "0.6.0": {
+                "en": "updated to adapter-dev and release script, introducing admin 5 UI (jsonConfig)",
+                "de": "auf adapter-dev und release script aktualisiert, Einführung der Admin 5 UI (jsonConfig)",
+                "ru": "обновлен до сценария адаптера-разработчика и выпуска, представлен пользовательский интерфейс администратора 5 (jsonConfig)",
+                "pt": "atualizado para o adapter-dev e o script de lançamento, apresentando a interface do usuário admin 5 (jsonConfig)",
+                "nl": "bijgewerkt naar adapter-dev en release-script, introductie van admin 5 UI (jsonConfig)",
+                "fr": "mise à jour vers adapter-dev et release script, introduisant l'interface utilisateur admin 5 (jsonConfig)",
+                "it": "aggiornato a adapter-dev e script di rilascio, introducendo l'interfaccia utente di amministrazione 5 (jsonConfig)",
+                "es": "actualizado a adapter-dev y release script, presentando admin 5 UI (jsonConfig)",
+                "pl": "zaktualizowano do skryptu adapter-dev i release, wprowadzając interfejs użytkownika admin 5 (jsonConfig)",
+                "zh-cn": "更新到适配器开发和发布脚本，引入 admin 5 UI (jsonConfig)"
+            },
             "0.5.1": {
                 "en": "updated dependencies",
                 "de": "Abhängigkeiten aktualisiert",
