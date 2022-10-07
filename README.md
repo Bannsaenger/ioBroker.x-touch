@@ -28,10 +28,10 @@ There a two acepted commands:
 
 <!--
     Placeholder for the next version (at the beginning of the line):
-    ## **WORK IN PROGRESS**
+    ### **WORK IN PROGRESS**
 -->
 
-## **WORK IN PROGRESS**
+### **WORK IN PROGRESS**
 
 - (Bannsaenger) updated to adapter-dev and release script
 - (Bannsaenger) introducing admin 5 UI (jsonConfig)
