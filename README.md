@@ -6,7 +6,6 @@
 ![Number of Installations (latest)](http://iobroker.live/badges/x-touch-installed.svg)
 ![Number of Installations (stable)](http://iobroker.live/badges/x-touch-stable.svg)
 ![Test and Release](https://github.com/bannsaenger/iobroker.x-touch/workflows/Test%20and%20Release/badge.svg)
-[![Dependency Status](https://img.shields.io/david/Bannsaenger/iobroker.x-touch.svg)](https://david-dm.org/Bannsaenger/iobroker.x-touch)
 [![Known Vulnerabilities](https://snyk.io/test/github/Bannsaenger/ioBroker.x-touch/badge.svg)](https://snyk.io/test/github/Bannsaenger/ioBroker.x-touch)
 
 [![NPM](https://nodei.co/npm/iobroker.x-touch.png?downloads=true)](https://nodei.co/npm/iobroker.x-touch/)
