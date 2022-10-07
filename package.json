@@ -1,6 +1,6 @@
 {
   "name": "iobroker.x-touch",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "Communicate with a Behringer X-Touch Control Surface (DAW Controller)",
   "author": {
     "name": "Bannsaenger",
@@ -59,9 +59,9 @@
     "lint": "eslint",
     "translate": "translate-adapter",
     "build": "build-adapter all",
-    "release": "release-script patch",
-    "release-minor": "release-script minor",
-    "release-major": "release-script major"
+    "release": "release-script patch --all --verbose -p iobroker license",
+    "release-minor": "release-script minor --all --verbose -p iobroker license",
+    "release-major": "release-script major --all --verbose -p iobroker license"
   },
   "bugs": {
     "url": "https://github.com/Bannsaenger/ioBroker.x-touch/issues"

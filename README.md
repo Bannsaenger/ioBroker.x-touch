@@ -29,10 +29,13 @@ There a two acepted commands:
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+### 0.6.1 (2022-10-07)
+* (Bannsaenger) confusion with the release script
+
 ### 0.6.0 (2022-10-07)
 
-- (Bannsaenger) updated to adapter-dev and release script
-- (Bannsaenger) introducing admin 5 UI (jsonConfig)
+* (Bannsaenger) updated to adapter-dev and release script
+* (Bannsaenger) introducing admin 5 UI (jsonConfig)
 
 ### 0.5.1
 * (Bannsaenger) updated dependencies
