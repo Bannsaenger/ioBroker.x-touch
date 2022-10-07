@@ -59,9 +59,9 @@
     "lint": "eslint",
     "translate": "translate-adapter",
     "build": "build-adapter all",
-    "release": "release-script patch --dry",
-    "release-minor": "release-script minor --dry",
-    "release-major": "release-script major --dry"
+    "release": "release-script patch",
+    "release-minor": "release-script minor",
+    "release-major": "release-script major"
   },
   "bugs": {
     "url": "https://github.com/Bannsaenger/ioBroker.x-touch/issues"
