@@ -29,7 +29,7 @@ There a two acepted commands:
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 0.6.2 (2022-10-07)
 * (Bannsaenger) test-and-release without build
 
 ### 0.6.1 (2022-10-07)

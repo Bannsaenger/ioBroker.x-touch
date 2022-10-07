@@ -1,8 +1,20 @@
 {
   "common": {
     "name": "x-touch",
-    "version": "0.6.1",
+    "version": "0.6.2",
     "news": {
+      "0.6.2": {
+        "en": "test-and-release without build",
+        "de": "test-und-release ohne aufbau",
+        "ru": "тест-и-релиз без сборки",
+        "pt": "test-and-release sem construir",
+        "nl": "test en vrijlating zonder te bouwen",
+        "fr": "test-and-release without build",
+        "it": "test-e-release senza costruzione",
+        "es": "prueba y liberación sin construir",
+        "pl": "bez budowy",
+        "zh-cn": "不建造试验和重新定位"
+      },
       "0.6.1": {
         "en": "confusion with the release script",
         "de": "verwechslung mit dem release-skript",
@@ -74,18 +86,6 @@
         "es": "corrección de errores en la función de exportación / importación",
         "pl": "naprawa błędów w funkcji eksportu/importu",
         "zh-cn": "导出/导入功能中的错误修复"
-      },
-      "0.4.0": {
-        "en": "added the ability to export the actual state values via a message and reimport the states again",
-        "de": "Möglichkeit hinzugefügt, die aktuellen Zustandswerte über eine Nachricht zu exportieren und die Zustände erneut zu importieren",
-        "ru": "добавлена возможность экспортировать фактические значения состояния через сообщение и повторно импортировать состояния",
-        "pt": "adicionou a capacidade de exportar os valores do estado real por meio de uma mensagem e reimportar os estados novamente",
-        "nl": "de mogelijkheid toegevoegd om de werkelijke statuswaarden via een bericht te exporteren en de statussen opnieuw te importeren",
-        "fr": "ajout de la possibilité d'exporter les valeurs d'état réelles via un message et de réimporter les états à nouveau",
-        "it": "aggiunta la possibilità di esportare i valori di stato effettivi tramite un messaggio e reimportare nuovamente gli stati",
-        "es": "agregó la capacidad de exportar los valores de estado reales a través de un mensaje y reimportar los estados nuevamente",
-        "pl": "dodano możliwość eksportu aktualnych wartości stanu za pomocą wiadomości i ponownego importu stanów;",
-        "zh-cn": "添加了通过消息导出实际状态值并再次重新导入状态的功能"
       }
     },
     "titleLang": {
