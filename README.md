@@ -29,8 +29,7 @@ There a two acepted commands:
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-
-### **WORK IN PROGRESS**
+### 0.6.0 (2022-10-07)
 
 - (Bannsaenger) updated to adapter-dev and release script
 - (Bannsaenger) introducing admin 5 UI (jsonConfig)
