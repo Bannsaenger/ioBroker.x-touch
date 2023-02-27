@@ -29,7 +29,7 @@ There a two acepted commands:
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 0.6.3 (2023-02-27)
 * (Bannsaenger) updated dependencies
 * (Bannsaenger) fixed bank and channel switching
 
