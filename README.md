@@ -29,6 +29,10 @@ There a two acepted commands:
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+* (Bannsaenger) updated dependencies
+* (Bannsaenger) fixed bank and channel switching
+
 ### 0.6.2 (2022-10-07)
 * (Bannsaenger) test-and-release without build
 

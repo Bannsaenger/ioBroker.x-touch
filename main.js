@@ -10,7 +10,7 @@
 
 /*
  * ToDo:
- *      - when maxBanks or maxChannels changes, delete when cretaeBank is set
+ *      - when maxBanks or maxChannels changes, delete when createBank is set
  *      - resend data on group membership change
  */
 
@@ -370,26 +370,28 @@ class XTouch extends utils.Adapter {
                         if (Number(midiMsg.note) >= 104 && Number(midiMsg.note) <= 112) {       // Fader touched, Fader 1 - 8 + Master
                             await self.handleFader(baseId , undefined, actPressed ? 'touched' : 'released', info.address);
                         } else if (Number(midiMsg.note) >= 46 && Number(midiMsg.note) <= 49) {  // fader or channel switch
-                            let action = '';
-                            switch (Number(midiMsg.note)) {
-                                case 46:        // fader bank down
-                                    action = 'bankDown';
-                                    break;
+                            if (actPressed) {                                                   // only on butten press, omit release
+                                let action = '';
+                                switch (Number(midiMsg.note)) {
+                                    case 46:        // fader bank down
+                                        action = 'bankDown';
+                                        break;
 
-                                case 47:        // fader bank up
-                                    action = 'bankUp';
-                                    break;
+                                    case 47:        // fader bank up
+                                        action = 'bankUp';
+                                        break;
 
-                                case 48:        // channel bank up
-                                    action = 'channelDown';
-                                    break;
+                                    case 48:        // channel bank up
+                                        action = 'channelDown';
+                                        break;
 
-                                case 49:        // channel bank down
-                                    action = 'channelUp';
-                                    break;
+                                    case 49:        // channel bank down
+                                        action = 'channelUp';
+                                        break;
 
+                                }
+                                await self.deviceSwitchChannels(action, info.address);
                             }
-                            await self.deviceSwitchChannels(action, info.address);
                         }
                         else {
                             await self.handleButton(baseId, undefined, actPressed ? 'pressed' : 'released', info.address);
