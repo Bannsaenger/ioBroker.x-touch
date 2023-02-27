@@ -1,194 +1,203 @@
 {
-  "common": {
-    "name": "x-touch",
-    "version": "0.6.2",
-    "news": {
-      "0.6.2": {
-        "en": "test-and-release without build",
-        "de": "test-und-release ohne aufbau",
-        "ru": "тест-и-релиз без сборки",
-        "pt": "test-and-release sem construir",
-        "nl": "test en vrijlating zonder te bouwen",
-        "fr": "test-and-release without build",
-        "it": "test-e-release senza costruzione",
-        "es": "prueba y liberación sin construir",
-        "pl": "bez budowy",
-        "zh-cn": "不建造试验和重新定位"
-      },
-      "0.6.1": {
-        "en": "confusion with the release script",
-        "de": "verwechslung mit dem release-skript",
-        "ru": "путаница с сценарием выхода",
-        "pt": "confusão com o script de lançamento",
-        "nl": "verwarring met het script",
-        "fr": "confusion avec le script de sortie",
-        "it": "confusione con lo script di rilascio",
-        "es": "confusión con el script de liberación",
-        "pl": "nieporozumienia ze scenariuszem wydania",
-        "zh-cn": "解 语"
-      },
-      "0.6.0": {
-        "en": "updated to adapter-dev and release script, introducing admin 5 UI (jsonConfig)",
-        "de": "auf adapter-dev und release script aktualisiert, Einführung der Admin 5 UI (jsonConfig)",
-        "ru": "обновлен до сценария адаптера-разработчика и выпуска, представлен пользовательский интерфейс администратора 5 (jsonConfig)",
-        "pt": "atualizado para o adapter-dev e o script de lançamento, apresentando a interface do usuário admin 5 (jsonConfig)",
-        "nl": "bijgewerkt naar adapter-dev en release-script, introductie van admin 5 UI (jsonConfig)",
-        "fr": "mise à jour vers adapter-dev et release script, introduisant l'interface utilisateur admin 5 (jsonConfig)",
-        "it": "aggiornato a adapter-dev e script di rilascio, introducendo l'interfaccia utente di amministrazione 5 (jsonConfig)",
-        "es": "actualizado a adapter-dev y release script, presentando admin 5 UI (jsonConfig)",
-        "pl": "zaktualizowano do skryptu adapter-dev i release, wprowadzając interfejs użytkownika admin 5 (jsonConfig)",
-        "zh-cn": "更新到适配器开发和发布脚本，引入 admin 5 UI (jsonConfig)"
-      },
-      "0.5.1": {
-        "en": "updated dependencies",
-        "de": "Abhängigkeiten aktualisiert",
-        "ru": "обновленные зависимости",
-        "pt": "dependências atualizadas",
-        "nl": "vertaling:",
-        "fr": "dépendances actualisées",
-        "it": "dipendenze aggiornate",
-        "es": "dependencias actualizadas",
-        "pl": "zależności aktualizacji",
-        "zh-cn": "二. 最新依赖"
-      },
-      "0.5.0": {
-        "en": "fixes in db creation for js controller 4.x",
-        "de": "Korrekturen in der DB-Erstellung für js Controller 4.x",
-        "ru": "исправления в создании БД для js контроллера 4.x",
-        "pt": "correções na criação de banco de dados para js controller 4.x",
-        "nl": "fixes in db-creatie voor js-controller 4.x",
-        "fr": "correctifs dans la création de la base de données pour le contrôleur js 4.x",
-        "it": "correzioni nella creazione di db per il controller js 4.x",
-        "es": "correcciones en la creación de db para el controlador js 4.x",
-        "pl": "poprawki w tworzeniu bazy danych dla kontrolera js 4.x",
-        "zh-cn": "修复了 js 控制器 4.x 的数据库创建"
-      },
-      "0.4.2": {
-        "en": "changed sort order in changelog",
-        "de": "Sortierreihenfolge im Changelog geändert",
-        "ru": "изменен порядок сортировки в журнале изменений",
-        "pt": "mudou a ordem de classificação no changelog",
-        "nl": "gewijzigde sorteervolgorde in changelog",
-        "fr": "ordre de tri modifié dans le journal des modifications",
-        "it": "cambiato l'ordinamento nel changelog",
-        "es": "orden de clasificación cambiado en el registro de cambios",
-        "pl": "zmieniono kolejność sortowania w dzienniku zmian",
-        "zh-cn": "更改日志中的排序顺序"
-      },
-      "0.4.1": {
-        "en": "bug fixing in the export/import feature",
-        "de": "Fehlerbehebung in der Export/Import-Funktion",
-        "ru": "исправление ошибки в функции экспорта / импорта",
-        "pt": "correção de bug no recurso de exportação / importação",
-        "nl": "bugfixing in de export-/importfunctie",
-        "fr": "correction de bugs dans la fonction d'export/import",
-        "it": "correzione di bug nella funzione di esportazione/importazione",
-        "es": "corrección de errores en la función de exportación / importación",
-        "pl": "naprawa błędów w funkcji eksportu/importu",
-        "zh-cn": "导出/导入功能中的错误修复"
-      }
+    "common": {
+        "name": "x-touch",
+        "version": "0.6.2",
+        "news": {
+            "0.6.2": {
+                "en": "test-and-release without build",
+                "de": "test-und-release ohne aufbau",
+                "ru": "тест-и-релиз без сборки",
+                "pt": "test-and-release sem construir",
+                "nl": "test en vrijlating zonder te bouwen",
+                "fr": "test-and-release without build",
+                "it": "test-e-release senza costruzione",
+                "es": "prueba y liberación sin construir",
+                "pl": "bez budowy",
+                "zh-cn": "不建造试验和重新定位",
+                "uk": "тестування та випуск без збірки"
+            },
+            "0.6.1": {
+                "en": "confusion with the release script",
+                "de": "verwechslung mit dem release-skript",
+                "ru": "путаница с сценарием выхода",
+                "pt": "confusão com o script de lançamento",
+                "nl": "verwarring met het script",
+                "fr": "confusion avec le script de sortie",
+                "it": "confusione con lo script di rilascio",
+                "es": "confusión con el script de liberación",
+                "pl": "nieporozumienia ze scenariuszem wydania",
+                "zh-cn": "解 语",
+                "uk": "плутанина зі сценарієм випуску"
+            },
+            "0.6.0": {
+                "en": "updated to adapter-dev and release script, introducing admin 5 UI (jsonConfig)",
+                "de": "auf adapter-dev und release script aktualisiert, Einführung der Admin 5 UI (jsonConfig)",
+                "ru": "обновлен до сценария адаптера-разработчика и выпуска, представлен пользовательский интерфейс администратора 5 (jsonConfig)",
+                "pt": "atualizado para o adapter-dev e o script de lançamento, apresentando a interface do usuário admin 5 (jsonConfig)",
+                "nl": "bijgewerkt naar adapter-dev en release-script, introductie van admin 5 UI (jsonConfig)",
+                "fr": "mise à jour vers adapter-dev et release script, introduisant l'interface utilisateur admin 5 (jsonConfig)",
+                "it": "aggiornato a adapter-dev e script di rilascio, introducendo l'interfaccia utente di amministrazione 5 (jsonConfig)",
+                "es": "actualizado a adapter-dev y release script, presentando admin 5 UI (jsonConfig)",
+                "pl": "zaktualizowano do skryptu adapter-dev i release, wprowadzając interfejs użytkownika admin 5 (jsonConfig)",
+                "zh-cn": "更新到适配器开发和发布脚本，引入 admin 5 UI (jsonConfig)",
+                "uk": "оновлено до adapter-dev і сценарію випуску, представлено інтерфейс адміністратора 5 (jsonConfig)"
+            },
+            "0.5.1": {
+                "en": "updated dependencies",
+                "de": "Abhängigkeiten aktualisiert",
+                "ru": "обновленные зависимости",
+                "pt": "dependências atualizadas",
+                "nl": "vertaling:",
+                "fr": "dépendances actualisées",
+                "it": "dipendenze aggiornate",
+                "es": "dependencias actualizadas",
+                "pl": "zależności aktualizacji",
+                "zh-cn": "二. 最新依赖",
+                "uk": "оновлені залежності"
+            },
+            "0.5.0": {
+                "en": "fixes in db creation for js controller 4.x",
+                "de": "Korrekturen in der DB-Erstellung für js Controller 4.x",
+                "ru": "исправления в создании БД для js контроллера 4.x",
+                "pt": "correções na criação de banco de dados para js controller 4.x",
+                "nl": "fixes in db-creatie voor js-controller 4.x",
+                "fr": "correctifs dans la création de la base de données pour le contrôleur js 4.x",
+                "it": "correzioni nella creazione di db per il controller js 4.x",
+                "es": "correcciones en la creación de db para el controlador js 4.x",
+                "pl": "poprawki w tworzeniu bazy danych dla kontrolera js 4.x",
+                "zh-cn": "修复了 js 控制器 4.x 的数据库创建",
+                "uk": "виправлення у створенні бази даних для контролера js 4.x"
+            },
+            "0.4.2": {
+                "en": "changed sort order in changelog",
+                "de": "Sortierreihenfolge im Changelog geändert",
+                "ru": "изменен порядок сортировки в журнале изменений",
+                "pt": "mudou a ordem de classificação no changelog",
+                "nl": "gewijzigde sorteervolgorde in changelog",
+                "fr": "ordre de tri modifié dans le journal des modifications",
+                "it": "cambiato l'ordinamento nel changelog",
+                "es": "orden de clasificación cambiado en el registro de cambios",
+                "pl": "zmieniono kolejność sortowania w dzienniku zmian",
+                "zh-cn": "更改日志中的排序顺序",
+                "uk": "змінено порядок сортування в журналі змін"
+            },
+            "0.4.1": {
+                "en": "bug fixing in the export/import feature",
+                "de": "Fehlerbehebung in der Export/Import-Funktion",
+                "ru": "исправление ошибки в функции экспорта / импорта",
+                "pt": "correção de bug no recurso de exportação / importação",
+                "nl": "bugfixing in de export-/importfunctie",
+                "fr": "correction de bugs dans la fonction d'export/import",
+                "it": "correzione di bug nella funzione di esportazione/importazione",
+                "es": "corrección de errores en la función de exportación / importación",
+                "pl": "naprawa błędów w funkcji eksportu/importu",
+                "zh-cn": "导出/导入功能中的错误修复",
+                "uk": "виправлення помилок у функції експорту/імпорту"
+            }
+        },
+        "titleLang": {
+            "en": "Behringer X-Touch",
+            "de": "Behringer X-Touch",
+            "ru": "Behringer X-Touch",
+            "pt": "Behringer X-Touch",
+            "nl": "Behringer X-Touch",
+            "fr": "Behringer X-Touch",
+            "it": "Behringer X-Touch",
+            "es": "Behringer X-Touch",
+            "pl": "Behringer X-Touch",
+            "zh-cn": "贝林格X-Touch",
+            "uk": "Behringer X-Touch"
+        },
+        "desc": {
+            "en": "Communicate with a Behringer X-Touch Control Surface (DAW Controller)",
+            "de": "Kommunizieren Sie mit einer Behringer X-Touch-Bedienoberfläche (DAW-Controller)",
+            "ru": "Связь с панелью управления Behringer X-Touch (контроллером DAW)",
+            "pt": "Comunique-se com uma superfície de controle Behringer X-Touch (controlador DAW)",
+            "nl": "Communiceer met een Behringer X-Touch Control Surface (DAW Controller)",
+            "fr": "Communiquer avec une surface de contrôle Behringer X-Touch (contrôleur DAW)",
+            "it": "Comunica con una superficie di controllo Behringer X-Touch (controller DAW)",
+            "es": "Comunicarse con una superficie de control Behringer X-Touch (controlador DAW)",
+            "pl": "Komunikuj się z Behringer X-Touch Control Surface (kontroler DAW)",
+            "zh-cn": "与Behringer X-Touch控制界面（DAW控制器）进行通信",
+            "uk": "Спілкування з Behringer X-Touch Control Surface (контролер DAW)"
+        },
+        "authors": [
+            "Bannsaenger <bannsaenger@gmx.de>"
+        ],
+        "keywords": [
+            "behringer x-touch hui mackie midi"
+        ],
+        "license": "MIT",
+        "platform": "Javascript/Node.js",
+        "main": "main.js",
+        "icon": "x-touch.png",
+        "enabled": true,
+        "extIcon": "https://raw.githubusercontent.com/Bannsaenger/ioBroker.x-touch/master/admin/x-touch.png",
+        "readme": "https://github.com/Bannsaenger/ioBroker.x-touch/blob/master/README.md",
+        "loglevel": "info",
+        "restartAdapters": [],
+        "mode": "daemon",
+        "type": "hardware",
+        "connectionType": "local",
+        "dataSource": "push",
+        "messagebox": true,
+        "compact": true,
+        "materialize": true,
+        "adminUI": {
+            "config": "json"
+        },
+        "dependencies": [
+            {
+                "js-controller": ">=3.3.19"
+            }
+        ],
+        "globalDependecies": [
+            {
+                "admin": ">=5.1.28"
+            }
+        ]
     },
-    "titleLang": {
-      "en": "Behringer X-Touch",
-      "de": "Behringer X-Touch",
-      "ru": "Behringer X-Touch",
-      "pt": "Behringer X-Touch",
-      "nl": "Behringer X-Touch",
-      "fr": "Behringer X-Touch",
-      "it": "Behringer X-Touch",
-      "es": "Behringer X-Touch",
-      "pl": "Behringer X-Touch",
-      "zh-cn": "贝林格X-Touch"
+    "native": {
+        "port": 10111,
+        "bind": "0.0.0.0",
+        "deviceInactivityTimeout": 6000,
+        "deviceGroups": 1,
+        "maxChannels": 8,
+        "maxBanks": 1,
+        "createBank": false,
+        "sendDelay": 1
     },
-    "desc": {
-      "en": "Communicate with a Behringer X-Touch Control Surface (DAW Controller)",
-      "de": "Kommunizieren Sie mit einer Behringer X-Touch-Bedienoberfläche (DAW-Controller)",
-      "ru": "Связь с панелью управления Behringer X-Touch (контроллером DAW)",
-      "pt": "Comunique-se com uma superfície de controle Behringer X-Touch (controlador DAW)",
-      "nl": "Communiceer met een Behringer X-Touch Control Surface (DAW Controller)",
-      "fr": "Communiquer avec une surface de contrôle Behringer X-Touch (contrôleur DAW)",
-      "it": "Comunica con una superficie di controllo Behringer X-Touch (controller DAW)",
-      "es": "Comunicarse con una superficie de control Behringer X-Touch (controlador DAW)",
-      "pl": "Komunikuj się z Behringer X-Touch Control Surface (kontroler DAW)",
-      "zh-cn": "与Behringer X-Touch控制界面（DAW控制器）进行通信"
-    },
-    "authors": [
-      "Bannsaenger <bannsaenger@gmx.de>"
-    ],
-    "keywords": [
-      "behringer x-touch hui mackie midi"
-    ],
-    "license": "MIT",
-    "platform": "Javascript/Node.js",
-    "main": "main.js",
-    "icon": "x-touch.png",
-    "enabled": true,
-    "extIcon": "https://raw.githubusercontent.com/Bannsaenger/ioBroker.x-touch/master/admin/x-touch.png",
-    "readme": "https://github.com/Bannsaenger/ioBroker.x-touch/blob/master/README.md",
-    "loglevel": "info",
-    "restartAdapters": [],
-    "mode": "daemon",
-    "type": "hardware",
-    "connectionType": "local",
-    "dataSource": "push",
-    "messagebox": true,
-    "compact": true,
-    "materialize": true,
-    "adminUI": {
-      "config": "json"
-    },
-    "dependencies": [
-      {
-        "js-controller": ">=3.3.19"
-      }
-    ],
-    "globalDependecies": [
-      {
-        "admin": ">=5.1.28"
-      }
+    "objects": [],
+    "instanceObjects": [
+        {
+            "_id": "",
+            "type": "meta",
+            "common": {
+                "name": "User files for x-touch",
+                "type": "meta.user"
+            },
+            "native": {}
+        },
+        {
+            "_id": "info",
+            "type": "channel",
+            "common": {
+                "name": "Information"
+            },
+            "native": {}
+        },
+        {
+            "_id": "info.connection",
+            "type": "state",
+            "common": {
+                "role": "indicator.connected",
+                "name": "Device or service connected",
+                "type": "boolean",
+                "read": true,
+                "write": false,
+                "def": false
+            },
+            "native": {}
+        }
     ]
-  },
-  "native": {
-    "port": 10111,
-    "bind": "0.0.0.0",
-    "deviceInactivityTimeout": 6000,
-    "deviceGroups": 1,
-    "maxChannels": 8,
-    "maxBanks": 1,
-    "createBank": false,
-    "sendDelay": 1
-  },
-  "objects": [],
-  "instanceObjects": [
-    {
-      "_id": "",
-      "type": "meta",
-      "common": {
-        "name": "User files for x-touch",
-        "type": "meta.user"
-      },
-      "native": {}
-    },
-    {
-      "_id": "info",
-      "type": "channel",
-      "common": {
-        "name": "Information"
-      },
-      "native": {}
-    },
-    {
-      "_id": "info.connection",
-      "type": "state",
-      "common": {
-        "role": "indicator.connected",
-        "name": "Device or service connected",
-        "type": "boolean",
-        "read": true,
-        "write": false,
-        "def": false
-      },
-      "native": {}
-    }
-  ]
 }
