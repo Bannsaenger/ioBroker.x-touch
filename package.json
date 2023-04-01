@@ -39,7 +39,7 @@
     "chai": "^4.3.7",
     "chai-as-promised": "^7.1.1",
     "dgram": "^1.0.1",
-    "eslint": "^8.35.0",
+    "eslint": "^8.37.0",
     "glob-parent": "^6.0.2",
     "gulp": "^4.0.2",
     "minimatch": ">=7.2.0",
