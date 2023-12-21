@@ -29,7 +29,7 @@ There a two acepted commands:
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 0.6.4 (2023-12-21)
 * (Bannsaenger) fixed console_layout.json
 * (Bannsaenger) fixed sending items on channel 9, 17 etc.
 * (Bannsaenger) use extendObject instead of Create......

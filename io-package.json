@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "x-touch",
-    "version": "0.6.3",
+    "version": "0.6.4",
     "news": {
+      "0.6.4": {
+        "en": "fixed console_layout.json\nfixed sending items on channel 9, 17 etc.\nuse extendObject instead of Create......\nupdated dependencies",
+        "de": "feste konsole_layout.json\nfeste sendungen auf kanal 9, 17 usw.\nnutzungsdauer Objekt statt Erstellen.\naktualisierte abhängigkeiten",
+        "ru": "фиксированная консоль_layout.json\nфиксированные элементы отправки на канале 9, 17 и т.д.\nиспользовать удлинить Объект вместо создания.\nобновленные зависимости",
+        "pt": "console fixo_layout.json\nitens de envio fixo no canal 9, 17 etc.\nextensão de uso Objeto em vez de Criar.\ndependências atualizadas",
+        "nl": "json\nverzonden artikelen op kanaal 9, 17 etc.\nvertaling: Object in plaats van Create.\nvertaling:",
+        "fr": "fixed console_layout.json\nenvoi fixe sur le canal 9, 17 etc.\nd ' utilisation Objet au lieu de Créer.\ndépendances actualisées",
+        "it": "fisso console_layout.json\narticoli di invio fissi sul canale 9, 17 ecc.\nestensione dell'uso Oggetto invece di Crea.\ndipendenze aggiornate",
+        "es": "fija consola_layout.json\nenvío fijo en el canal 9, 17 etc.\nuso Objeto en lugar de Crear.\ndependencias actualizadas",
+        "pl": "zamknięta konsola.json\nna kanale 9, 17.\nrozszerzenie Obiekt zamiast kreatu.\nzależności aktualizacji",
+        "uk": "javascript licenses api веб-сайт go1.13.8\nфіксовані відправлення елементів на каналі 9, 17 і т.д.\nрозширення Об'єкт замість створення.\nоновлені залежності",
+        "zh-cn": "a. 固定的礼貌_layout.json\n固定发送物品9、17等。.\n用途 反对。.\n二. 最新依赖"
+      },
       "0.6.3": {
         "en": "updated dependencies\nfixed bank and channel switching",
         "de": "aktualisierte abhängigkeiten\nfestbank- und kanalwechsel",
@@ -80,19 +93,6 @@
         "pl": "poprawki w tworzeniu bazy danych dla kontrolera js 4.x",
         "zh-cn": "修复了 js 控制器 4.x 的数据库创建",
         "uk": "виправлення у створенні бази даних для контролера js 4.x"
-      },
-      "0.4.2": {
-        "en": "changed sort order in changelog",
-        "de": "Sortierreihenfolge im Changelog geändert",
-        "ru": "изменен порядок сортировки в журнале изменений",
-        "pt": "mudou a ordem de classificação no changelog",
-        "nl": "gewijzigde sorteervolgorde in changelog",
-        "fr": "ordre de tri modifié dans le journal des modifications",
-        "it": "cambiato l'ordinamento nel changelog",
-        "es": "orden de clasificación cambiado en el registro de cambios",
-        "pl": "zmieniono kolejność sortowania w dzienniku zmian",
-        "zh-cn": "更改日志中的排序顺序",
-        "uk": "змінено порядок сортування в журналі змін"
       }
     },
     "titleLang": {
