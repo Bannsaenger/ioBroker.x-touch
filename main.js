@@ -2,7 +2,7 @@
  *
  *      iobroker x-touch Adapter
  *
- *      Copyright (c) 2020-2022, Bannsaenger <bannsaenger@gmx.de>
+ *      Copyright (c) 2020-2023, Bannsaenger <bannsaenger@gmx.de>
  *
  *      MIT License
  *
@@ -1107,7 +1107,7 @@ class XTouch extends utils.Adapter {
                     if ((actDeviceGroup == self.devices[device].memberOfGroup) &&
                         (selectedBank == self.devices[device].activeBank) &&
                         (Number(realChannel) >= self.devices[device].activeBaseChannel) &&
-                        (Number(realChannel) <= (self.devices[device].activeBaseChannel + 8))) {   // only if fader seen on console
+                        (Number(realChannel) < (self.devices[device].activeBaseChannel + 8))) {   // only if fader seen on console
                         //self.log.info(`send fader ${channelInBank} to ${device} value ${logObj.midiValue}`);
                         self.deviceSendData(midiCommand, self.devices[device].ipAddress, self.devices[device].port);
                     }
@@ -1196,7 +1196,7 @@ class XTouch extends utils.Adapter {
                     if ((actDeviceGroup == self.devices[device].memberOfGroup) &&
                         (selectedBank == self.devices[device].activeBank) &&
                         (Number(realChannel) >= self.devices[device].activeBaseChannel) &&
-                        (Number(realChannel) <= (self.devices[device].activeBaseChannel + 8)) &&
+                        (Number(realChannel) < (self.devices[device].activeBaseChannel + 8)) &&
                         (self.devices[device].connection)) {   // only if display seen on console and device connected
                         self.deviceSendData(midiCommand, self.devices[device].ipAddress, self.devices[device].port);
                     }
@@ -1268,7 +1268,7 @@ class XTouch extends utils.Adapter {
                     if ((actDeviceGroup == self.devices[device].memberOfGroup) &&
                         (selectedBank == self.devices[device].activeBank) &&
                         (Number(realChannel) >= self.devices[device].activeBaseChannel) &&
-                        (Number(realChannel) <= (self.devices[device].activeBaseChannel + 8)) &&
+                        (Number(realChannel) < (self.devices[device].activeBaseChannel + 8)) &&
                         (self.devices[device].connection)) {
                         // only if display seen on console and device connected
                         self.deviceSendData(midiCommand1, self.devices[device].ipAddress, self.devices[device].port);
@@ -2272,6 +2272,7 @@ class XTouch extends utils.Adapter {
                         if (!importFiles.includes(importFile)) throw({'message': `File "${importFile}" does not exist in directory`});
                         // try to read the file
                         importContent = await self.readFileAsync('x-touch.0', importFile);
+                        // @ts-ignore
                         importJson = JSON.parse(importContent.data.toString());
                         self.log.debug(`File "${importFile}" red`);
                     }
