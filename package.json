@@ -59,9 +59,9 @@
     "test": "npm run test:js && npm run test:package",
     "lint": "eslint",
     "translate": "translate-adapter",
-    "release": "release-script patch --all --verbose -p iobroker license",
-    "release-minor": "release-script minor --all --verbose -p iobroker license",
-    "release-major": "release-script major --all --verbose -p iobroker license"
+    "release": "release-script patch --all --verbose",
+    "release-minor": "release-script minor --all --verbose",
+    "release-major": "release-script major --all --verbose"
   },
   "bugs": {
     "url": "https://github.com/Bannsaenger/ioBroker.x-touch/issues"
