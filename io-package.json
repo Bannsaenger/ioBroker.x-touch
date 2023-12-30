@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "x-touch",
-    "version": "0.6.4",
+    "version": "0.6.5",
     "news": {
+      "0.6.5": {
+        "en": "add CHANGELOG_OLD.md",
+        "de": "cHANGELOG_OLD.md",
+        "ru": "добавить CHANGELOG_OLD.md",
+        "pt": "adicionar CHANGELOG_OLD.md",
+        "nl": "voeg chANGELOGOLD toe",
+        "fr": "ajouter CHANGELOG_OLD.md",
+        "it": "aggiungere CHANGELOG_OLD.md",
+        "es": "añadir CHANGELOG_OLD.md",
+        "pl": "dodaje do niej CHANGELOG_OLD.md",
+        "uk": "додати CHANGELOG_OLD.md",
+        "zh-cn": "增 编"
+      },
       "0.6.4": {
         "en": "fixed console_layout.json\nfixed sending items on channel 9, 17 etc.\nuse extendObject instead of Create......\nupdated dependencies",
         "de": "feste konsole_layout.json\nfeste sendungen auf kanal 9, 17 usw.\nnutzungsdauer Objekt statt Erstellen.\naktualisierte abhängigkeiten",
@@ -80,19 +93,6 @@
         "pl": "zależności aktualizacji",
         "zh-cn": "二. 最新依赖",
         "uk": "оновлені залежності"
-      },
-      "0.5.0": {
-        "en": "fixes in db creation for js controller 4.x",
-        "de": "Korrekturen in der DB-Erstellung für js Controller 4.x",
-        "ru": "исправления в создании БД для js контроллера 4.x",
-        "pt": "correções na criação de banco de dados para js controller 4.x",
-        "nl": "fixes in db-creatie voor js-controller 4.x",
-        "fr": "correctifs dans la création de la base de données pour le contrôleur js 4.x",
-        "it": "correzioni nella creazione di db per il controller js 4.x",
-        "es": "correcciones en la creación de db para el controlador js 4.x",
-        "pl": "poprawki w tworzeniu bazy danych dla kontrolera js 4.x",
-        "zh-cn": "修复了 js 控制器 4.x 的数据库创建",
-        "uk": "виправлення у створенні бази даних для контролера js 4.x"
       }
     },
     "titleLang": {
