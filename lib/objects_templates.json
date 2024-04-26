@@ -119,6 +119,19 @@
                 "def": 0
             },
             "native": {}
+        },
+        {
+            "_id": "deviceLocked",
+            "type": "state",
+            "common": {
+                "role": "value",
+                "name": "if set to true the device will go to the locked state, i.e. no operation of the device is possible",
+                "type": "boolean",
+                "read": true,
+                "write": true,
+                "def": false
+            },
+            "native": {}
         }
     ],
     "deviceGroup": {

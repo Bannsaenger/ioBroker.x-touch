@@ -2,7 +2,7 @@
  *
  *      iobroker x-touch Adapter
  *
- *      Copyright (c) 2020-2023, Bannsaenger <bannsaenger@gmx.de>
+ *      Copyright (c) 2020-2024, Bannsaenger <bannsaenger@gmx.de>
  *
  *      MIT License
  *
@@ -57,7 +57,7 @@ class XTouch extends utils.Adapter {
         // mapping of the encoder modes to LED values
         this.encoderMapping = JSON.parse(fs.readFileSync(__dirname + '/lib/encoder_mapping.json', 'utf8'));
         // mapping of the characters in timecode display to 7-segment
-        // coding is in Siekoo-Alphabet (https://fakoo.de/siekoo/posible-siekoo.gif)
+        // coding is in Siekoo-Alphabet (https://fakoo.de/siekoo.html)
         // not as described in Logic Control Manual
         this.characterMapping = JSON.parse(fs.readFileSync(__dirname + '/lib/character_mapping.json', 'utf8'));
 
