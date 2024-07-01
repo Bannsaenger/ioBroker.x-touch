@@ -42,7 +42,7 @@
     "eslint": "^8.57.0",
     "glob-parent": "^6.0.2",
     "gulp": "^5.0.0",
-    "minimatch": ">=9.0.4",
+    "minimatch": ">=9.0.5",
     "mocha": "^10.4.0",
     "path-parse": ">=1.0.7",
     "proxyquire": "^2.1.3",
