@@ -31,8 +31,11 @@ There a two acepted commands:
 -->
 ### **WORK IN PROGRESS**
 * (Bannsaenger) fixed some minor typos
-* (Bannsaenger) updated dependencies
-* (Bannsaenger) 
+* (Bannsaenger) updated to node 18.x - 22.x
+* (Bannsaenger) updated dependencies, node 22 compatibility, workflow
+* (Bannsaenger) added possibility to lock the desk
+* (Bannsaenger) resend data on group membership change
+* (Bannsaenger) removed createBanks from config dialog (too dangerous, delete by hand if neccessary)
 
 ### 0.6.5 (2023-12-30)
 * (Bannsaenger) add CHANGELOG_OLD.md
@@ -56,7 +59,7 @@ There a two acepted commands:
 ## License
 MIT License
 
-Copyright (c) 2021-2023 Bannsaenger <bannsaenger@gmx.de>
+Copyright (c) 2021-2025 Bannsaenger <bannsaenger@gmx.de>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

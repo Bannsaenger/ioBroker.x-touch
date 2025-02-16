@@ -17,7 +17,7 @@
         "zh-cn": "增 编"
       },
       "0.6.4": {
-        "en": "fixed console_layout.json\nfixed sending items on channel 9, 17 etc.\nuse extendObject instead of Create......\nupdated dependencies",
+        "en": "fixed console_layout.json\nfixed sending items on channel 9, 17 etc.\nuse extendObject instead of Create.\nupdated dependencies",
         "de": "feste konsole_layout.json\nfeste sendungen auf kanal 9, 17 usw.\nnutzungsdauer Objekt statt Erstellen.\naktualisierte abhängigkeiten",
         "ru": "фиксированная консоль_layout.json\nфиксированные элементы отправки на канале 9, 17 и т.д.\nиспользовать удлинить Объект вместо создания.\nобновленные зависимости",
         "pt": "console fixo_layout.json\nitens de envio fixo no canal 9, 17 etc.\nextensão de uso Objeto em vez de Criar.\ndependências atualizadas",
@@ -43,43 +43,17 @@
         "zh-cn": "二. 最新依赖\n固定银行和转账"
       },
       "0.6.2": {
-        "en": "test-and-release without build",
-        "de": "test-und-release ohne aufbau",
-        "ru": "тест-и-релиз без сборки",
-        "pt": "test-and-release sem construir",
-        "nl": "test en vrijlating zonder te bouwen",
-        "fr": "test-and-release without build",
-        "it": "test-e-release senza costruzione",
-        "es": "prueba y liberación sin construir",
-        "pl": "bez budowy",
-        "zh-cn": "不建造试验和重新定位",
-        "uk": "тестування та випуск без збірки"
-      },
-      "0.6.1": {
-        "en": "confusion with the release script",
-        "de": "verwechslung mit dem release-skript",
-        "ru": "путаница с сценарием выхода",
-        "pt": "confusão com o script de lançamento",
-        "nl": "verwarring met het script",
-        "fr": "confusion avec le script de sortie",
-        "it": "confusione con lo script di rilascio",
-        "es": "confusión con el script de liberación",
-        "pl": "nieporozumienia ze scenariuszem wydania",
-        "zh-cn": "解 语",
-        "uk": "плутанина зі сценарієм випуску"
-      },
-      "0.6.0": {
-        "en": "updated to adapter-dev and release script, introducing admin 5 UI (jsonConfig)",
-        "de": "auf adapter-dev und release script aktualisiert, Einführung der Admin 5 UI (jsonConfig)",
-        "ru": "обновлен до сценария адаптера-разработчика и выпуска, представлен пользовательский интерфейс администратора 5 (jsonConfig)",
-        "pt": "atualizado para o adapter-dev e o script de lançamento, apresentando a interface do usuário admin 5 (jsonConfig)",
-        "nl": "bijgewerkt naar adapter-dev en release-script, introductie van admin 5 UI (jsonConfig)",
-        "fr": "mise à jour vers adapter-dev et release script, introduisant l'interface utilisateur admin 5 (jsonConfig)",
-        "it": "aggiornato a adapter-dev e script di rilascio, introducendo l'interfaccia utente di amministrazione 5 (jsonConfig)",
-        "es": "actualizado a adapter-dev y release script, presentando admin 5 UI (jsonConfig)",
-        "pl": "zaktualizowano do skryptu adapter-dev i release, wprowadzając interfejs użytkownika admin 5 (jsonConfig)",
-        "zh-cn": "更新到适配器开发和发布脚本，引入 admin 5 UI (jsonConfig)",
-        "uk": "оновлено до adapter-dev і сценарію випуску, представлено інтерфейс адміністратора 5 (jsonConfig)"
+        "en": "test-and-release without build, updated to adapter-dev and release script, introducing admin 5 UI (jsonConfig)",
+        "de": "test-und-release ohne aufbau, auf adapter-dev und release script aktualisiert, Einführung der Admin 5 UI (jsonConfig)",
+        "ru": "тест-и-релиз без сборки, обновлен до сценария адаптера-разработчика и выпуска, представлен пользовательский интерфейс администратора 5 (jsonConfig)",
+        "pt": "test-and-release sem construir, atualizado para o adapter-dev e o script de lançamento, apresentando a interface do usuário admin 5 (jsonConfig)",
+        "nl": "test en vrijlating zonder te bouwen, bijgewerkt naar adapter-dev en release-script, introductie van admin 5 UI (jsonConfig)",
+        "fr": "test-and-release without build, mise à jour vers adapter-dev et release script, introduisant l'interface utilisateur admin 5 (jsonConfig)",
+        "it": "test-e-release senza costruzione, aggiornato a adapter-dev e script di rilascio, introducendo l'interfaccia utente di amministrazione 5 (jsonConfig)",
+        "es": "prueba y liberación sin construir, actualizado a adapter-dev y release script, presentando admin 5 UI (jsonConfig)",
+        "pl": "bez budowy, zaktualizowano do skryptu adapter-dev i release, wprowadzając interfejs użytkownika admin 5 (jsonConfig)",
+        "zh-cn": "不建造试验和重新定位, 更新到适配器开发和发布脚本，引入 admin 5 UI (jsonConfig)",
+        "uk": "тестування та випуск без збірки, оновлено до adapter-dev і сценарію випуску, представлено інтерфейс адміністратора 5 (jsonConfig)"
       },
       "0.5.1": {
         "en": "updated dependencies",
@@ -127,33 +101,35 @@
     "keywords": [
       "behringer x-touch hui mackie midi"
     ],
-    "license": "MIT",
+    "licenseInformation": {
+      "link": "https://github.com/Bannsaenger/ioBroker.vivitek/blob/master/LICENSE",
+      "type": "free",
+      "license": "MIT"
+    },
     "platform": "Javascript/Node.js",
-    "main": "main.js",
     "icon": "x-touch.png",
     "enabled": true,
     "extIcon": "https://raw.githubusercontent.com/Bannsaenger/ioBroker.x-touch/master/admin/x-touch.png",
     "readme": "https://github.com/Bannsaenger/ioBroker.x-touch/blob/master/README.md",
     "loglevel": "info",
-    "restartAdapters": [],
     "mode": "daemon",
     "type": "hardware",
+    "tier": 3,
+    "compact": true,
     "connectionType": "local",
     "dataSource": "push",
-    "messagebox": true,
-    "compact": true,
-    "materialize": true,
     "adminUI": {
       "config": "json"
     },
+    "messagebox": true,
     "dependencies": [
       {
-        "js-controller": ">=3.3.19"
+        "js-controller": ">=5.0.19"
       }
     ],
     "globalDependecies": [
       {
-        "admin": ">=5.1.28"
+        "admin": ">=5.3.2"
       }
     ]
   },
@@ -164,8 +140,8 @@
     "deviceGroups": 1,
     "maxChannels": 8,
     "maxBanks": 1,
-    "createBank": false,
-    "sendDelay": 1
+    "sendDelay": 1,
+    "deviceLockedState": 1
   },
   "objects": [],
   "instanceObjects": [

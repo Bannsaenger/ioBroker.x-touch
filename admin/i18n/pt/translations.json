@@ -14,5 +14,6 @@
     "maximum number of channels (8 to 32, in steps of 8)": "número máximo de canais (8 a 32, em passos de 8)",
     "Banks": "Bancos de faders",
     "maximum number of fader banks to switch (max. 8)": "número máximo de bancos de fader para alternar (máx. 8)",
-    "createBank": "se marcado, os faderbanks serão criados quando os parâmetros (maxBanks ou maxChannels) forem alterados"
+    "createBank": "se marcado, os faderbanks serão criados quando os parâmetros (maxBanks ou maxChannels) forem alterados",
+    "lockedState": "se o dispositivo estiver bloqueado, o seguinte estado será definido"
 }

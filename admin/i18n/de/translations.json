@@ -14,5 +14,6 @@
     "maximum number of channels (8 to 32, in steps of 8)": "maximale Anzahl Kanäle (8 bis 32, in 8er-Schritten)",
     "Banks": "Faderbänke",
     "maximum number of fader banks to switch (max. 8)": "maximale Anzahl zu schaltender Faderbänke (max. 8)",
-    "createBank": "Wenn diese Option aktiviert ist, werden die Faderbänke neu erstellt, wenn sich Parameter (maxBanks oder maxChannels) ändern"
+    "createBank": "Wenn diese Option aktiviert ist, werden die Faderbänke neu erstellt, wenn sich Parameter (maxBanks oder maxChannels) ändern",
+    "lockedState": "Wenn das Gerät gesperrt ist, wird der folgende Status hergestellt"
 }

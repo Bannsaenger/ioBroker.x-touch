@@ -10,9 +10,11 @@
                     "type": "ip",
                     "listenOnAllPorts": true,
                     "onlyIp4": true,
+                    "xs": 12,
                     "sm": 12,
                     "md": 6,
                     "lg": 4,
+                    "xl": 4,
                     "label": "IP",
                     "help": "IP address to bind the port to"
                 },
@@ -20,9 +22,11 @@
                     "type": "number",
                     "min": 1,
                     "max": 65565,
+                    "xs": 12,
                     "sm": 12,
                     "md": 6,
-                    "lg": 2,
+                    "lg": 4,
+                    "xl": 2,
                     "label": "Port",
                     "help": "listen at this UDP port"
                 },
@@ -31,9 +35,11 @@
                     "min": 2000,
                     "max": 30000,
                     "step": 100,
+                    "xs": 12,
                     "sm": 12,
                     "md": 6,
-                    "lg": 2,
+                    "lg": 4,
+                    "xl": 2,
                     "label": "device inactivity timeout (in ms)",
                     "help": "set the time limit in ms after which the device will be reported offline if no status query is received",
                     "newLine": true
@@ -43,9 +49,11 @@
                     "min": 1,
                     "max": 100,
                     "step": 1,
+                    "xs": 12,
                     "sm": 12,
                     "md": 6,
-                    "lg": 2,
+                    "lg": 4,
+                    "xl": 2,
                     "label": "time to wait between two midi messages (in ms)",
                     "help": "increase if some conditions are not displayed correctly, especially if the whole status is transferred"
                 },
@@ -54,9 +62,11 @@
                     "min": 1,
                     "max": 4,
                     "step": 1,
+                    "xs": 12,
                     "sm": 12,
                     "md": 6,
-                    "lg": 2,
+                    "lg": 4,
+                    "xl": 2,
                     "label": "Device groups",
                     "help": "number of devicegroups which will be generated for use",
                     "newLine": true
@@ -66,9 +76,11 @@
                     "min": 8,
                     "max": 32,
                     "step": 8,
+                    "xs": 12,
                     "sm": 12,
                     "md": 6,
-                    "lg": 2,
+                    "lg": 4,
+                    "xl": 2,
                     "label": "Channels",
                     "help": "maximum number of channels (8 to 32, in steps of 8)"
                 },
@@ -77,9 +89,11 @@
                     "min": 1,
                     "max": 8,
                     "step": 1,
+                    "xs": 12,
                     "sm": 12,
                     "md": 6,
-                    "lg": 2,
+                    "lg": 4,
+                    "xl": 2,
                     "label": "Banks",
                     "help": "maximum number of fader banks to switch (max. 8)"
                 },
@@ -87,12 +101,20 @@
                     "type": "divider",
                     "newLine": true
                 },
-                "createBank": {
-                    "type": "checkbox",
+                "deviceLockedState": {
+                    "type": "select",
+                    "xs": 12,
                     "sm": 12,
                     "md": 6,
-                    "lg": 6,
-                    "label": "createBank",
+                    "lg": 4,
+                    "xl": 4,
+                    "label": "lockedState",
+                    "options": [
+                        {"label": {"en": "BLANK"}, "value": 0},
+                        {"label": {"en": "BLANK + Text '- Locked -'"}, "value": 1},
+                        {"label": {"en": "Text '- Locked -' only"}, "value": 2},
+                        {"label": {"en": "Leave as is"}, "value": 3}
+                    ],
                     "newLine": true
                 }
             }
