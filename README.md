@@ -29,7 +29,7 @@ There a two acepted commands:
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 0.7.0 (2025-02-17)
 * (Bannsaenger) fixed some minor typos
 * (Bannsaenger) updated to node 18.x - 22.x
 * (Bannsaenger) updated dependencies, node 22 compatibility, workflow
@@ -52,9 +52,6 @@ There a two acepted commands:
 
 ### 0.6.2 (2022-10-07)
 * (Bannsaenger) test-and-release without build
-
-### 0.6.1 (2022-10-07)
-* (Bannsaenger) confusion with the release script
 
 ## License
 MIT License

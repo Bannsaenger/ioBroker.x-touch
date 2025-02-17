@@ -1,4 +1,7 @@
 # Older changes
+## 0.6.1 (2022-10-07)
+* (Bannsaenger) confusion with the release script
+
 ## 0.6.0 (2022-10-07)
 * (Bannsaenger) updated to adapter-dev and release script
 * (Bannsaenger) introducing admin 5 UI (jsonConfig)

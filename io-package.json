@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "x-touch",
-    "version": "0.6.5",
+    "version": "0.7.0",
     "news": {
+      "0.7.0": {
+        "en": "fixed some minor typos\nupdated to node 18.x - 22.x\nupdated dependencies, node 22 compatibility, workflow\nadded possibility to lock the desk\nresend data on group membership change\nremoved createBanks from config dialog (too dangerous, delete by hand if neccessary)",
+        "de": "einige kleinere typos\naktualisiert zum knoten 18.x - 22.x\naktualisierte abhängigkeiten, knoten 22 kompatibilität, workflow\nzusätzliche möglichkeit, den schreibtisch zu sperren\ndaten zum gruppenmitgliedschaftswechsel ändern\nentfernen Banken aus dem config Dialog (zu gefährlich, löschen von Hand, wenn erforderlich)",
+        "ru": "фиксированный немного опечаток\nобновленный к узлу 18.x - 22.x\nобновленные зависимости, совместимость узла 22, рабочий процесс\nдобавлена возможность блокировки стола\nпересмотр данных об изменении членского состава группы\nудаленное создание Банки из диалогового окна настройки (слишком опасны, удалять вручную, если это не работает)",
+        "pt": "corrigiu alguns erros menores\natualizado para o nó 18.x - 22.x\ndependências atualizadas, compatibilidade do nó 22, fluxo de trabalho\npossibilidade adicionada para bloquear a mesa\nreenviar dados sobre a mudança de associação de grupo\ncriador removido Bancos de configuração diálogo (muito perigoso, excluir à mão se necessário)",
+        "nl": "enkele kleine typefouten hersteld\nbijgewerkt naar knooppunt 18.x - 22.x\nbijgewerkte afhankelijkheden, node 22 compatibiliteit, workflow\ntoegevoegd mogelijkheid om het bureau te vergrendelen\ngegevens over groepslidmaatschap wijzigen\naanmaken verwijderd Banken van config dialoog (te gevaarlijk, handmatig verwijderen indien noodzakelijk)",
+        "fr": "fixe quelques typos mineurs\nmise à jour au node 18.x - 22.x\ndépendances mises à jour, compatibilité node 22, flux de travail\npossibilité supplémentaire de verrouiller le bureau\nrenvoyez les données sur le changement d'appartenance au groupe\nsupprimé créer Banques du dialogue de configuration (trop dangereux, supprimer à la main si nécessaire)",
+        "it": "fissi alcuni tipi minori\naggiornato al nodo 18.x - 22.x\ndipendenze aggiornate, nodo 22 compatibilità, flusso di lavoro\npossibilità aggiunta di bloccare la scrivania\nrivendere i dati sul cambiamento dell'appartenenza al gruppo\ncreato rimosso Le banche dalla finestra di dialogo di configurazione (troppo pericoloso, eliminare a mano se neccessario)",
+        "es": "fija algunos tipos menores\nactualizado al nodo 18.x - 22.x\ndependencias actualizadas, compatibilidad con el nodo 22, flujo de trabajo\nadicional posibilidad de bloquear el escritorio\nreenviar datos sobre el cambio de miembros del grupo\neliminado crear Bancos del diálogo de configuración (demasiado peligroso, eliminar a mano si es necesario)",
+        "pl": "naprawił kilka drobnych literek\nzaktualizowane do węzła 18.x - 22.x\nzaktualizowane zależności, kompatybilność węzła 22, przepływ pracy\ndodana możliwość zamknięcia biurka\nponownie aktualizować dane dotyczące zmian w składzie grupy\nusunięty stwórz Banki z okna konfiguracyjnego (zbyt niebezpieczne, usunąć ręcznie, jeśli konieczne)",
+        "uk": "виправлено деякі незначні типи\nоновлений в вузол 18.x - 22.x\nоновлені залежності, вершина 22 сумісність, робочий процес\nможливість заблокувати стіл\nотримувати дані про зміну членства групи\nвидалити створення Банки з діалогу налаштувань (небезпечні, видалені вручну, якщо необов'язково)",
+        "zh-cn": "修补一些小打字\n更新至节点18.x - 22.x\n更新的依赖性、节点 22 兼容性、工作流程\n增加锁定办公桌的可能性\n重新发送团体成员变化数据\n删除创建 配置对话框中的银行( 太危险, 如果需要手动删除)"
+      },
       "0.6.5": {
         "en": "add CHANGELOG_OLD.md",
         "de": "cHANGELOG_OLD.md",
