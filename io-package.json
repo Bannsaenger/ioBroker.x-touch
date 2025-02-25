@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "x-touch",
-    "version": "0.7.0",
+    "version": "0.7.1",
     "news": {
+      "0.7.1": {
+        "en": "updated admin dependency",
+        "de": "aktualisierte adminabhängigkeit",
+        "ru": "обновленная зависимость администратора",
+        "pt": "dependência de administrador atualizada",
+        "nl": "bijgewerkte admin afhankelijkheid",
+        "fr": "mise à jour de la dépendance de l'administration",
+        "it": "dipendenza da amministratore aggiornata",
+        "es": "dependencia de administración actualizada",
+        "pl": "zaktualizowana zależność administratora",
+        "uk": "оновлена залежність адміністратора",
+        "zh-cn": "更新管理员依赖性"
+      },
       "0.7.0": {
         "en": "fixed some minor typos\nupdated to node 18.x - 22.x\nupdated dependencies, node 22 compatibility, workflow\nadded possibility to lock the desk\nresend data on group membership change\nremoved createBanks from config dialog (too dangerous, delete by hand if neccessary)",
         "de": "einige kleinere typos\naktualisiert zum knoten 18.x - 22.x\naktualisierte abhängigkeiten, knoten 22 kompatibilität, workflow\nzusätzliche möglichkeit, den schreibtisch zu sperren\ndaten zum gruppenmitgliedschaftswechsel ändern\nentfernen Banken aus dem config Dialog (zu gefährlich, löschen von Hand, wenn erforderlich)",
@@ -137,12 +150,12 @@
     "messagebox": true,
     "dependencies": [
       {
-        "js-controller": ">=5.0.19"
+        "js-controller": ">=6.0.11"
       }
     ],
-    "globalDependecies": [
+    "globalDependencies": [
       {
-        "admin": ">=5.3.2"
+        "admin": ">=7.4.10"
       }
     ]
   },

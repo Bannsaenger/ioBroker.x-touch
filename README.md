@@ -29,6 +29,9 @@ There a two acepted commands:
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+### 0.7.1 (2025-02-25)
+* (Bannsaenger) updated admin dependency
+
 ### 0.7.0 (2025-02-17)
 * (Bannsaenger) fixed some minor typos
 * (Bannsaenger) updated to node 18.x - 22.x
@@ -49,9 +52,6 @@ There a two acepted commands:
 ### 0.6.3 (2023-02-27)
 * (Bannsaenger) updated dependencies
 * (Bannsaenger) fixed bank and channel switching
-
-### 0.6.2 (2022-10-07)
-* (Bannsaenger) test-and-release without build
 
 ## License
 MIT License

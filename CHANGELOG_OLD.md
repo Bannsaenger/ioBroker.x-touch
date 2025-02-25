@@ -1,4 +1,7 @@
 # Older changes
+## 0.6.2 (2022-10-07)
+* (Bannsaenger) test-and-release without build
+
 ## 0.6.1 (2022-10-07)
 * (Bannsaenger) confusion with the release script
 
