@@ -47,7 +47,7 @@
     "ansi-regex": ">=6.1.0",
     "chai": "^4.4.1",
     "chai-as-promised": "^7.1.1",
-    "eslint": "^9.19.0",
+    "eslint": "^9.21.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-jsdoc": "^50.6.2",
     "eslint-plugin-prettier": "^5.2.1",
