@@ -16,7 +16,6 @@ Communicate with a Behringer X-Touch Control Surface (DAW Controller)
 
 ## ToDo
 - Add the syncGlobal functionality
-- Add the recreation of banks if option is set
 
 ## Message Box
 There a two acepted commands:
@@ -29,6 +28,10 @@ There a two acepted commands:
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+* (Bannsaenger) updated dependencies, node 24 compatibility
+* (Bannsaenger) refactored lock feature
+
 ### 0.7.1 (2025-02-25)
 * (Bannsaenger) updated admin dependency
 

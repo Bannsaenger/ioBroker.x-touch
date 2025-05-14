@@ -1432,7 +1432,7 @@ class XTouch extends utils.Adapter {
      *
      * @param {string} charId           the character id to send
      * @param {string} deviceAddress    only chen called via deviceUpdatexx
-     * @param {number|undefined} value  if value is set then send this value, used for locked devices
+     * @param {string|undefined} value  if value is set then send this value (character), used for locked devices
      */
     async sendDisplayChar(charId, deviceAddress = '', value = undefined) {
         try {
@@ -1501,24 +1501,27 @@ class XTouch extends utils.Adapter {
                     break;
             }
 
-            if (mode == 0) {
-                charCode = this.characterMapping[char] || 0;
-            } else {
-                charCode = extended || 0;
-            }
-
-            if (!enabled) {
-                this.log.debug(`character "${charId}" disabled. switch off`);
-                charCode = 0;
-            } else {
-                if (dot) {
-                    controller += 16;
-                } // the controller number with dot
-                // only if enabled. When disabled send to controller without dot to switch of the dot
-            }
-
             if (value !== undefined) {
-                charCode = value; // send back the gives value if exists
+                // forced mode. Send back the gives value (character) if exists
+                charCode = this.characterMapping[value] || 0;
+            } else {
+                // standard mode / behaviour
+                if (mode == 0) {
+                    charCode = this.characterMapping[char] || 0;
+                } else {
+                    charCode = extended || 0;
+                }
+
+                if (!enabled) {
+                    this.log.debug(`character "${charId}" disabled. switch off`);
+                    charCode = 0;
+                } else {
+                    if (dot) {
+                        controller += 16;
+                    }
+                    // the controller number with dot
+                    // only if enabled. When disabled send to controller without dot to switch of the dot
+                }
             }
 
             const midiCommand = new Uint8Array([0xb0, controller, charCode]);
@@ -1789,74 +1792,27 @@ class XTouch extends utils.Adapter {
             const activeGroup = this.devices[deviceAddress].memberOfGroup;
             let deskBlank = false;
             if (this.devices[deviceAddress].deviceLocked) {
-                deskBlank = this.config.deviceLockedState <= 1 ? true : false;
+                deskBlank = this.config.deviceLockedState >= 1 ? true : false;
             }
             for (const actButton of this.consoleLayout.buttons) {
                 const baseId = `${this.namespace}.deviceGroups.${activeGroup}.${actButton}`;
                 this.sendButton(baseId, deviceAddress, deskBlank);
             }
             // send all display characters
+            let displayIndex = 0;
             for (const actDisplayChar of this.consoleLayout.displayChars) {
                 const baseId = `${this.namespace}.deviceGroups.${activeGroup}.${actDisplayChar}`;
-                let blankValue = 0;
-                if (
-                    (this.config.deviceLockedState === 1 || this.config.deviceLockedState === 2) &&
-                    this.devices[deviceAddress].deviceLocked
-                ) {
-                    switch (actDisplayChar) {
-                        case 'timecodeDisplay.assignment_left':
-                            blankValue = 0;
-                            break;
-
-                        case 'timecodeDisplay.assignment_right':
-                            blankValue = 0;
-                            break;
-
-                        case 'timecodeDisplay.hours_left':
-                            blankValue = 64;
-                            break;
-
-                        case 'timecodeDisplay.hours_middle':
-                            blankValue = 0;
-                            break;
-
-                        case 'timecodeDisplay.hours_right':
-                            blankValue = 56;
-                            break;
-
-                        case 'timecodeDisplay.minutes_left':
-                            blankValue = 63;
-                            break;
-
-                        case 'timecodeDisplay.minutes_right':
-                            blankValue = 57;
-                            break;
-
-                        case 'timecodeDisplay.seconds_left':
-                            blankValue = 117;
-                            break;
-
-                        case 'timecodeDisplay.seconds_right':
-                            blankValue = 121;
-                            break;
-
-                        case 'timecodeDisplay.frames_left':
-                            blankValue = 94;
-                            break;
-
-                        case 'timecodeDisplay.frames_middle':
-                            blankValue = 0;
-                            break;
-
-                        case 'timecodeDisplay.frames_right':
-                            blankValue = 64;
-                            break;
-                    }
+                let blankValue = '';
+                if (this.config.deviceLockedState >= 2 && this.devices[deviceAddress].deviceLocked) {
+                    // do this only if the device is locked and the configured locked state includes a text
+                    blankValue = this.config.deviceLockedText.substring(displayIndex, displayIndex + 1);
+                    displayIndex++;
                     this.log.debug(`actDisplayChar: ${actDisplayChar} blankValue: ${blankValue}`);
                     this.sendDisplayChar(baseId, deviceAddress, blankValue);
-                } else if (this.config.deviceLockedState === 0 && this.devices[deviceAddress].deviceLocked) {
+                } else if (this.config.deviceLockedState === 1 && this.devices[deviceAddress].deviceLocked) {
+                    // only blanking
                     this.log.debug(`actDisplayChar: ${actDisplayChar} blanking`);
-                    this.sendDisplayChar(baseId, deviceAddress, 0);
+                    this.sendDisplayChar(baseId, deviceAddress, '');
                 } else {
                     this.sendDisplayChar(baseId, deviceAddress);
                 }

@@ -16,7 +16,7 @@
                     "lg": 4,
                     "xl": 4,
                     "label": "IP",
-                    "help": "IP address to bind the port to"
+                    "help": "lblIP"
                 },
                 "port": {
                     "type": "number",
@@ -28,7 +28,7 @@
                     "lg": 4,
                     "xl": 2,
                     "label": "Port",
-                    "help": "listen at this UDP port"
+                    "help": "hlpPort"
                 },
                 "deviceInactivityTimeout": {
                     "type": "number",
@@ -40,8 +40,8 @@
                     "md": 6,
                     "lg": 4,
                     "xl": 2,
-                    "label": "device inactivity timeout (in ms)",
-                    "help": "set the time limit in ms after which the device will be reported offline if no status query is received",
+                    "label": "lblDeviceInactivityTimeout",
+                    "help": "hlpDeviceInactivityTimeout",
                     "newLine": true
                 },
                 "sendDelay": {
@@ -54,8 +54,8 @@
                     "md": 6,
                     "lg": 4,
                     "xl": 2,
-                    "label": "time to wait between two midi messages (in ms)",
-                    "help": "increase if some conditions are not displayed correctly, especially if the whole status is transferred"
+                    "label": "lblSendDelay",
+                    "help": "hlpSendDelay"
                 },
                 "deviceGroups": {
                     "type": "number",
@@ -67,8 +67,8 @@
                     "md": 6,
                     "lg": 4,
                     "xl": 2,
-                    "label": "Device groups",
-                    "help": "number of devicegroups which will be generated for use",
+                    "label": "lblDeviceGroups",
+                    "help": "hlpDeviceGroups",
                     "newLine": true
                 },
                 "maxChannels": {
@@ -81,8 +81,8 @@
                     "md": 6,
                     "lg": 4,
                     "xl": 2,
-                    "label": "Channels",
-                    "help": "maximum number of channels (8 to 32, in steps of 8)"
+                    "label": "lblChannels",
+                    "help": "hlpChannels"
                 },
                 "maxBanks": {
                     "type": "number",
@@ -94,8 +94,8 @@
                     "md": 6,
                     "lg": 4,
                     "xl": 2,
-                    "label": "Banks",
-                    "help": "maximum number of fader banks to switch (max. 8)"
+                    "label": "lblBanks",
+                    "help": "hlpBanks"
                 },
                 "_divider": {
                     "type": "divider",
@@ -108,14 +108,26 @@
                     "md": 6,
                     "lg": 4,
                     "xl": 4,
-                    "label": "lockedState",
+                    "label": "lblLockedState",
+                    "help": "hlpLockedState",
                     "options": [
-                        {"label": {"en": "BLANK"}, "value": 0},
-                        {"label": {"en": "BLANK + Text '- Locked -'"}, "value": 1},
-                        {"label": {"en": "Text '- Locked -' only"}, "value": 2},
-                        {"label": {"en": "Leave as is"}, "value": 3}
-                    ],
-                    "newLine": true
+                        {"label": "lblValueUnchanged", "value": 0},
+                        {"label": "lblValueBlank", "value": 1},
+                        {"label": "lblValueBlankText", "value": 2}
+                    ]
+                },
+                "deviceLockedText": {
+                    "type": "text",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 2,
+                    "label": "lblDeviceLockedText",
+                    "help": "hlpDeviceLockedText",
+                    "tooltip": "ttDeviceLockedText",
+                    "maxLength": 12,
+                    "disabled": "data.deviceLockedState < 2"
                 }
             }
         }

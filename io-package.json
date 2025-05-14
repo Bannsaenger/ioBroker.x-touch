@@ -167,7 +167,8 @@
     "maxChannels": 8,
     "maxBanks": 1,
     "sendDelay": 1,
-    "deviceLockedState": 1
+    "deviceLockedState": 0,
+    "deviceLockedText": "  - LOCKED -"
   },
   "objects": [],
   "instanceObjects": [
