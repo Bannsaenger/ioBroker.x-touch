@@ -21,7 +21,7 @@
     "url": "https://github.com/Bannsaenger/ioBroker.x-touch"
   },
   "engines": {
-    "node": ">=18.x"
+    "node": ">=20.x"
   },
   "dependencies": {
     "@iobroker/adapter-core": "^3.2.3",
