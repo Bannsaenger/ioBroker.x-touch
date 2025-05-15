@@ -28,6 +28,9 @@ There a two acepted commands:
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+* (Bannsaenger) node 22 in deploy script
+
 ### 0.8.0 (2025-05-15)
 * (Bannsaenger) updated dependencies, node 24 compatibility
 * (Bannsaenger) refactored lock feature
