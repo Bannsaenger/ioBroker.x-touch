@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "x-touch",
-    "version": "0.7.1",
+    "version": "0.8.0",
     "news": {
+      "0.8.0": {
+        "en": "updated dependencies, node 24 compatibility\nrefactored lock feature",
+        "de": "aktualisierte abhängigkeiten, knoten 24 kompatibilität\nrefactored lock feature",
+        "ru": "обновленные зависимости, совместимость с узлом 24\nрефакторированная функция блокировки",
+        "pt": "dependências atualizadas, compatibilidade node 24\nrecurso de bloqueio refactored",
+        "nl": "bijgewerkte afhankelijkheden, node 24 compatibiliteit\nrefactored slot functie",
+        "fr": "dépendances actualisées, compatibilité node 24\nfonction de verrouillage remaniée",
+        "it": "dipendenze aggiornate, nodo 24 compatibilità\nfunzione di blocco refactored",
+        "es": "dependencias actualizadas, compatibilidad con el nodo 24\nfunción de bloqueo refactorizado",
+        "pl": "zaktualizowane zależności, kompatybilność węzła 24\nfunkcja refakturowanej blokady",
+        "uk": "оновлені залежності, сумісність вузла 24\nрефакторований замок функції",
+        "zh-cn": "更新的依附关系,节点 24 兼容性\n重构锁定特性"
+      },
       "0.7.1": {
         "en": "updated admin dependency",
         "de": "aktualisierte adminabhängigkeit",
@@ -80,19 +93,6 @@
         "pl": "bez budowy, zaktualizowano do skryptu adapter-dev i release, wprowadzając interfejs użytkownika admin 5 (jsonConfig)",
         "zh-cn": "不建造试验和重新定位, 更新到适配器开发和发布脚本，引入 admin 5 UI (jsonConfig)",
         "uk": "тестування та випуск без збірки, оновлено до adapter-dev і сценарію випуску, представлено інтерфейс адміністратора 5 (jsonConfig)"
-      },
-      "0.5.1": {
-        "en": "updated dependencies",
-        "de": "Abhängigkeiten aktualisiert",
-        "ru": "обновленные зависимости",
-        "pt": "dependências atualizadas",
-        "nl": "vertaling:",
-        "fr": "dépendances actualisées",
-        "it": "dipendenze aggiornate",
-        "es": "dependencias actualizadas",
-        "pl": "zależności aktualizacji",
-        "zh-cn": "二. 最新依赖",
-        "uk": "оновлені залежності"
       }
     },
     "titleLang": {

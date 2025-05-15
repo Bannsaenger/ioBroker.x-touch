@@ -1,4 +1,8 @@
 # Older changes
+## 0.6.3 (2023-02-27)
+* (Bannsaenger) updated dependencies
+* (Bannsaenger) fixed bank and channel switching
+
 ## 0.6.2 (2022-10-07)
 * (Bannsaenger) test-and-release without build
 
