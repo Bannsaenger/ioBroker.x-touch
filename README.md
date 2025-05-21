@@ -30,6 +30,7 @@ There a two acepted commands:
 -->
 ### **WORK IN PROGRESS**
 * (Bannsaenger) node 22 in deploy script
+* (Bannsaenger) do not send updates when lock feature is in blank mode
 
 ### 0.8.0 (2025-05-15)
 * (Bannsaenger) updated dependencies, node 24 compatibility

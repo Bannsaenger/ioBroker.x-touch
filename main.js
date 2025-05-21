@@ -151,6 +151,7 @@ class XTouch extends utils.Adapter {
                         index: actDeviceNum,
                         connection: false, // connection must be false on system start
                         deviceLocked: actDeviceLocked,
+                        blankingFinished: false, // allow sending of updates while blanking runs. Will be true if blanking succeeded
                         ipAddress: actIpAddress,
                         port: actPort,
                         memberOfGroup: actMemberOfGroup,
@@ -237,6 +238,7 @@ class XTouch extends utils.Adapter {
                         memberOfGroup: 0,
                         serialNumber: '',
                         deviceLocked: false,
+                        blankingFinished: false,
                         index: this.nextDevice,
                     };
                     let prefix = `devices.${this.nextDevice.toString()}`;
@@ -374,7 +376,7 @@ class XTouch extends utils.Adapter {
 
                 this.setConnection(info.address, info.port, true);
 
-                this.deviceSendData(this.fromHexString(POLL_REPLY), info.address, info.port);
+                this.deviceSendData(this.fromHexString(POLL_REPLY), info.address, info.port, true);
             } else if (msg_hex === HOST_CON_QUERY) {
                 this.log.silly(
                     `X-Touch received Host Connection Query, give no reply, probably "${this.logHexData(
@@ -1794,9 +1796,13 @@ class XTouch extends utils.Adapter {
             if (this.devices[deviceAddress].deviceLocked) {
                 deskBlank = this.config.deviceLockedState >= 1 ? true : false;
             }
-            for (const actButton of this.consoleLayout.buttons) {
-                const baseId = `${this.namespace}.deviceGroups.${activeGroup}.${actButton}`;
-                this.sendButton(baseId, deviceAddress, deskBlank);
+            if (deskBlank) {
+                // if device update has to blank, start it
+                this.devices[deviceAddress].blankingFinished = false;
+                for (const actButton of this.consoleLayout.buttons) {
+                    const baseId = `${this.namespace}.deviceGroups.${activeGroup}.${actButton}`;
+                    this.sendButton(baseId, deviceAddress, true);
+                }
             }
             // send all display characters
             let displayIndex = 0;
@@ -1828,6 +1834,11 @@ class XTouch extends utils.Adapter {
             );
             // illuminate the page buttons
             this.deviceSwitchChannels(deskBlank ? 'blank' : 'none', deviceAddress);
+            // if device update has finished, set blankingFinished
+            this.devices[deviceAddress].blankingFinished = true;
+            this.log.debug(
+                `deviceUpdateDevice: ${deviceAddress}, blankingFinished: ${this.devices[deviceAddress].blankingFinished}`,
+            );
         } catch (err) {
             this.errorHandler(err, 'deviceUpdateDevice');
         }
@@ -1881,8 +1892,19 @@ class XTouch extends utils.Adapter {
      * @param {Buffer | Uint8Array | Array} data    the data to send
      * @param {string} deviceAddress                the address to send to
      * @param {string | number} devicePort          the port to send to
+     * @param {boolean} sysMessage          		if true send in any case, even when the device is locked
      */
-    deviceSendData(data, deviceAddress, devicePort = 10111) {
+    deviceSendData(data, deviceAddress, devicePort = 10111, sysMessage = false) {
+        // do not send back data if device is locked, except when blanking runs
+        //this.log.debug(`deviceSendData: ${deviceAddress}, blankingFinished: ${this.devices[deviceAddress].blankingFinished}`);
+        if (
+            this.devices[deviceAddress].deviceLocked &&
+            this.config.deviceLockedState >= 1 &&
+            this.devices[deviceAddress].blankingFinished &&
+            !sysMessage
+        ) {
+            return;
+        }
         const sendData = {
             data: data,
             address: deviceAddress,
