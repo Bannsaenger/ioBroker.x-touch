@@ -28,7 +28,7 @@ There a two acepted commands:
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 0.8.1 (2025-05-21)
 * (Bannsaenger) node 22 in deploy script
 * (Bannsaenger) do not send updates when lock feature is in blank mode
 
@@ -49,12 +49,6 @@ There a two acepted commands:
 
 ### 0.6.5 (2023-12-30)
 * (Bannsaenger) add CHANGELOG_OLD.md
-
-### 0.6.4 (2023-12-21)
-* (Bannsaenger) fixed console_layout.json
-* (Bannsaenger) fixed sending items on channel 9, 17 etc.
-* (Bannsaenger) use extendObject instead of Create......
-* (Bannsaenger) updated dependencies
 
 ## License
 MIT License

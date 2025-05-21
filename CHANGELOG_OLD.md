@@ -1,4 +1,10 @@
 # Older changes
+## 0.6.4 (2023-12-21)
+* (Bannsaenger) fixed console_layout.json
+* (Bannsaenger) fixed sending items on channel 9, 17 etc.
+* (Bannsaenger) use extendObject instead of Create......
+* (Bannsaenger) updated dependencies
+
 ## 0.6.3 (2023-02-27)
 * (Bannsaenger) updated dependencies
 * (Bannsaenger) fixed bank and channel switching

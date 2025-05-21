@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "x-touch",
-    "version": "0.8.0",
+    "version": "0.8.1",
     "news": {
+      "0.8.1": {
+        "en": "node 22 in deploy script\ndo not send updates when lock feature is in blank mode",
+        "de": "node 22 in deploy script\nkeine updates senden, wenn die sperrfunktion im leeren modus ist",
+        "ru": "узел 22 в сценарии развертывания\nне отправляйте обновления, когда функция блокировки находится в пустом режиме",
+        "pt": "node 22 em implantar script\nnão envie atualizações quando o recurso de bloqueio está no modo em branco",
+        "nl": "node 22 in implementatiescript\ngeen updates versturen wanneer de functie vergrendelen in lege modus is",
+        "fr": "node 22 dans le script de déploiement\nne pas envoyer de mises à jour lorsque la fonction de verrouillage est en mode vide",
+        "it": "nodo 22 in implementazione script\nnon inviare aggiornamenti quando la funzione di blocco è in modalità vuota",
+        "es": "nodo 22 en el script de despliegue\nno enviar actualizaciones cuando la función de bloqueo está en modo en blanco",
+        "pl": "węzeł 22 w skrypcie wdrożenia\nnie wysyłaj aktualizacji, gdy funkcja blokady jest w trybie pustym",
+        "uk": "вершина 22 в скрипт розгортання\nне надсилайте оновлення, коли функція блокування знаходиться в порожній режимі",
+        "zh-cn": "部署脚本中的节点 22\n当锁定特性处于空白模式时, 不发送更新"
+      },
       "0.8.0": {
         "en": "updated dependencies, node 24 compatibility\nrefactored lock feature",
         "de": "aktualisierte abhängigkeiten, knoten 24 kompatibilität\nrefactored lock feature",
@@ -80,19 +93,6 @@
         "pl": "zależności aktualizacji\nbank i kanał przełączają się",
         "uk": "оновлені залежності\nфіксований банк і канал перемикач",
         "zh-cn": "二. 最新依赖\n固定银行和转账"
-      },
-      "0.6.2": {
-        "en": "test-and-release without build, updated to adapter-dev and release script, introducing admin 5 UI (jsonConfig)",
-        "de": "test-und-release ohne aufbau, auf adapter-dev und release script aktualisiert, Einführung der Admin 5 UI (jsonConfig)",
-        "ru": "тест-и-релиз без сборки, обновлен до сценария адаптера-разработчика и выпуска, представлен пользовательский интерфейс администратора 5 (jsonConfig)",
-        "pt": "test-and-release sem construir, atualizado para o adapter-dev e o script de lançamento, apresentando a interface do usuário admin 5 (jsonConfig)",
-        "nl": "test en vrijlating zonder te bouwen, bijgewerkt naar adapter-dev en release-script, introductie van admin 5 UI (jsonConfig)",
-        "fr": "test-and-release without build, mise à jour vers adapter-dev et release script, introduisant l'interface utilisateur admin 5 (jsonConfig)",
-        "it": "test-e-release senza costruzione, aggiornato a adapter-dev e script di rilascio, introducendo l'interfaccia utente di amministrazione 5 (jsonConfig)",
-        "es": "prueba y liberación sin construir, actualizado a adapter-dev y release script, presentando admin 5 UI (jsonConfig)",
-        "pl": "bez budowy, zaktualizowano do skryptu adapter-dev i release, wprowadzając interfejs użytkownika admin 5 (jsonConfig)",
-        "zh-cn": "不建造试验和重新定位, 更新到适配器开发和发布脚本，引入 admin 5 UI (jsonConfig)",
-        "uk": "тестування та випуск без збірки, оновлено до adapter-dev і сценарію випуску, представлено інтерфейс адміністратора 5 (jsonConfig)"
       }
     },
     "titleLang": {
