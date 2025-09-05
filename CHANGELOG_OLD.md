@@ -1,4 +1,7 @@
 # Older changes
+## 0.6.5 (2023-12-30)
+* (Bannsaenger) add CHANGELOG_OLD.md
+
 ## 0.6.4 (2023-12-21)
 * (Bannsaenger) fixed console_layout.json
 * (Bannsaenger) fixed sending items on channel 9, 17 etc.

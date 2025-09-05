@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "x-touch",
-    "version": "0.8.1",
+    "version": "0.8.2",
     "news": {
+      "0.8.2": {
+        "en": "updated dependencies and issues from repository checker",
+        "de": "aktualisierte abhängigkeiten und probleme von repository checker",
+        "ru": "обновленные зависимости и проблемы из проверки репозитория",
+        "pt": "dependências e problemas atualizados do verificador de repositório",
+        "nl": "bijgewerkte afhankelijkheden en problemen van repository-checker",
+        "fr": "les dépendances et les problèmes mis à jour par le vérificateur du dépôt",
+        "it": "dipendenze aggiornate e problemi da repository checker",
+        "es": "dependencias actualizadas y cuestiones del control del repositorio",
+        "pl": "zaktualizowane zależności i problemy z kontrolerem repozytorium",
+        "uk": "оновлені залежності та питання репозиторійної перевірки",
+        "zh-cn": "从仓库检查器更新的依赖性和问题"
+      },
       "0.8.1": {
         "en": "node 22 in deploy script\ndo not send updates when lock feature is in blank mode",
         "de": "node 22 in deploy script\nkeine updates senden, wenn die sperrfunktion im leeren modus ist",
@@ -80,19 +93,6 @@
         "pl": "zamknięta konsola.json\nna kanale 9, 17.\nrozszerzenie Obiekt zamiast kreatu.\nzależności aktualizacji",
         "uk": "javascript licenses api веб-сайт go1.13.8\nфіксовані відправлення елементів на каналі 9, 17 і т.д.\nрозширення Об'єкт замість створення.\nоновлені залежності",
         "zh-cn": "a. 固定的礼貌_layout.json\n固定发送物品9、17等。.\n用途 反对。.\n二. 最新依赖"
-      },
-      "0.6.3": {
-        "en": "updated dependencies\nfixed bank and channel switching",
-        "de": "aktualisierte abhängigkeiten\nfestbank- und kanalwechsel",
-        "ru": "обновленные зависимости\nфиксированное переключение банка и канала",
-        "pt": "dependências atualizadas\nbanco fixo e comutação de canal",
-        "nl": "vertaling:\nvertaling:",
-        "fr": "dépendances actualisées\nbanque fixe et commutation de canal",
-        "it": "dipendenze aggiornate\nbanca fissa e canale di commutazione",
-        "es": "dependencias actualizadas\ncambio de banco fijo y canal",
-        "pl": "zależności aktualizacji\nbank i kanał przełączają się",
-        "uk": "оновлені залежності\nфіксований банк і канал перемикач",
-        "zh-cn": "二. 最新依赖\n固定银行和转账"
       }
     },
     "titleLang": {
