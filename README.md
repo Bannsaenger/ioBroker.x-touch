@@ -28,6 +28,9 @@ There a two acepted commands:
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+* (Bannsaenger) updated dependencies and issues from repository checker
+
 ### 0.8.1 (2025-05-21)
 * (Bannsaenger) node 22 in deploy script
 * (Bannsaenger) do not send updates when lock feature is in blank mode
