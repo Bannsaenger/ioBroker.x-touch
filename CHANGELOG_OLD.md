@@ -1,4 +1,12 @@
 # Older changes
+## 0.7.0 (2025-02-17)
+* (Bannsaenger) fixed some minor typos
+* (Bannsaenger) updated to node 18.x - 22.x
+* (Bannsaenger) updated dependencies, node 22 compatibility, workflow
+* (Bannsaenger) added possibility to lock the desk
+* (Bannsaenger) resend data on group membership change
+* (Bannsaenger) removed createBanks from config dialog (too dangerous, delete by hand if neccessary)
+
 ## 0.6.5 (2023-12-30)
 * (Bannsaenger) add CHANGELOG_OLD.md
 
