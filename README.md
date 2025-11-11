@@ -28,6 +28,9 @@ There a two acepted commands:
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+* (Bannsaenger) updated dependencies and issues from repository checker
+
 ### 0.8.3 (2025-10-24)
 * (Bannsaenger) updated dependencies and issues from repository checker
 * (Bannsaenger) migrate to NPM Trusted Publishing
