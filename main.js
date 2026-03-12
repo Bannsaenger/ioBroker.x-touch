@@ -301,7 +301,10 @@ class XTouch extends utils.Adapter {
         }
     }
 
-    // Methods related to Server events
+    /**********************************************************************************************
+     * Methods related to server events
+     **********************************************************************************************/
+    /* #region server events */
     /**
      * Is called if a server error occurs
      *
@@ -485,6 +488,7 @@ class XTouch extends utils.Adapter {
             this.errorHandler(err, 'onServerMessage');
         }
     }
+    /* #endregion */
 
     /********************************************************************************
      * handler functions to handle the values coming from the database or the device
@@ -493,6 +497,7 @@ class XTouch extends utils.Adapter {
      * primary behaviour is correction of values and the processing of the
      * autofunction process
      ********************************************************************************/
+    /* #region handler functions */
     /**
      * handle the button events and call the sendback if someting is changed
      *
@@ -1094,12 +1099,14 @@ class XTouch extends utils.Adapter {
             this.errorHandler(err, 'handleDisplayChar');
         }
     }
+    /* #endregion */
 
     /********************************************************************************
      * send functions to send back data to the device e.g. devices in the group
      ********************************************************************************
      *
      ********************************************************************************/
+    /* #region send functions */
     /**
      * send back the button status, use same method to send the button state on restart and bank change
      *
@@ -1701,89 +1708,6 @@ class XTouch extends utils.Adapter {
     }
 
     /**
-     * Is called if a subscribed state changes
-     *
-     * @param {string} id                                   database id of the state which generates this event
-     * @param {ioBroker.State | null | undefined} state     the state with value and acknowledge
-     */
-    async onStateChange(id, state) {
-        try {
-            if (state) {
-                // The state was changed
-                // this.log.debug(`state ${id} changed: ${state.val} (ack = ${state.ack})`);
-                if (!state.ack) {
-                    // only react on not acknowledged state changes
-                    if (state.lc === state.ts) {
-                        // last changed and last updated equal then the value has changed
-                        this.log.info(`state ${id} changed: ${state.val} (ack = ${state.ack})`);
-                        const baseId = id.substring(0, id.lastIndexOf('.'));
-                        const locObj = await this.getObjectAsync(baseId);
-                        if (typeof locObj !== 'undefined' && locObj !== null) {
-                            const locRole = typeof locObj.common.role !== 'undefined' ? locObj.common.role : '';
-                            switch (locRole) {
-                                case 'button':
-                                    this.handleButton(id, state.val, 'value');
-                                    break;
-
-                                case 'level.volume':
-                                    this.handleFader(id, state.val, 'value');
-                                    break;
-
-                                case 'info.display':
-                                    this.handleDisplay(id, state.val);
-                                    break;
-
-                                case 'encoder':
-                                    this.handleEncoder(id, state.val);
-                                    break;
-
-                                case 'displayChar':
-                                    this.handleDisplayChar(id, state.val);
-                                    break;
-                            }
-                        }
-                        if (/max/.test(id)) {
-                            this.log.warn(`X-Touch state ${id} changed. Please restart instance`);
-                        }
-                        if (/illuminate/.test(id)) {
-                            this.log.info(`X-Touch lock state changed to: ${state.val} on baseId: ${baseId}`);
-                        }
-                        if (/deviceLocked/.test(id)) {
-                            const tempObj = await this.getStateAsync(`${baseId}.ipAddress`);
-                            if (tempObj && tempObj.val) {
-                                const deviceAddress = tempObj.val.toString();
-                                this.log.info(
-                                    `X-Touch lock state changed to: ${state.val}. Device address: ${deviceAddress}`,
-                                );
-                                this.devices[deviceAddress].deviceLocked = state.val;
-                                this.deviceUpdateDevice(deviceAddress);
-                            }
-                        }
-                        if (/memberOfGroup/.test(id)) {
-                            const tempObj = await this.getStateAsync(`${baseId}.memberOfGroup`);
-                            if (tempObj && tempObj.val) {
-                                const deviceAddress = tempObj.val.toString();
-                                this.log.info(
-                                    `X-Touch memberOfGroup changed to: ${state.val}. Device address: ${deviceAddress}`,
-                                );
-                                this.devices[deviceAddress].memberOfGroup = state.val;
-                                this.deviceUpdateDevice(deviceAddress);
-                            }
-                        }
-                    } else {
-                        this.log.debug(`state ${id} only updated not changed: ${state.val} (ack = ${state.ack})`);
-                    }
-                }
-            } else {
-                // The state was deleted
-                this.log.info(`state ${id} deleted`);
-            }
-        } catch (err) {
-            this.errorHandler(err, 'onStateChange');
-        }
-    }
-
-    /**
      * called for sending all elements on status update
      *
      * @param {string} deviceAddress send all elements, update, this device
@@ -1796,13 +1720,11 @@ class XTouch extends utils.Adapter {
             if (this.devices[deviceAddress].deviceLocked) {
                 deskBlank = this.config.deviceLockedState >= 1 ? true : false;
             }
-            if (deskBlank) {
-                // if device update has to blank, start it
-                this.devices[deviceAddress].blankingFinished = false;
-                for (const actButton of this.consoleLayout.buttons) {
-                    const baseId = `${this.namespace}.deviceGroups.${activeGroup}.${actButton}`;
-                    this.sendButton(baseId, deviceAddress, true);
-                }
+            // update the buttons, if deskBlank is true blank it, else update the desk
+            this.devices[deviceAddress].blankingFinished = false;
+            for (const actButton of this.consoleLayout.buttons) {
+                const baseId = `${this.namespace}.deviceGroups.${activeGroup}.${actButton}`;
+                this.sendButton(baseId, deviceAddress, deskBlank);
             }
             // send all display characters
             let displayIndex = 0;
@@ -1985,7 +1907,352 @@ class XTouch extends utils.Adapter {
             }
         }
     }
+    /* #endregion */
 
+    /********************************************************************************
+     * functions for database creation
+     ********************************************************************************/
+    /* #region database creation */
+    /**
+     * create the database (populate all values an delete unused)
+     */
+    async createDatabaseAsync() {
+        try {
+            this.log.debug('X-Touch start to create/update the database');
+
+            // create the device groups
+            for (let index = 0; index < this.config.deviceGroups; index++) {
+                await this.createDeviceGroupAsync(index.toString());
+            }
+
+            // delete all unused device groups
+            for (const key in await this.getAdapterObjectsAsync()) {
+                const tempArr = key.split('.');
+                if (tempArr.length < 5) {
+                    continue;
+                }
+                if (tempArr[2] === 'devices') {
+                    continue;
+                }
+                if (Number(tempArr[3]) >= this.config.deviceGroups) {
+                    await this.delObjectAsync(key);
+                }
+            }
+
+            // and now delete the unused device groups base folder
+            for (let index = this.config.deviceGroups; index <= 4; index++) {
+                await this.delObjectAsync(`${this.namespace}.deviceGroups.${index}`);
+            }
+
+            this.log.debug('X-Touch finished up database creation');
+        } catch (err) {
+            this.errorHandler(err, 'createDatabaseAsync');
+        }
+    }
+
+    /**
+     * create the given deviceGroup
+     *
+     * @param {string} deviceGroup the device group to create
+     */
+    async createDeviceGroupAsync(deviceGroup) {
+        try {
+            await this.extendObjectPreserveAsync(`deviceGroups.${deviceGroup}`, this.objectTemplates.deviceGroup);
+            for (const element of this.objectTemplates.deviceGroups) {
+                await this.extendObjectPreserveAsync(`deviceGroups.${deviceGroup}.${element._id}`, element);
+
+                if (element.common.role === 'button') {
+                    // populate the button folder
+                    for (const button of this.objectTemplates.button) {
+                        await this.extendObjectPreserveAsync(
+                            `deviceGroups.${deviceGroup}.${element._id}.${button._id}`,
+                            button,
+                        );
+                    }
+                }
+                if (element.common.role === 'level.volume') {
+                    // populate the fader folder
+                    for (const fader of this.objectTemplates.levelVolume) {
+                        await this.extendObjectPreserveAsync(
+                            `deviceGroups.${deviceGroup}.${element._id}.${fader._id}`,
+                            fader,
+                        );
+                    }
+                }
+
+                if (element.type === 'folder' && element._id !== 'banks') {
+                    // populate the section, but not banks
+                    await this.extendObjectPreserveAsync(`deviceGroups.${deviceGroup}.${element._id}`, element);
+
+                    for (const sectElem of this.objectTemplates[element._id]) {
+                        // find the section
+                        await this.extendObjectPreserveAsync(
+                            `deviceGroups.${deviceGroup}.${element._id}.${sectElem._id}`,
+                            sectElem,
+                        );
+
+                        if (sectElem.common.role === 'button') {
+                            // populate the button folder
+                            for (const button of this.objectTemplates.button) {
+                                await this.extendObjectPreserveAsync(
+                                    `deviceGroups.${deviceGroup}.${element._id}.${sectElem._id}.${button._id}`,
+                                    button,
+                                );
+                            }
+                        }
+                        if (sectElem.common.role === 'led') {
+                            // populate the led folder
+                            for (const button of this.objectTemplates.led) {
+                                await this.extendObjectPreserveAsync(
+                                    `deviceGroups.${deviceGroup}.${element._id}.${sectElem._id}.${button._id}`,
+                                    button,
+                                );
+                            }
+                        }
+                        if (sectElem.common.role === 'level.volume') {
+                            // populate the fader folder
+                            for (const fader of this.objectTemplates.levelVolume) {
+                                await this.extendObjectPreserveAsync(
+                                    `deviceGroups.${deviceGroup}.${element._id}.${sectElem._id}.${fader._id}`,
+                                    fader,
+                                );
+                            }
+                        }
+                        if (sectElem.common.role === 'value.volume') {
+                            // populate the meter folder
+                            for (const meter of this.objectTemplates.valueVolume) {
+                                await this.extendObjectPreserveAsync(
+                                    `deviceGroups.${deviceGroup}.${element._id}.${sectElem._id}.${meter._id}`,
+                                    meter,
+                                );
+                            }
+                        }
+                        if (sectElem.common.role === 'encoder') {
+                            // populate the encoder folder
+                            for (const meter of this.objectTemplates.encoder) {
+                                await this.extendObjectPreserveAsync(
+                                    `deviceGroups.${deviceGroup}.${element._id}.${sectElem._id}.${meter._id}`,
+                                    meter,
+                                );
+                            }
+                        }
+                        if (sectElem.common.role === 'displayChar') {
+                            // populate the displayChar folder
+                            for (const displayChar of this.objectTemplates.displayChar) {
+                                await this.extendObjectPreserveAsync(
+                                    `deviceGroups.${deviceGroup}.${element._id}.${sectElem._id}.${displayChar._id}`,
+                                    displayChar,
+                                );
+                            }
+                        }
+                    }
+                }
+            }
+
+            this.log.info(`create bank of devicegroup ${deviceGroup}`);
+            await this.createBanksAsync(deviceGroup);
+        } catch (err) {
+            this.errorHandler(err, 'createDeviceGroupAsync');
+        }
+    }
+
+    /**
+     * create a number of banks as defines by maxBanks in the given device group
+     *
+     * @param {string} deviceGroup the device group to create banks for
+     */
+    async createBanksAsync(deviceGroup) {
+        try {
+            const tempObj = await this.getStateAsync(`deviceGroups.${deviceGroup}.maxBanks`);
+            let maxBanks = tempObj && tempObj.val ? Number(tempObj.val) : 1;
+
+            if (maxBanks > this.config.maxBanks) {
+                maxBanks = this.config.maxBanks;
+                this.setState(`deviceGroups.${deviceGroup}.maxBanks`, Number(maxBanks), true);
+            }
+
+            for (let index = 0; index < maxBanks; index++) {
+                const activeBank = `deviceGroups.${deviceGroup}.banks.${index}`;
+
+                await this.extendObjectPreserveAsync(activeBank, this.objectTemplates.bank);
+
+                for (const element of this.objectTemplates.banks) {
+                    await this.extendObjectPreserveAsync(`${activeBank}.${element._id}`, element);
+
+                    if (element.common.role === 'button') {
+                        // populate the button folder
+                        for (const button of this.objectTemplates.button) {
+                            await this.extendObjectPreserveAsync(`${activeBank}.${element._id}.${button._id}`, button);
+                        }
+                    }
+                    if (element.common.role === 'level.volume') {
+                        // populate the fader folder
+                        for (const fader of this.objectTemplates.level_volume) {
+                            await this.extendObjectPreserveAsync(`${activeBank}.${element._id}.${fader._id}`, fader);
+                        }
+                    }
+                    if (element.common.role === 'value.volume') {
+                        // populate the meter folder
+                        for (const meter of this.objectTemplates.value_volume) {
+                            await this.extendObjectPreserveAsync(`${activeBank}.${element._id}.${meter._id}`, meter);
+                        }
+                    }
+                }
+
+                await this.createChannelsAsync(deviceGroup, index.toString());
+            }
+
+            // delete all unused banks
+            for (const key in await this.getAdapterObjectsAsync()) {
+                const tempArr = key.split('.');
+                if (tempArr.length < 6) {
+                    continue;
+                }
+                if (tempArr[3] == deviceGroup && Number(tempArr[5]) >= maxBanks) {
+                    await this.delObjectAsync(key);
+                }
+            }
+
+            // and now delete the unused bank base folder
+            for (let index = maxBanks; index <= this.config.maxBanks; index++) {
+                await this.delObjectAsync(`${this.namespace}.deviceGroups.${deviceGroup}.banks.${index}`);
+            }
+        } catch (err) {
+            this.errorHandler(err, 'createBanksAsync');
+        }
+    }
+
+    /**
+     * create a number of channels (faders)
+     *
+     * @param {string} deviceGroup  the device group to create channels for
+     * @param {string} bank         the bank in the device group
+     */
+    async createChannelsAsync(deviceGroup, bank) {
+        try {
+            const tempObj = await this.getStateAsync(`deviceGroups.${deviceGroup}.banks.${bank}.maxChannels`);
+            let maxChannels = tempObj && tempObj.val ? Number(tempObj.val) : 8;
+
+            if (Number(maxChannels) % 8) {
+                // if not a multiple of 8
+                maxChannels = 8;
+                this.setState(`deviceGroups.${deviceGroup}.banks.${bank}.maxChannels`, Number(maxChannels), true);
+            }
+
+            if (maxChannels > this.config.maxChannels) {
+                maxChannels = this.config.maxChannels;
+                this.setState(`deviceGroups.${deviceGroup}.banks.${bank}.maxChannels`, Number(maxChannels), true);
+            }
+
+            for (let channel = 1; channel <= maxChannels; channel++) {
+                const activeChannel = `deviceGroups.${deviceGroup}.banks.${bank}.channels.${channel}`;
+
+                await this.extendObjectPreserveAsync(activeChannel, this.objectTemplates.channel);
+
+                for (const element of this.objectTemplates.channels) {
+                    await this.extendObjectPreserveAsync(`${activeChannel}.${element._id}`, element);
+
+                    if (element.common.role === 'button') {
+                        // populate the button folder
+                        for (const button of this.objectTemplates.button) {
+                            await this.extendObjectPreserveAsync(
+                                `${activeChannel}.${element._id}.${button._id}`,
+                                button,
+                            );
+                        }
+                    }
+                    if (element.common.role === 'level.volume') {
+                        // populate the fader folder
+                        for (const fader of this.objectTemplates.levelVolume) {
+                            await this.extendObjectPreserveAsync(`${activeChannel}.${element._id}.${fader._id}`, fader);
+                        }
+                    }
+                    if (element.common.role === 'value.volume') {
+                        // populate the meter folder
+                        for (const meter of this.objectTemplates.valueVolume) {
+                            await this.extendObjectPreserveAsync(`${activeChannel}.${element._id}.${meter._id}`, meter);
+                        }
+                    }
+                    if (element.common.role === 'info.display') {
+                        // populate the meter folder
+                        for (const display of this.objectTemplates.infoDisplay) {
+                            await this.extendObjectPreserveAsync(
+                                `${activeChannel}.${element._id}.${display._id}`,
+                                display,
+                            );
+                        }
+                    }
+                    if (element.common.role === 'encoder') {
+                        // populate the encoder folder
+                        for (const display of this.objectTemplates.channelEncoder) {
+                            await this.extendObjectPreserveAsync(
+                                `${activeChannel}.${element._id}.${display._id}`,
+                                display,
+                            );
+                        }
+                    }
+                }
+            }
+
+            // delete all unused channels
+            for (const key in await this.getAdapterObjectsAsync()) {
+                const tempArr = key.split('.');
+                if (tempArr.length < 9) {
+                    continue;
+                }
+                if (tempArr[3] == deviceGroup && tempArr[5] === bank && Number(tempArr[7]) > maxChannels) {
+                    await this.delObjectAsync(key);
+                }
+            }
+
+            // and now delete the unused channel base folder
+            for (let index = maxChannels + 1; index <= this.config.maxChannels; index++) {
+                await this.delObjectAsync(
+                    `${this.namespace}.deviceGroups.${deviceGroup}.banks.${bank}.channels.${index}`,
+                );
+            }
+        } catch (err) {
+            this.errorHandler(err, 'createChannelsAsync');
+        }
+    }
+
+    /**
+     * extend a existing object and preserve the attributes in preserve or "name" or create a new object
+     *
+     * @param {string} id objectid to extend
+     * @param {object} obj object whith values that are written to the database
+     * @param {Array} preserve array with attribute names to preserve existing values
+     */
+    async extendObjectPreserveAsync(id, obj, preserve = ['name']) {
+        try {
+            const existingObj = await this.getObjectAsync(id);
+            let locObj = obj;
+
+            if (existingObj) {
+                for (const preserveAttrib of preserve) {
+                    this.log.debug(
+                        `preserve attribute: ${preserveAttrib}, existing value: ${existingObj[preserveAttrib]}`,
+                    );
+                    // eslint-disable-next-line no-prototype-builtins
+                    if (existingObj.hasOwnProperty(preserveAttrib) && locObj.hasOwnProperty(preserveAttrib)) {
+                        this.log.debug(
+                            `preserve attribute: ${preserveAttrib}. Preserve value: ${existingObj[preserveAttrib]}`,
+                        );
+                        locObj.preserveAttrib = existingObj[preserveAttrib];
+                    }
+                }
+            }
+            this.extendObject(id, locObj);
+        } catch (err) {
+            this.errorHandler(err, 'extendObjectPreserveAsync');
+        }
+    }
+    /* #endregion */
+
+    /********************************************************************************
+     * helper functions
+     ********************************************************************************/
+    /* #region helper */
     /**
      * parse midi data, assume the data passed is complete (network transfer via udp)
      *
@@ -2118,305 +2385,10 @@ class XTouch extends utils.Adapter {
     }
 
     /**
-     * create the database (populate all values an delete unused)
-     */
-    async createDatabaseAsync() {
-        this.log.debug('X-Touch start to create/update the database');
-
-        // create the device groups
-        for (let index = 0; index < this.config.deviceGroups; index++) {
-            await this.createDeviceGroupAsync(index.toString());
-        }
-
-        // delete all unused device groups
-        for (const key in await this.getAdapterObjectsAsync()) {
-            const tempArr = key.split('.');
-            if (tempArr.length < 5) {
-                continue;
-            }
-            if (tempArr[2] === 'devices') {
-                continue;
-            }
-            if (Number(tempArr[3]) >= this.config.deviceGroups) {
-                await this.delObjectAsync(key);
-            }
-        }
-
-        // and now delete the unused device groups base folder
-        for (let index = this.config.deviceGroups; index <= 4; index++) {
-            await this.delObjectAsync(`${this.namespace}.deviceGroups.${index}`);
-        }
-
-        this.log.debug('X-Touch finished up database creation');
-    }
-
-    /**
-     * create the given deviceGroup
-     *
-     * @param {string} deviceGroup the device group to create
-     */
-    async createDeviceGroupAsync(deviceGroup) {
-        try {
-            await this.setObjectNotExistsAsync(`deviceGroups.${deviceGroup}`, this.objectTemplates.deviceGroup);
-            for (const element of this.objectTemplates.deviceGroups) {
-                await this.setObjectNotExistsAsync(`deviceGroups.${deviceGroup}.${element._id}`, element);
-
-                if (element.common.role === 'button') {
-                    // populate the button folder
-                    for (const button of this.objectTemplates.button) {
-                        await this.setObjectNotExistsAsync(
-                            `deviceGroups.${deviceGroup}.${element._id}.${button._id}`,
-                            button,
-                        );
-                    }
-                }
-                if (element.common.role === 'level.volume') {
-                    // populate the fader folder
-                    for (const fader of this.objectTemplates.levelVolume) {
-                        await this.setObjectNotExistsAsync(
-                            `deviceGroups.${deviceGroup}.${element._id}.${fader._id}`,
-                            fader,
-                        );
-                    }
-                }
-
-                if (element.type === 'folder' && element._id !== 'banks') {
-                    // populate the section, but not banks
-                    await this.setObjectNotExistsAsync(`deviceGroups.${deviceGroup}.${element._id}`, element);
-
-                    for (const sectElem of this.objectTemplates[element._id]) {
-                        // find the section
-                        await this.setObjectNotExistsAsync(
-                            `deviceGroups.${deviceGroup}.${element._id}.${sectElem._id}`,
-                            sectElem,
-                        );
-
-                        if (sectElem.common.role === 'button') {
-                            // populate the button folder
-                            for (const button of this.objectTemplates.button) {
-                                await this.setObjectNotExistsAsync(
-                                    `deviceGroups.${deviceGroup}.${element._id}.${sectElem._id}.${button._id}`,
-                                    button,
-                                );
-                            }
-                        }
-                        if (sectElem.common.role === 'led') {
-                            // populate the led folder
-                            for (const button of this.objectTemplates.led) {
-                                await this.setObjectNotExistsAsync(
-                                    `deviceGroups.${deviceGroup}.${element._id}.${sectElem._id}.${button._id}`,
-                                    button,
-                                );
-                            }
-                        }
-                        if (sectElem.common.role === 'level.volume') {
-                            // populate the fader folder
-                            for (const fader of this.objectTemplates.levelVolume) {
-                                await this.setObjectNotExistsAsync(
-                                    `deviceGroups.${deviceGroup}.${element._id}.${sectElem._id}.${fader._id}`,
-                                    fader,
-                                );
-                            }
-                        }
-                        if (sectElem.common.role === 'value.volume') {
-                            // populate the meter folder
-                            for (const meter of this.objectTemplates.valueVolume) {
-                                await this.setObjectNotExistsAsync(
-                                    `deviceGroups.${deviceGroup}.${element._id}.${sectElem._id}.${meter._id}`,
-                                    meter,
-                                );
-                            }
-                        }
-                        if (sectElem.common.role === 'encoder') {
-                            // populate the encoder folder
-                            for (const meter of this.objectTemplates.encoder) {
-                                await this.setObjectNotExistsAsync(
-                                    `deviceGroups.${deviceGroup}.${element._id}.${sectElem._id}.${meter._id}`,
-                                    meter,
-                                );
-                            }
-                        }
-                        if (sectElem.common.role === 'displayChar') {
-                            // populate the displayChar folder
-                            for (const displayChar of this.objectTemplates.displayChar) {
-                                await this.setObjectNotExistsAsync(
-                                    `deviceGroups.${deviceGroup}.${element._id}.${sectElem._id}.${displayChar._id}`,
-                                    displayChar,
-                                );
-                            }
-                        }
-                    }
-                }
-            }
-
-            this.log.info(`create bank of devicegroup ${deviceGroup}`);
-            await this.createBanksAsync(deviceGroup);
-        } catch (err) {
-            this.errorHandler(err, 'createDeviceGroupAsync');
-        }
-    }
-
-    /**
-     * create a number of banks as defines by maxBanks in the given device group
-     *
-     * @param {string} deviceGroup the device group to create banks for
-     */
-    async createBanksAsync(deviceGroup) {
-        try {
-            const tempObj = await this.getStateAsync(`deviceGroups.${deviceGroup}.maxBanks`);
-            let maxBanks = tempObj && tempObj.val ? Number(tempObj.val) : 1;
-
-            if (maxBanks > this.config.maxBanks) {
-                maxBanks = this.config.maxBanks;
-                this.setState(`deviceGroups.${deviceGroup}.maxBanks`, Number(maxBanks), true);
-            }
-
-            for (let index = 0; index < maxBanks; index++) {
-                const activeBank = `deviceGroups.${deviceGroup}.banks.${index}`;
-
-                await this.setObjectNotExistsAsync(activeBank, this.objectTemplates.bank);
-
-                for (const element of this.objectTemplates.banks) {
-                    await this.setObjectNotExistsAsync(`${activeBank}.${element._id}`, element);
-
-                    if (element.common.role === 'button') {
-                        // populate the button folder
-                        for (const button of this.objectTemplates.button) {
-                            await this.setObjectNotExistsAsync(`${activeBank}.${element._id}.${button._id}`, button);
-                        }
-                    }
-                    if (element.common.role === 'level.volume') {
-                        // populate the fader folder
-                        for (const fader of this.objectTemplates.level_volume) {
-                            await this.setObjectNotExistsAsync(`${activeBank}.${element._id}.${fader._id}`, fader);
-                        }
-                    }
-                    if (element.common.role === 'value.volume') {
-                        // populate the meter folder
-                        for (const meter of this.objectTemplates.value_volume) {
-                            await this.setObjectNotExistsAsync(`${activeBank}.${element._id}.${meter._id}`, meter);
-                        }
-                    }
-                }
-
-                await this.createChannelsAsync(deviceGroup, index.toString());
-            }
-
-            // delete all unused banks
-            for (const key in await this.getAdapterObjectsAsync()) {
-                const tempArr = key.split('.');
-                if (tempArr.length < 6) {
-                    continue;
-                }
-                if (tempArr[3] == deviceGroup && Number(tempArr[5]) >= maxBanks) {
-                    await this.delObjectAsync(key);
-                }
-            }
-
-            // and now delete the unused bank base folder
-            for (let index = maxBanks; index <= this.config.maxBanks; index++) {
-                await this.delObjectAsync(`${this.namespace}.deviceGroups.${deviceGroup}.banks.${index}`);
-            }
-        } catch (err) {
-            this.errorHandler(err, 'createBanksAsync');
-        }
-    }
-
-    /**
-     * create a number of channels (faders)
-     *
-     * @param {string} deviceGroup  the device group to create channels for
-     * @param {string} bank         the bank in the device group
-     */
-    async createChannelsAsync(deviceGroup, bank) {
-        try {
-            const tempObj = await this.getStateAsync(`deviceGroups.${deviceGroup}.banks.${bank}.maxChannels`);
-            let maxChannels = tempObj && tempObj.val ? Number(tempObj.val) : 8;
-
-            if (Number(maxChannels) % 8) {
-                // if not a multiple of 8
-                maxChannels = 8;
-                this.setState(`deviceGroups.${deviceGroup}.banks.${bank}.maxChannels`, Number(maxChannels), true);
-            }
-
-            if (maxChannels > this.config.maxChannels) {
-                maxChannels = this.config.maxChannels;
-                this.setState(`deviceGroups.${deviceGroup}.banks.${bank}.maxChannels`, Number(maxChannels), true);
-            }
-
-            for (let channel = 1; channel <= maxChannels; channel++) {
-                const activeChannel = `deviceGroups.${deviceGroup}.banks.${bank}.channels.${channel}`;
-
-                await this.setObjectNotExistsAsync(activeChannel, this.objectTemplates.channel);
-
-                for (const element of this.objectTemplates.channels) {
-                    await this.setObjectNotExistsAsync(`${activeChannel}.${element._id}`, element);
-
-                    if (element.common.role === 'button') {
-                        // populate the button folder
-                        for (const button of this.objectTemplates.button) {
-                            await this.setObjectNotExistsAsync(`${activeChannel}.${element._id}.${button._id}`, button);
-                        }
-                    }
-                    if (element.common.role === 'level.volume') {
-                        // populate the fader folder
-                        for (const fader of this.objectTemplates.levelVolume) {
-                            await this.setObjectNotExistsAsync(`${activeChannel}.${element._id}.${fader._id}`, fader);
-                        }
-                    }
-                    if (element.common.role === 'value.volume') {
-                        // populate the meter folder
-                        for (const meter of this.objectTemplates.valueVolume) {
-                            await this.setObjectNotExistsAsync(`${activeChannel}.${element._id}.${meter._id}`, meter);
-                        }
-                    }
-                    if (element.common.role === 'info.display') {
-                        // populate the meter folder
-                        for (const display of this.objectTemplates.infoDisplay) {
-                            await this.setObjectNotExistsAsync(
-                                `${activeChannel}.${element._id}.${display._id}`,
-                                display,
-                            );
-                        }
-                    }
-                    if (element.common.role === 'encoder') {
-                        // populate the encoder folder
-                        for (const display of this.objectTemplates.channelEncoder) {
-                            await this.setObjectNotExistsAsync(
-                                `${activeChannel}.${element._id}.${display._id}`,
-                                display,
-                            );
-                        }
-                    }
-                }
-            }
-
-            // delete all unused channels
-            for (const key in await this.getAdapterObjectsAsync()) {
-                const tempArr = key.split('.');
-                if (tempArr.length < 9) {
-                    continue;
-                }
-                if (tempArr[3] == deviceGroup && tempArr[5] === bank && Number(tempArr[7]) > maxChannels) {
-                    await this.delObjectAsync(key);
-                }
-            }
-
-            // and now delete the unused channel base folder
-            for (let index = maxChannels + 1; index <= this.config.maxChannels; index++) {
-                await this.delObjectAsync(
-                    `${this.namespace}.deviceGroups.${deviceGroup}.banks.${bank}.channels.${index}`,
-                );
-            }
-        } catch (err) {
-            this.errorHandler(err, 'createChannelsAsync');
-        }
-    }
-
-    /**
      * map the given hex string to a UInt8Array
      *
-     * @param {string} hexString the hexadeecimal formed string to parse to an int value
+     * @param {string} hexString the hexadecimal formed string to parse to an int value
+     * @returns {Uint8Array} newly created Uint8Array
      */
     fromHexString(hexString) {
         // @ts-expect-error could but will not be NULL
@@ -2451,9 +2423,8 @@ class XTouch extends utils.Adapter {
      * calculate midiValue -> linValue -> logValue and back
      *
      * @param {number | string | undefined} value   the value to calculate the real value from
-     * @param {string} type                         Type of value provided
-     * midiValue, linValue, logValue
-     * returns: Object with all 3 value types
+     * @param {string} type Type of value provided: midiValue | linValue | logValue
+     * @returns Object with all 3 value types
      */
     calculateFaderValue(value, type = 'midiValue') {
         if (typeof value === 'undefined') {
@@ -2534,9 +2505,10 @@ class XTouch extends utils.Adapter {
     calculateEncoderValue(value) {
         return parseInt((value / 77).toString(), 10);
     }
+    /* #endregion */
 
     /**
-     * Called for creating a new file for recording
+     * Called for creating a new file for configuration export
      *
      * @returns {string} the name of the actual export file
      */
@@ -2566,13 +2538,86 @@ class XTouch extends utils.Adapter {
     }
 
     /**
-     * Called on error situations and from catch blocks
+     * Is called if a subscribed state changes
      *
-     * @param {any} err         the error to log
-     * @param {string} module   optional, the module from where the error was generarted
+     * @param {string} id                                   database id of the state which generates this event
+     * @param {ioBroker.State | null | undefined} state     the state with value and acknowledge
      */
-    errorHandler(err, module = '') {
-        this.log.error(`X-Touch error in method: [${module}] error: ${err.message}, stack: ${err.stack}`);
+    async onStateChange(id, state) {
+        try {
+            if (state) {
+                // The state was changed
+                // this.log.debug(`state ${id} changed: ${state.val} (ack = ${state.ack})`);
+                if (!state.ack) {
+                    // only react on not acknowledged state changes
+                    if (state.lc === state.ts) {
+                        // last changed and last updated equal then the value has changed
+                        this.log.info(`state ${id} changed: ${state.val} (ack = ${state.ack})`);
+                        const baseId = id.substring(0, id.lastIndexOf('.'));
+                        const locObj = await this.getObjectAsync(baseId);
+                        if (typeof locObj !== 'undefined' && locObj !== null) {
+                            const locRole = typeof locObj.common.role !== 'undefined' ? locObj.common.role : '';
+                            switch (locRole) {
+                                case 'button':
+                                    this.handleButton(id, state.val, 'value');
+                                    break;
+
+                                case 'level.volume':
+                                    this.handleFader(id, state.val, 'value');
+                                    break;
+
+                                case 'info.display':
+                                    this.handleDisplay(id, state.val);
+                                    break;
+
+                                case 'encoder':
+                                    this.handleEncoder(id, state.val);
+                                    break;
+
+                                case 'displayChar':
+                                    this.handleDisplayChar(id, state.val);
+                                    break;
+                            }
+                        }
+                        if (/max/.test(id)) {
+                            this.log.warn(`X-Touch state ${id} changed. Please restart instance`);
+                        }
+                        if (/illuminate/.test(id)) {
+                            this.log.info(`X-Touch lock state changed to: ${state.val} on baseId: ${baseId}`);
+                        }
+                        if (/deviceLocked/.test(id)) {
+                            const tempObj = await this.getStateAsync(`${baseId}.ipAddress`);
+                            if (tempObj && tempObj.val) {
+                                const deviceAddress = tempObj.val.toString();
+                                this.log.info(
+                                    `X-Touch lock state changed to: ${state.val}. Device address: ${deviceAddress}`,
+                                );
+                                this.devices[deviceAddress].deviceLocked = state.val;
+                                this.deviceUpdateDevice(deviceAddress);
+                            }
+                        }
+                        if (/memberOfGroup/.test(id)) {
+                            const tempObj = await this.getStateAsync(`${baseId}.memberOfGroup`);
+                            if (tempObj && tempObj.val) {
+                                const deviceAddress = tempObj.val.toString();
+                                this.log.info(
+                                    `X-Touch memberOfGroup changed to: ${state.val}. Device address: ${deviceAddress}`,
+                                );
+                                this.devices[deviceAddress].memberOfGroup = state.val;
+                                this.deviceUpdateDevice(deviceAddress);
+                            }
+                        }
+                    } else {
+                        this.log.debug(`state ${id} only updated not changed: ${state.val} (ack = ${state.ack})`);
+                    }
+                }
+            } else {
+                // The state was deleted
+                this.log.info(`state ${id} deleted`);
+            }
+        } catch (err) {
+            this.errorHandler(err, 'onStateChange');
+        }
     }
 
     /**
@@ -2701,6 +2746,16 @@ class XTouch extends utils.Adapter {
         } catch (err) {
             this.errorHandler(err, 'onMessage');
         }
+    }
+
+    /**
+     * Called on error situations and from catch blocks
+     *
+     * @param {any} err         the error to log
+     * @param {string} module   optional, the module from where the error was generarted
+     */
+    errorHandler(err, module = '') {
+        this.log.error(`X-Touch error in method: [${module}] error: ${err.message}, stack: ${err.stack}`);
     }
 
     /**
