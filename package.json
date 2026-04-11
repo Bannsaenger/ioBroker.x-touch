@@ -46,7 +46,7 @@
     "eslint-plugin-unicorn": "^60.0.0",
     "eslint-plugin-import": "^2.32.0",
     "prettier": "^3.8.2",
-    "typescript": "~5.9.3",
+    "typescript": "~6.0.2",
     "typescript-eslint": "^8.58.1"
   },
   "main": "main.js",
