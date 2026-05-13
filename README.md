@@ -52,6 +52,8 @@ There a two acepted commands:
 ### 0.7.1 (2025-02-25)
 * (Bannsaenger) updated admin dependency
 
+[Older changelogs can be found there](CHANGELOG_OLD.md)
+
 ## License
 MIT License
 
