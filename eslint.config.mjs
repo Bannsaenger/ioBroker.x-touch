@@ -26,7 +26,8 @@ export default [
         // as this improves maintainability. jsdoc warnings will not block buiuld process.
         rules: {
             // 'jsdoc/require-jsdoc': 'off',
-            'jsdoc/no-types': 'off'
+            'jsdoc/no-types': 'off',
+            'jsdoc/reject-any-type': 'off'
         },
     },
     
