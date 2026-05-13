@@ -35,25 +35,8 @@
     "@iobroker/build-tools": "^3.0.1",
     "@iobroker/eslint-config": "^2.3.4",
     "@iobroker/testing": "^5.2.2",
-<<<<<<< HEAD
     "@iobroker/types": "^7.1.2",
     "@types/node": "^22.19.19"
-=======
-    "@iobroker/types": "^7.1.1",
-    "@tsconfig/node20": "^20.1.9",
-    "@types/node": "^24.12.2",
-    "eslint": "^9.39.4",
-    "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-import": "^2.32.0",
-    "eslint-plugin-jsdoc": "^54.1.1",
-    "eslint-plugin-prettier": "^5.5.5",
-    "eslint-plugin-react": "^7.37.5",
-    "eslint-plugin-react-hooks": "^5.2.0",
-    "eslint-plugin-unicorn": "^60.0.0",
-    "prettier": "^3.8.3",
-    "typescript": "~5.9.3",
-    "typescript-eslint": "^8.59.2"
->>>>>>> d560cc3d80a196ebf8aa17ee95ab1bdd6285d8f8
   },
   "main": "main.js",
   "files": [
