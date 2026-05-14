@@ -29,7 +29,8 @@ There a two acepted commands:
     ### **WORK IN PROGRESS**
 -->
 ### **WORK IN PROGRESS**
-- (copilot) Adapter requires node.js >= 22 now
+* (Bannsaenger) added additional path checking on importing files
+* (copilot) Adapter requires node.js >= 22 now
 * (Bannsaenger) updated dependencies and issues from repository checker
 * (Bannsaenger) preserve names while database creation
 * (Bannsaenger) restructured main.js and completed JsDoc requirements

@@ -2667,7 +2667,17 @@ class XTouch extends utils.Adapter {
                     if (importPath !== '') {
                         // look in the filesystem
                         // try to read the given file. If not exists run to the error portion
-                        importJson = JSON.parse(fs.readFileSync(`${importPath}/${importFile}`, 'utf8'));
+                        // change suggested by Aikido to harden the file import
+                        const path = require('path');
+                        const base = path.resolve(importPath);
+                        const target = path.resolve(base, importFile);
+                        const relative = path.relative(base, target);
+                        if (relative.startsWith('..') || path.isAbsolute(relative)) {
+                            throw { message: `Invalid file path` };
+                        }
+                        importJson = JSON.parse(fs.readFileSync(target, 'utf8'));
+                        // Original import statement
+                        // importJson = JSON.parse(fs.readFileSync(`${importPath}/${importFile}`, 'utf8'));
                     } else {
                         // look in the adapters file section
                         const tempDir = await this.readDirAsync('x-touch.0', '/');
