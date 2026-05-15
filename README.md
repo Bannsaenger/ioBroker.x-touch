@@ -28,7 +28,7 @@ There a two acepted commands:
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 0.9.0 (2026-05-15)
 * (Bannsaenger) added additional path checking on importing files
 * (copilot) Adapter requires node.js >= 22 now
 * (Bannsaenger) updated dependencies and issues from repository checker
@@ -51,12 +51,7 @@ There a two acepted commands:
 * (Bannsaenger) updated dependencies, node 24 compatibility
 * (Bannsaenger) refactored lock feature
 
-### 0.7.1 (2025-02-25)
-* (Bannsaenger) updated admin dependency
-
-[Older changelogs can be found there](CHANGELOG_OLD.md)
-
-## License
+[Older changelogs can be found there](CHANGELOG_OLD.md)## License
 MIT License
 
 Copyright (c) 2021-2026 Bannsaenger <bannsaenger@gmx.de>

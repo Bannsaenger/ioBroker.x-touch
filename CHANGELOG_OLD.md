@@ -1,4 +1,7 @@
 # Older changes
+## 0.7.1 (2025-02-25)
+* (Bannsaenger) updated admin dependency
+
 ## 0.7.0 (2025-02-17)
 * (Bannsaenger) fixed some minor typos
 * (Bannsaenger) updated to node 18.x - 22.x
