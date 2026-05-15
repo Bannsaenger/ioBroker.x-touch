@@ -51,7 +51,9 @@ There a two acepted commands:
 * (Bannsaenger) updated dependencies, node 24 compatibility
 * (Bannsaenger) refactored lock feature
 
-[Older changelogs can be found there](CHANGELOG_OLD.md)## License
+[Older changelogs can be found there](CHANGELOG_OLD.md)
+
+## License
 MIT License
 
 Copyright (c) 2021-2026 Bannsaenger <bannsaenger@gmx.de>
