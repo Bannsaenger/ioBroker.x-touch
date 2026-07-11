@@ -36,7 +36,7 @@
     "@iobroker/eslint-config": "^2.3.4",
     "@iobroker/testing": "^5.2.2",
     "@iobroker/types": "^7.2.2",
-    "@types/node": "^22.19.19"
+    "@types/node": "^22.20.0"
   },
   "main": "main.js",
   "files": [
