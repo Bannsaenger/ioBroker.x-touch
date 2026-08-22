@@ -1,4 +1,8 @@
 # Older changes
+## 0.8.0 (2025-05-15)
+* (Bannsaenger) updated dependencies, node 24 compatibility
+* (Bannsaenger) refactored lock feature
+
 ## 0.7.1 (2025-02-25)
 * (Bannsaenger) updated admin dependency
 
