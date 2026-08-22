@@ -199,13 +199,13 @@ class XTouch extends utils.Adapter {
 
             // create a timer to reset the encoder state for each device group
             for (let index = 0; index < this.config.deviceGroups; index++) {
-                this.timers.encoderWheels[index] = setTimeout(
+                this.timers.encoderWheels[index] = this.setTimeout(
                     this.onEncoderWheelTimeoutExceeded.bind(this, index.toString()),
                     1000,
                 );
             }
             // last action is to create the timer for the sendDelay and unref it immediately
-            this.timers.sendDelay = setTimeout(
+            this.timers.sendDelay = this.setTimeout(
                 this.deviceSendNext.bind(this, undefined, 'timer'),
                 this.config.sendDelay || 1,
             );
@@ -258,7 +258,7 @@ class XTouch extends utils.Adapter {
                     if (this.devices[deviceAddress].timerDeviceInactivityTimeout) {
                         this.devices[deviceAddress].timerDeviceInactivityTimeout.refresh();
                     } else {
-                        this.devices[deviceAddress].timerDeviceInactivityTimeout = setTimeout(
+                        this.devices[deviceAddress].timerDeviceInactivityTimeout = this.setTimeout(
                             this.onDeviceInactivityTimeoutExceeded.bind(this, deviceAddress),
                             this.config.deviceInactivityTimeout,
                         );
@@ -281,7 +281,7 @@ class XTouch extends utils.Adapter {
                     if (this.devices[deviceAddress].timerDeviceInactivityTimeout) {
                         this.devices[deviceAddress].timerDeviceInactivityTimeout.refresh();
                     } else {
-                        this.devices[deviceAddress].timerDeviceInactivityTimeout = setTimeout(
+                        this.devices[deviceAddress].timerDeviceInactivityTimeout = this.setTimeout(
                             this.onDeviceInactivityTimeoutExceeded.bind(this, deviceAddress),
                             this.config.deviceInactivityTimeout,
                         );
@@ -2668,7 +2668,7 @@ class XTouch extends utils.Adapter {
                         // look in the filesystem
                         // try to read the given file. If not exists run to the error portion
                         // change suggested by Aikido to harden the file import
-                        const path = require('path');
+                        const path = require('node:path');
                         const base = path.resolve(importPath);
                         const target = path.resolve(base, importFile);
                         const relative = path.relative(base, target);

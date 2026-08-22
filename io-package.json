@@ -128,7 +128,6 @@
       "behringer x-touch hui mackie midi"
     ],
     "licenseInformation": {
-      "link": "https://github.com/Bannsaenger/ioBroker.x-touch/blob/master/LICENSE",
       "type": "free",
       "license": "MIT"
     },

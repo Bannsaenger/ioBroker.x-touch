@@ -7,7 +7,7 @@
 
         {
             "name": "Backup erstellen",
-            "type": "cppvsdbg",
+            "type": "node",
             "request": "launch",
             "program": "D:/TechDevel/ioBroker/X-Touch/backup_x-touch.cmd",
             "args": [],
