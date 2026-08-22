@@ -28,6 +28,9 @@ There a two acepted commands:
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+* (Bannsaenger) updated dependencies and issues from repository checker
+
 ### 0.9.0 (2026-05-15)
 * (Bannsaenger) added additional path checking on importing files
 * (copilot) Adapter requires node.js >= 22 now
